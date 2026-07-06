@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <main.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 
@@ -12,7 +13,7 @@
 #define PIN_MOSI 19
 
 
-
+//docs:start:main
 int main()
 {
     stdio_init_all();
@@ -27,10 +28,10 @@ int main()
     // Chip select is active-low, so we'll initialise it to a driven-high state
     gpio_set_dir(PIN_CS, GPIO_OUT);
     gpio_put(PIN_CS, 1);
-    // For more examples of SPI use see https://github.com/raspberrypi/pico-examples/tree/master/spi
 
     while (true) {
         printf("Hello, world!\n");
         sleep_ms(1000);
     }
 }
+//docs:end:main

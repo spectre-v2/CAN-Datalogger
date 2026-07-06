@@ -11,6 +11,7 @@
 ]
 #v(2cm)
 
+
 #table(
   columns: (1.3fr, 2.7fr),
   inset: (y: 3.5mm, x: 1.4mm),
@@ -40,16 +41,23 @@
 
 
 // -------------------------Quellen-------------------------
-#bibliography("sources.bib", style: "ieee")
+
+#pagebreak()
+= Literaturverzeichnis
+#bibliography("sources.bib", title: none, style: "ieee")
 
 // -------------------------Verzeichnisse-------------------------
 
+#pagebreak()
+= Tabellenverzeichnis
 #outline(
-  title: [Tabellenverzeichnis],
+  title: none,
   target: figure.where(kind: table),
 )
 
+#pagebreak()
+= Abbildungsverzeichnis
 #outline(
-  title: [Abbildungsverzeichnis],
+  title: none,
   target: figure.where(kind: image),
 )

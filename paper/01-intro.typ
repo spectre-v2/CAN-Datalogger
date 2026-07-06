@@ -7,6 +7,7 @@ in Funktionsumfang, Energieeffizienz, Kosten sowie Sicherheit machen präziseste
 Jede Konstruktion basiert auf Mathematischen Modellannahmen, welche fast immer eine starke Vereinfachung der realen Physik darstellen.
 Eine Konstruktion ist erst dann validiert, wenn bewiesen werden kann, das ihr zugrunde liegende Mathematische Modell mit der Realitiät übereinstimmt.
 Durch präzise und zuverlässige aufzeichnung kritischer Fahrzeugdaten lässt sich die Konstruktion iterativ verbessern.
+@whitebook
 == Anforderungsanalyse
 === Geringes Gewicht
 In der Formula Student sind Streckenlayouts bewusst so gewählt, dass das Fahrzeug starke Querbeschleunigungen bewältigen muss.
@@ -31,7 +32,7 @@ In dieser Studienarbeit soll zunächst das technische Grundwissen geschaffen wer
   block(
     width: 170.0mm,
     inset: 3.0mm,
-    fill: GREY,
+    fill: light_grey,
     stroke: 0.1mm,
     radius: 3.0mm,
     align(center)[
@@ -105,7 +106,7 @@ In dieser Studienarbeit soll zunächst das technische Grundwissen geschaffen wer
       (0, 5),
       "Reflexion",
       "14.09-20.09",
-      [Wissenschaftliche Aufarbeitung Fazit und Politur.],
+      [Wissenschaftliche Aufarbeitung, Fazit und Politur.],
       [Finale Version fertiggestellt.]
     ),
   )

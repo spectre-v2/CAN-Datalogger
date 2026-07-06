@@ -78,7 +78,30 @@
 
   body
 }
-  // -------------------------Globale Variablen-------------------------
+  // ------------------------Globale Variablen-------------------------
 
-#let GREY= rgb("#f1f1f1")
+#let light_grey=rgb("#f5f5f5")
+#let medium_grey=rgb("#e8e8e8")
+#let dark_grey=rgb("#d9d9d9")
+
+
+
+
+  // ------------------------Funktion zum einbinden von Code-------------------------
+
+#let code-snippet(path, marker, lang: "c") = {
+  let content = read(path)
+  let start-tag = "docs:start:" + marker
+  let end-tag = "docs:end:" + marker
+
+  let start-idx = content.position(start-tag)
+  let end-idx = content.position(end-tag)
+
+  let snippet = content.slice(
+    start-idx + start-tag.len(), 
+    end-idx
+  )
+
+  raw(snippet.trim(), lang: lang, block: true)
+}
 
