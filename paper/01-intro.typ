@@ -23,3 +23,12 @@ vollständig ohne externe Software auf dem PC des Endbenutzers auskommen.
 == Stand der Technik
 == Umfang und Ziele
 In dieser Studienarbeit soll zunächst das technische Grundwissen geschaffen werden, um die Entwicklung eines solchen Datenloggers zu ermöglichen. Zu diesem Zweck sollen Grundprinzipen eines naheliegenden Systemaufbaus erforscht und getestet werden.
+== Meilensteinplanung
+
+#align(center)[
+  #figure(
+    image("pictures/timeline.svg", width: 60%),
+    caption: [Meilensteinplanung]
+    
+  )
+]

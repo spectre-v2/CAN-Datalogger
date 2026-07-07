@@ -16,10 +16,19 @@ Der Mikrocontroller stellt den Zentralen Baustein dar.
 
 == Auswahl eines Speichermediums
 
+
+== Blockdiagramm
+
 Dieser Datenlogger besteht aus einem RP2350 und drei Microchip MCP251863 Controller-Transceivern für die CAN-Busse Accu-FD, Main-FD und DV-Can, sowie einer micro SD- Karte.
 Die MCP's bieten die Möglichkeit, Frames relativ einfach mit ID- Masken zu filtern. Sie kommunizieren über SPI mit dem Mcu. 
 Core 0 des Mcu ist für Echtzeit- Handling der eingehenden Frames zuständig und schreibt diese in den RAM- Buffer.
 Core 1 übernimmt ausschließlich das Formatieren und schreiben in das FAT32 Dateisystem der SD, da dies rechenintensiv ist und größere Latenzen haben kann.
+#align(center)[
+  #figure(
+    image("pictures/full-system-diagram.svg", width: 80%),
+    caption: [Zeitplanung],
+  )
+]
 
 === Vorteile
 - Reduzierung der Masse um bis zu 3/4.
