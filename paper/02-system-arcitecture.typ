@@ -30,6 +30,13 @@ Core 1 übernimmt ausschließlich das Formatieren und schreiben in das FAT32 Dat
   )
 ]
 
+== Blockdiagramm des Prototypen
+#align(center)[
+  #figure(
+    image("pictures/prototype-diagram.svg", width: 80%),
+    caption: [Zeitplanung],
+  )
+]
 === Vorteile
 - Reduzierung der Masse um bis zu 3/4.
 - Effektive Filterung der Frames nach Can-ID.
