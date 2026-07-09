@@ -1,13 +1,17 @@
 #import "header.typ":*
 
 = Einleitung
-Moderne technische Systeme stehen unter dem Anspruch, maximale Funktionalität, hohe Energieeffizienz, geringe Kosten und höchste Zuverlässigkeit miteinander zu vereinen. 
+Moderne technische Systeme stehen unter dem Anspruch, maximale Qualität in Funktionalität, Energieeffizienz,   Zuverlässigkeit sowie Wirtschaftlichkeit zu vereinen. 
 
 Die Grundlage jeder Entwicklung bilden mathematische Modelle, mit denen das Verhalten eines Systems bereits in der Entwurfsphase beschrieben und bewertet wird. Diese Modelle stellen jedoch zwangsläufig eine Vereinfachung der realen physikalischen Zusammenhänge dar. Ihre Aussagekraft ist daher erst dann gegeben, wenn sie durch Messdaten unter realen Betriebsbedingungen bestätigt werden.
 
-Die präzise und zuverlässige Erfassung von Fahrzeugdaten ist deshalb ein zentraler Bestandteil moderner Entwicklungsprozesse - sowohl in der industriellen Fahrzeugentwicklung als auch in der Formula Student. Sie ermöglicht es, theoretische Annahmen mit der Realität abzugleichen, konstruktive Schwachstellen eindeutig zu identifizieren und Systeme auf Grundlage objektiver Messwerte gezielt weiterzuentwickeln.
+Die präzise und zuverlässige Erfassung von Messdaten ist deshalb ein zentraler Bestandteil moderner Entwicklungsprozesse - sowohl in der industriellen Fahrzeugentwicklung als auch in der Formula Student. Sie ermöglicht es, theoretische Annahmen mit der Realität abzugleichen, konstruktive Schwachstellen eindeutig zu identifizieren und Systeme gezielt weiterzuentwickeln.
 
 Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
+
+= Methodik
+
+
 
 #v(10mm)
 
@@ -21,9 +25,10 @@ Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Tec
 #pagebreak()
 == Anforderungsanalyse
 
-Der Datenlogger wird fest in ein Formula-Student-Fahrzeug integriert. Damit wird er Teil eines extrem masseempfindlichen Gesamtsystems. Jede Zusatzmasse erhöht die Trägheit. Jeder zusätzliche Bauraum verschärft die Integration. Jeder verlorene Datensatz schwächt die spätere Fehleranalyse. Aus diesen Randbedingungen ergeben sich drei zentrale Anforderungen: 
+Der Datenlogger wird nicht nur fest in ein Formula-Student-Fahrzeug integriert, sondern dient auch zukünftigen Generationen als Werkzeug, um Fahrzeugdaten zu erfassen, sowie als Referenz für zukünftige Designs. Instanzen oder Varianten des Datenloggers müssen einfach herstellbar, anpassbar, programmierbar und benutzbar sein. 
+Daraus ergeben sich einige Zentrale Anforderungen:
 
-- *Geringe Masse*
+- *Geringe Masse und Größe*
   In der Formula Student wirken hohe Quer- und Längsbeschleunigungen. Jede zusätzliche Masse erhöht nach dem zweiten Newtonschen Gesetz die erforderliche Kraft für dieselbe Beschleunigung. Das verschlechtert Beschleunigung, Bremsverhalten und Kurvendynamik. Der Datenlogger muss deshalb leicht, kompakt und mechanisch robust sein.
 
 - *Robuste und vollständige Datenerfassung*
@@ -35,7 +40,7 @@ Der Datenlogger wird fest in ein Formula-Student-Fahrzeug integriert. Damit wird
 #pagebreak()
 == Anforderungsmatrix
 
-Die abstrakten Anforderungen werden nach dem SMART-Prinzip in konkrete technische Ziele überführt. Jedes Ziel ist spezifisch, messbar, erreichbar, relevant und terminiert. @smart
+Die abstrakten Anforderungen werden in zwei Gruppen getrennt. Zwingende Anforderungen sind harte Ja/Nein-Kriterien: Wird eine davon nicht erfüllt, ist der Lösungsansatz für das Gesamtsystem ungeeignet. Bewertungsrelevante Anforderungen beschreiben dagegen messbare technische Eigenschaften, mit denen geeignete Lösungen miteinander verglichen werden.
 
 
 #figure(
@@ -45,37 +50,26 @@ Die abstrakten Anforderungen werden nach dem SMART-Prinzip in konkrete technisch
     inset: 8pt,
     table.header(
       [*Nr.*],
-      [*Technische Anforderung*],
-      [*Ziel*],
+      [*Ausschlusskriterium*],
+      [*Muss-Bedingung*],
       [*Nachweis*],
     ),
-
     [A1 <a1>],
-    [CAN-FD-Schnittstellen],
-    [Mindestens 3 unabhängige CAN-FD-Kanäle parallel erfassen können.],
-    [Prüfung der Hardware-Schnittstellen und erfolgreicher Empfang definierter Testnachrichten auf allen Kanälen.],
+    [Mehrkanal-CAN-FD-Erfassung],
+    [Das Gesamtsystem muss die gleichzeitige Erfassung von mindestens drei unabhängigen CAN-FD-Bussen ermöglichen.],
+    [Prüfung der Systemarchitektur und erfolgreicher Empfang definierter Testnachrichten auf allen vorgesehenen Kanälen.],
 
     [A2 <a2>],
-    [Systemmasse],
-    [Die Masse des vollständigen Datenloggers darf 100g nicht überschreiten.],
-    [Messung der Gesamtmasse mit Leiterplatte, Gehäuse und notwendigen Anschlussleitungen.],
+    [Nichtflüchtige Speicherung],
+    [Empfangene Messdaten müssen dauerhaft auf einem nichtflüchtigen Speichermedium abgelegt werden.],
+    [Aufzeichnung, Spannungsabschaltung und anschließende Prüfung der gespeicherten Datei.],
 
     [A3 <a3>],
-    [Systemvolumen],
-    [Das Volumen des vollständigen Datenloggers darf 250 cm³ nicht überschreiten.],
-    [Berechnung.],
-
-    [A4 <a4>],
-    [Datenintegrität],
-    [Bei definierter maximaler Buslast müssen mindestens 99% der empfangenen Nachrichten dauerhaft gespeichert werden.],
-    [Vergleich der empfangenen Nachrichten mit den gespeicherten Datensätzen im Belastungstest.],
-
-    [A5 <a5>],
-    [Datenrate und Pufferverhalten],
-    [Der Datenlogger muss die Eingangsdatenrate aller aktiven CAN-FD-Kanäle ohne Rückstau verarbeiten.],
-    [Messung der Pufferfüllstände Messung der Speicherlatenz.],
+    [Fertigbarer Prototyp],
+    [Der Prototyp muss mit den verfügbaren Fertigungs- und Debug-Möglichkeiten aufbaubar und prüfbar sein.],
+    [Prüfung von Gehäuseformen, Leiterplattenlayout, Lötbarkeit, Programmierzugang und Testpunkten.],
   ),
-  caption: [Anforderungsmatrix],
+  caption: [Zwingende Anforderungen],
 )
 
 #figure(
@@ -85,37 +79,47 @@ Die abstrakten Anforderungen werden nach dem SMART-Prinzip in konkrete technisch
     inset: 8pt,
     table.header(
       [*Nr.*],
-      [*Technische Anforderung*],
-      [*Ziel*],
-      [*Nachweis*],
+      [*Bewertungskriterium*],
+      [*Messgröße*],
+      [*Bewertung*],
     ),
+
+    [A4 <a4>],
+    [Datenintegrität],
+    [Anteil vollständig und korrekt gespeicherter Nachrichten sowie Anzahl beschädigter Dateien im Belastungstest.],
+    [Höherer Anteil korrekt gespeicherter Nachrichten und weniger beschädigte Dateien sind besser.],
+
+    [A5 <a5>],
+    [Datenrate und Pufferverhalten],
+    [Maximal dauerhaft verarbeitbare Eingangsdatenrate, Pufferfüllstand und Speicherlatenz bei definierter Buslast.],
+    [Höhere stabile Datenrate, geringerer Pufferfüllstand und geringere Latenz sind besser.],
 
     [A6 <a6>],
     [Abschaltsicherheit],
-    [Nach Ausfall der Fahrzeugversorgung muss der Datenlogger mindestens 1s weiter betrieben werden und den aktuellen Schreibvorgang abschließen.],
-    [Simulierter Spannungsverlust mit anschließender Prüfung der Datensatzvollständigkeit.],
+    [Zeitspanne nach Ausfall der Fahrzeugversorgung, in der ein Schreibvorgang noch abgeschlossen werden kann.],
+    [Längere Überbrückungszeit und reproduzierbar abgeschlossene Dateien sind besser.],
 
     [A7 <a7>],
     [Auslesbarkeit und Datenformat],
-    [Die Messdaten müssen ohne spezielle PC-Software über eine Standardschnittstelle auslesbar sein und in einem offenen, dokumentierten Format vorliegen.],
-    [Auslesen auf einem unveränderten Windows-PC und Auswertung der erzeugten Datei mit Standardwerkzeugen.],
+    [Benötigte Schritte und Zeit zum Auslesen auf einem Standard-PC sowie Dokumentationsgrad des Dateiformats.],
+    [Weniger Schritte, kürzere Auslesezeit und ein klar dokumentiertes Format sind besser.],
 
     [A8 <a8>],
-    [Produktionskosten],
-    [Die Materialkosten des vollständigen Prototyps dürfen 100 EUR nicht überschreiten.],
-    [Erstellung einer Stückliste mit Einzelpreisen und Berechnung der Gesamtkosten.],
+    [Masse und Bauraum],
+    [Gesamtmasse, Leiterplattenfläche und erforderliches Einbauvolumen des vollständigen Datenloggers.],
+    [Geringere Masse und kleinerer Bauraum sind besser.],
 
     [A9 <a9>],
-    [Einfache Fertigung und Fehlersuche],
-    [Der Prototyp muss mit gut lötbaren Bauteilen, klarem Leiterplattenlayout, dokumentierten Schnittstellen und definierten Testpunkten aufgebaut werden.],
-    [Prüfung des Leiterplattenlayouts, Sichtprüfung der Baugruppe und elektrische Messung an den Testpunkten.],
+    [Kosten und Verfügbarkeit],
+    [Stücklistenkosten, Anzahl schwer beschaffbarer Bauteile und Lieferbarkeit der Schlüsselkomponenten.],
+    [Niedrigere Kosten und bessere Verfügbarkeit sind besser.],
 
     [A10 <a10>],
-    [Schnelle Produktentwicklung],
-    [Der Systemaufbau muss funktional klar getrennt, flexibel erweiterbar und softwareseitig sauber strukturiert sein.],
-    [Prüfung der Modulstruktur in Hardware und Software sowie Nachvollziehbarkeit der Signal- und Datenpfade.],
+    [Erweiterbarkeit und Entwicklungsaufwand],
+    [Freie Schnittstellen, Modularität der Hardware, Treiberqualität und Aufwand für Erweiterung auf weitere Kanäle.],
+    [Mehr Reserven, klarere Modulgrenzen und geringerer Erweiterungsaufwand sind besser.],
   ),
-  caption: [Anforderungsmatrix, Fortsetzung],
+  caption: [Bewertungsrelevante Anforderungen],
 )
 
 
@@ -125,7 +129,7 @@ Die abstrakten Anforderungen werden nach dem SMART-Prinzip in konkrete technisch
 
 Auf dem Markt existieren nur eine geringe Anzahl an CAN-FD-Datenloggern, die diesen Anforderungen entsprechen. 
 
-Datenlogger, die für die Automobilindustrie entwickelt wurden, sind meist als robuste Multi-Bus-Logger mit umfangreicher Konnektivität ausgeführt. Die größte Einschränkung ist dabei oft die Anzahl der CAN-FD-Kanäle, das Gewicht und Volumen sowie der Anschaffungspreis.
+Datenlogger, die für die Automobilindustrie entwickelt wurden, sind meist als robuste Multi-Bus-Logger mit umfangreicher Konnektivität ausgeführt. Die größten Einschränkungen sind dabei oft die Anzahl der CAN-FD-Kanäle, das Gewicht und Volumen sowie der Anschaffungspreis.
 Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Projekts und dienen als technische Referenz:
 
 #block(breakable: false)[
@@ -136,7 +140,7 @@ Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Proj
     caption: [Influx ReXgen Air]
   )
 ]
-  - Kanäle: bis zu 4x CAN/CAN-FD
+  - Kanäle: 4
   - Speicher: 32 GB eMMC
   - Gewicht: 112 g
   - Volumen: 195 cm³

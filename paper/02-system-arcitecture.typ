@@ -1,7 +1,11 @@
 #import "header.typ":*
-
+#import "02-header.typ":*
 
 = Systemarchitektur
+
+Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet:
+
+
 === Auswahl des Mikrocontrollers
 
 Der Mikrocontroller bildet die zentrale Logikeinheit des Datenloggers. Er übernimmt die Initialisierung aller Peripheriegeräte, die Verarbeitung der empfangenen Nachrichten und die Speicherung. Damit bestimmt er direkt die Robustheit, Erweiterbarkeit und Entwicklungsgeschwindigkeit des Prototyps.
@@ -18,75 +22,34 @@ Die Auswahl des Mikrocontrollers erfolgt daher nicht allein über einzelne Maxim
 
 Ein integrierter CAN-FD-Controller ist für diese Systemarchitektur nicht zwingend erforderlich. Stattdessen wird ein externer CAN-FD-Controller eingesetzt. Dadurch wird die CAN-FD-Logik vom Mikrocontroller entkoppelt. Diese Architektur ist skalierbarer, da mehrere externe Controller über flexible Schnittstellen angebunden werden können. Gleichzeitig übernehmen die Controller bereits einen Teil der Nachrichtenfilterung und entlasten damit den Mikrocontroller. Der Mikrocontroller muss dadurch nicht jede Nachricht direkt auf Bitebene verarbeiten, sondern liest nur relevante Empfangspuffer aus.
 
+
 #block(breakable: false)[
 
   #figure(
     table(
-      columns: (auto, auto, auto, auto),
-      align: (left + horizon),
-      inset: 8pt,
-      table.header(
-        [Mikrocontroller],
-        [*AVR64DU* @avr64du],
-        [*STM32C5* @stm32c5],
-        [*RP2350* @rp2350],
-      ),
-      [Hersteller],
-      [Microchip],
-      [STMicroelectronics],
-      [Raspberry Pi],
+      columns: (auto, auto, auto, auto), align: (left + horizon), inset: 8pt,
 
-      [Veröffentlichung],
-      [2026],
-      [2026],
-      [2024],
+      table.header([Mikrocontroller],[*AVR64DU* @avr64du],[*STM32C5* @stm32c5],[*RP2350* @rp2350],),
 
-      [Architektur],
-      [8-Bit AVR-Mega],
-      [32-Bit Cortex-M33],
-      [32-Bit Cortex-M33 / RISC-V],
+      [Hersteller],[Microchip],[STMicroelectronics],[Raspberry Pi],
+      [Veröffentlichung],[2026],[2026],[2024],
+      [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[32-Bit Cortex-M33 / RISC-V],
+      [Anzahl Prozessoren],[1],[1],[2],
+      [RAM-Größe],[8 KB],[bis 256 KB],[520 KB],
+      [Schnittstellen],[1x SPI, 1x I²C, 2x USART, USB FS],[USB, OctoSPI, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
+      [Pin-Multiplexer],[PORTMUX eingeschränkt],[Alternate-Function-Matrix],[sehr flexibel über GPIO-Funktionen],
+      [Anzahl CAN-FD-Controller],[0],[2],[0],
+      [Treiber/ Software workflow],[Melody],[STM- HAL, CubeMX-2],[Pico C/ C++ SDK]),
 
-      [Anzahl Prozessoren],
-      [1],
-      [1],
-      [2],
-
-      [RAM-Größe],
-      [8 KB],
-      [bis 256 KB],
-      [520 KB],
-
-
-      [Schnittstellen],
-      [1x SPI, 1x I²C, 2x USART, USB FS],
-      [USB, OctoSPI, CAN-FD],
-      [2x SPI, 2x I²C, USB, 12x PIO-SM],
-
-      [Pin-Multiplexer],
-      [PORTMUX eingeschränkt],
-      [Alternate-Function-Matrix],
-      [sehr flexibel über GPIO-Funktionen],
-
-      [Anzahl CAN-FD-Controller],
-      [0],
-      [2],
-      [0],
-
-      [Treiber/ Software workflow],
-      [Melody],
-      [STM- HAL, CubeMX-2],
-      [Pico C/ C++ SDK],
-    ),
-    caption: [Gängige aktuelle Mikrocontroller],
+      caption: [Gängige aktuelle Mikrocontroller],
   )
 ]
-Eine engere auswahl der modernsten Mikrocontroller wird im folgenden anhand der aus den Zielen hergeleiteten Kriterien auf einer Skala von 1-3 bewertet.
 
-// entscheidungsmatrix
+Eine engere auswahl der modernsten Mikrocontroller wird im folgenden anhand der aus den Zielen hergeleiteten Kriterien auf einer Skala von 1-3 bewertet.
 
 *Entscheidungsmatrix Mikrocontroller*
 
-Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach relevanz für diesen konkreten anwendungsfall mit einem multiplikator Gewichtet.
+Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach Relevanz für diesen konkreten Anwendungsfall mit einem Multiplikator Gewichtet.
 
 
 #figure(
@@ -94,11 +57,10 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
     columns: (auto, auto),
     align: (left + horizon),
     inset: 8pt,
-    table.header([*Bewertung*],[*Bedeutung*]),
-    [-1], [nicht vorhanden/ unpassend für Anwendungsfall],
-    [0], [in geringem Umfang vorhanden],
-    [1],[in hoher Qualität vorhanden]
-  ),
+table.header([*Bewertung*], [*Bedeutung*]),
+[-1], [Keine oder ungeeignete Umsetzung des Kriteriums],
+[0],  [Ausreichende Erfüllung des Kriteriums],
+[1],  [Besonders vorteilhafte Erfüllung des Kriteriums]),
   caption: [Bewertungsskala]
 )
 
@@ -107,74 +69,13 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
     columns: (auto, auto),
     align: (left + horizon),
     inset: 8pt,
-    table.header([*Multiplikator*],[*Bedeutung*]),
-    [1], [wichtig, aber nicht entscheident],
-    [2], [sehr wichtig für Anwendungsfall],
-    [3],[äußerste wichtigkeit für konkrete umsetzung]
+ table.header([*Multiplikator*], [*Bewertungsrelevanz*]),
+[1], [Grundlegende Relevanz für die Systemauswahl],
+[2], [Hoher Einfluss auf die Eignung im Anwendungsfall],
+[3], [Entscheidender Einfluss auf die technische Umsetzbarkeit]
   ),
   caption: [Gewichtungsskala]
 )
-
-// Structs für den Komponenten- Bewertungsscore
-#let avr64du_scores=(
-  name: "AVR64DU",
-  modern: 1,
-  core_perf: 0,
-  multicore: -1,
-  ramsize: -1,
-  interface: 0,
-  signalrout: 0,
-  canfdinteg: -1,
-  software: 0,
-)
-
-#let stm32c5_scores=(
-  name: "STM32C5",
-  modern: 1,
-  core_perf: 1,
-  multicore: -1,
-  ramsize: 0,
-  interface: 0,
-  signalrout: -1,
-  canfdinteg: 1,
-  software: -1,
-)
-
-#let rp2350_scores=(
-  name: "RP2350",
-  modern: 0,
-  core_perf: 1,
-  multicore: 1,
-  ramsize: 1,
-  interface: 1,
-  signalrout: 1,
-  canfdinteg: -1,
-  software: 1,
-)
-
-// Struct mit den gewichtungs- Multiplikatoren
-#let mcu_multi=(
-  modern: 1,
-  core_perf: 1,
-  multicore: 2,
-  ramsize: 3,
-  interface: 2,
-  signalrout: 2,
-  canfdinteg: 1,
-  software: 3,
-)
-// funktion, die en gewichteten score berechnet.
-#let score(device)= (
-  device.modern * mcu_multi.modern +
-  device.core_perf * mcu_multi.core_perf +
-  device.multicore * mcu_multi.multicore +
-  device.ramsize * mcu_multi.ramsize +
-  device.interface * mcu_multi.interface +
-  device.signalrout * mcu_multi.signalrout +
-  device.canfdinteg * mcu_multi.canfdinteg +
-  device.software * mcu_multi.software
-)
-
 
   #figure(
     table(
@@ -241,9 +142,9 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
 
       [Gewichtete Summe],
       [],
-      [#score(avr64du_scores)],
-      [#score(stm32c5_scores)],
-      [#score(rp2350_scores)],
+      [#mcu_score(avr64du_scores)],
+      [#mcu_score(stm32c5_scores)],
+      [#mcu_score(rp2350_scores)],
     ),
     caption: [Entscheidungsmatrix Mikrocontroller],
   )
@@ -271,15 +172,15 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
       [Microchip],
       [Microchip],
 
-      [Funktion],
-      [CAN-FD-SBC mit Controller und Transceiver],
-      [CAN-FD-Controller mit integriertem Transceiver],
-      [CAN-FD-Controller ohne Transceiver],
+      [Transciever integriert],
+      [Ja],
+      [Ja],
+      [Nein],
 
       [CAN-FD-Datenrate],
-      [bis 8 Mbit/s],
-      [bis 5 Mbit/s],
-      [bis 8 Mbit/s],
+      [8 Mbit/s],
+      [5 Mbit/s],
+      [8 Mbit/s],
 
       [SPI-Takt],
       [bis 18 MHz],
@@ -287,24 +188,20 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
       [bis 20 MHz],
 
       [Nachrichtenspeicher],
-      [2 KB MRAM],
-      [2 KB RAM],
-      [2 KB RAM],
+      [2 KB],
+      [2 KB],
+      [2 KB],
 
       [Filter],
-      [bis 128 Standard-ID oder 64 Extended-ID Filter],
-      [32 flexible Filter-/Maskenobjekte],
-      [32 flexible Filter-/Maskenobjekte],
+      [128 Standard-ID oder 64 Extended-ID Filter],
+      [32 flexible Filter-/Masken],
+      [32 flexible Filter-/Masken],
 
       [FIFO-Struktur],
       [konfigurierbare Rx-/Tx-FIFOs und Tx-Queue],
       [31 konfigurierbare FIFOs und Tx-Queue],
       [31 konfigurierbare FIFOs und Tx-Queue],
 
-      [Besonderheit],
-      [integrierter 5V-LDO, Automotive-SBC],
-      [kompakte Ein-Chip-Lösung],
-      [benötigt externen CAN-FD-Transceiver],
     ),
     caption: [Verfügbare CAN-FD-Controller-Transceiver],
   )
@@ -313,6 +210,24 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
 //hier bewertungsmatrix einfügen
 
 //kriterien: modernität, hohe datenrate,interface- geschwindigkeit, simplizität der interface- implementierung, buffer/ speichergröße, Kosten 
+
+#figure(
+  table(
+    columns: (auto,auto,auto,auto),
+    align: (left+horizon),
+    inset: 1mm,
+    table.header([Controller], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
+    [Modernität],[],[],[],[],
+    [Simple externe Beschaltung],[],[],[],[],
+    [Hohe CAN- Datenrate],[],[],[],[],
+    [Hohe SPI- Datenrate],[],[],[],[],
+    [Großer Datenspeicher],[],[],[],[],
+    [Effektivität der Filterung],[],[],[],[],
+    [Simplizität des Interfaces],[],[],[],[],
+    [Geringe Kosten],[],[],[],[],
+
+  )
+)
 
 == Auswahl eines Speichermediums
 
