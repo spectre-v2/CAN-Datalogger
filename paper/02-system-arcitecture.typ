@@ -114,11 +114,67 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
   ),
   caption: [Gewichtungsskala]
 )
-// structs für die komponenten (experimentell)
-#let rp2350=(
-  modernität: 1,
-  singlecore: 2
+
+// Structs für den Komponenten- Bewertungsscore
+#let avr64du_scores=(
+  name: "AVR64DU",
+  modern: 1,
+  core_perf: 0,
+  multicore: -1,
+  ramsize: -1,
+  interface: 0,
+  signalrout: 0,
+  canfdinteg: -1,
+  software: 0,
 )
+
+#let stm32c5_scores=(
+  name: "STM32C5",
+  modern: 1,
+  core_perf: 1,
+  multicore: -1,
+  ramsize: 0,
+  interface: 0,
+  signalrout: -1,
+  canfdinteg: 1,
+  software: -1,
+)
+
+#let rp2350_scores=(
+  name: "RP2350",
+  modern: 0,
+  core_perf: 1,
+  multicore: 1,
+  ramsize: 1,
+  interface: 1,
+  signalrout: 1,
+  canfdinteg: -1,
+  software: 1,
+)
+
+// Struct mit den gewichtungs- Multiplikatoren
+#let mcu_multi=(
+  modern: 1,
+  core_perf: 1,
+  multicore: 2,
+  ramsize: 3,
+  interface: 2,
+  signalrout: 2,
+  canfdinteg: 1,
+  software: 3,
+)
+// funktion, die en gewichteten score berechnet.
+#let score(device)= (
+  device.modern * mcu_multi.modern +
+  device.core_perf * mcu_multi.core_perf +
+  device.multicore * mcu_multi.multicore +
+  device.ramsize * mcu_multi.ramsize +
+  device.interface * mcu_multi.interface +
+  device.signalrout * mcu_multi.signalrout +
+  device.canfdinteg * mcu_multi.canfdinteg +
+  device.software * mcu_multi.software
+)
+
 
   #figure(
     table(
@@ -134,60 +190,60 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
       ),
 
       [Modernität],
-      [1],
-      [1],
-      [1],
-      [0],
+      [#mcu_multi.modern],
+      [#avr64du_scores.modern],
+      [#stm32c5_scores.modern],
+      [#rp2350_scores.modern],
 
       [Single core- Performance],
-      [1],
-      [0],
-      [1],
-      [1],
+      [#mcu_multi.core_perf],
+      [#avr64du_scores.core_perf],
+      [#stm32c5_scores.core_perf],
+      [#rp2350_scores.core_perf],
 
       [Multi- Core- Architektur],
-      [2],
-      [-1],
-      [-1],
-      [1],
+      [#mcu_multi.multicore],
+      [#avr64du_scores.multicore],
+      [#stm32c5_scores.multicore],
+      [#rp2350_scores.multicore],
 
       [RAM-Größe],
-      [3],
-      [-1],
-      [0],
-      [1],
+      [#mcu_multi.ramsize],
+      [#avr64du_scores.ramsize],
+      [#stm32c5_scores.ramsize],
+      [#rp2350_scores.ramsize],
 
 
       [Flexibilität Schnittstellen],
-      [2],
-      [0],
-      [0],
-      [1],
+      [#mcu_multi.interface],
+      [#avr64du_scores.interface],
+      [#stm32c5_scores.interface],
+      [#rp2350_scores.interface],
 
       [Flexibilität Signal- Routing],
-      [2],
-      [0],
-      [-1],
-      [1],
+      [#mcu_multi.signalrout],
+      [#avr64du_scores.signalrout],
+      [#stm32c5_scores.signalrout],
+      [#rp2350_scores.signalrout],
 
       [CAN-FD-Integration],
-      [1],
-      [-1],
-      [1],
-      [-1],
+      [#mcu_multi.canfdinteg],
+      [#avr64du_scores.canfdinteg],
+      [#stm32c5_scores.canfdinteg],
+      [#rp2350_scores.canfdinteg],
 
       [Qualität Software- Support],
-      [3],
-      [0],
-      [-1],
-      [1],
+      [#mcu_multi.software],
+      [#avr64du_scores.software],
+      [#stm32c5_scores.software],
+      [#rp2350_scores.software],
 
 
       [Gewichtete Summe],
       [],
-      [],
-      [],
-      [],
+      [#score(avr64du_scores)],
+      [#score(stm32c5_scores)],
+      [#score(rp2350_scores)],
     ),
     caption: [Entscheidungsmatrix Mikrocontroller],
   )
@@ -253,6 +309,10 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
     caption: [Verfügbare CAN-FD-Controller-Transceiver],
   )
 ]
+
+//hier bewertungsmatrix einfügen
+
+//kriterien: modernität, hohe datenrate,interface- geschwindigkeit, simplizität der interface- implementierung, buffer/ speichergröße, Kosten 
 
 == Auswahl eines Speichermediums
 
