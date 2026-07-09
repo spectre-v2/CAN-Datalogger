@@ -7,10 +7,7 @@ Die Grundlage jeder Entwicklung bilden mathematische Modelle, mit denen das Verh
 
 Die präzise und zuverlässige Erfassung von Messdaten ist deshalb ein zentraler Bestandteil moderner Entwicklungsprozesse - sowohl in der industriellen Fahrzeugentwicklung als auch in der Formula Student. Sie ermöglicht es, theoretische Annahmen mit der Realität abzugleichen, konstruktive Schwachstellen eindeutig zu identifizieren und Systeme gezielt weiterzuentwickeln.
 
-Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
-
-= Methodik
-
+Ziel dieser Studienarbeit ist deshalb die Erarbeitung eines Konzeptes zur Aufzeichnung und Analyse relevanter Fahrzeugdaten eines Formula- Student Rennwagens, sowie die erforschung der technischen Grundlagen dieser.
 
 
 #v(10mm)
@@ -21,6 +18,18 @@ Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Tec
     caption: [Der A-25 von Raceyard.]
   )
 ]
+
+
+= Methodik
+Zur Erarbeitung eines Funktionalen Konzeptes orientiert sich diese Studienarbeit an einer leicht abgewandelten und präzisierteren Version des V- Modells aus der VDI- Richtlinie VDI/VDE- 2206 @vmod
+
+#align(center)[
+  #figure(
+    image("/paper/pictures/v-model.svg", width: 80%),
+    caption: [V-Modell. @vmod]
+  )
+]
+
 
 #pagebreak()
 == Anforderungsanalyse
@@ -179,6 +188,7 @@ Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Proj
   - Quelle: Vector GL Logger Produktseite @vectorgl
 ]
 == Ziele und Umfang
+Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
 
 In dieser Studienarbeit soll zunächst das technische Grundwissen geschaffen werden, um die Entwicklung eines CAN-FD-Datenloggers für ein Formula-Student-Fahrzeug zu ermöglichen. Dazu werden die Kernprinzipien eines naheliegenden Systemaufbaus anhand eines vereinfachten Prototyps erforscht.
 
