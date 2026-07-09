@@ -2,19 +2,323 @@
 
 
 = Systemarchitektur
-== Auswahl eines Mikrocontrollers
-Der Mikrocontroller stellt den Zentralen Baustein dar. 
+=== Auswahl des Mikrocontrollers
 
-- Software- Infrastruktur
-- Größe des SRAM
-- Geschwindigkeit
-- Periphrerie
-- Flexibles Signal-Routing
+Der Mikrocontroller bildet die zentrale Logikeinheit des Datenloggers. Er übernimmt die Initialisierung aller Peripheriegeräte, die Verarbeitung der empfangenen Nachrichten und die Speicherung. Damit bestimmt er direkt die Robustheit, Erweiterbarkeit und Entwicklungsgeschwindigkeit des Prototyps.
+
+Aus den Anforderung #link(<a1>)[A1] (Mindestens 3 CAN-FD Schnittstellen),ergibt sich, dass der Mikrocontroller vor allem eine flexible und anpassbare Plattform bereitstellen muss. Die höchste Gewichtung erhält deshalb die Software-Infrastruktur. Eine klar strukturierte Hardware- Abstraktionsschicht, gute Dokumentation, aktive Beispielprojekte und einfache Debug-Möglichkeiten reduzieren den Entwicklungsaufwand massiv.
+
+Aus A7 (Auslesbarkeit und Datenformat) ergibt sich, dass der Mikrocontroller einen Hardware- USB- Device- Controller braucht.
+
+Aus A5 (Datenrate und Pufferverhalten) sowie A4 (Datenintigrität) ergeben sich ausreichender SRAM, um größere datenmengen speichern zu können, hohe Rechenleistung und flexible Schnittstellen entscheidend. Der SRAM wird für Empfangspuffer, Zwischenspeicher und Dateisystemoperationen benötigt. Die Rechenleistung bestimmt, wie stabil der Datenpfad bei hoher Eingangsdatenrate bleibt. Flexible Peripherie, insbesondere mehrere SPI-Schnittstellen oder rekonfigurierbare I/O-Blöcke, erleichtert die Anbindung externer CAN-FD-Controller und der SD-Karte.
+
+Zusätzlich ist eine hohe Flexibilität beim Pin-Routing vorteilhaft. Sie vereinfacht das Leiterplattendesign und reduziert Engstellen beim Layout. Ein nativer USB-Device-Controller ist ebenfalls relevant, da Programmierung und Debugging über USB erfolgen sollen. Für den Prototyp muss der Mikrocontroller außerdem in einem gut lötbaren Gehäuse verfügbar sein. BGA-Gehäuse werden ausgeschlossen, da sie die Fertigung und Fehlersuche unnötig erschweren.
+
+Die Auswahl des Mikrocontrollers erfolgt daher nicht allein über einzelne Maximalwerte. Entscheidend ist die Kombination aus Software-Support, Speichergröße, Rechenleistung, Schnittstellenflexibilität, einfacher Fertigung und klarer Erweiterbarkeit des Gesamtsystems.
+
+Ein integrierter CAN-FD-Controller ist für diese Systemarchitektur nicht zwingend erforderlich. Stattdessen wird ein externer CAN-FD-Controller eingesetzt. Dadurch wird die CAN-FD-Logik vom Mikrocontroller entkoppelt. Diese Architektur ist skalierbarer, da mehrere externe Controller über flexible Schnittstellen angebunden werden können. Gleichzeitig übernehmen die Controller bereits einen Teil der Nachrichtenfilterung und entlasten damit den Mikrocontroller. Der Mikrocontroller muss dadurch nicht jede Nachricht direkt auf Bitebene verarbeiten, sondern liest nur relevante Empfangspuffer aus.
+
+#block(breakable: false)[
+
+  #figure(
+    table(
+      columns: (auto, auto, auto, auto),
+      align: (left + horizon),
+      inset: 8pt,
+      table.header(
+        [Mikrocontroller],
+        [*AVR64DU* @avr64du],
+        [*STM32C5* @stm32c5],
+        [*RP2350* @rp2350],
+      ),
+      [Hersteller],
+      [Microchip],
+      [STMicroelectronics],
+      [Raspberry Pi],
+
+      [Veröffentlichung],
+      [2026],
+      [2026],
+      [2024],
+
+      [Architektur],
+      [8-Bit AVR-Mega],
+      [32-Bit Cortex-M33],
+      [32-Bit Cortex-M33 / RISC-V],
+
+      [Anzahl Prozessoren],
+      [1],
+      [1],
+      [2],
+
+      [RAM-Größe],
+      [8 KB],
+      [bis 256 KB],
+      [520 KB],
 
 
+      [Schnittstellen],
+      [1x SPI, 1x I²C, 2x USART, USB FS],
+      [USB, OctoSPI, CAN-FD],
+      [2x SPI, 2x I²C, USB, 12x PIO-SM],
+
+      [Pin-Multiplexer],
+      [PORTMUX eingeschränkt],
+      [Alternate-Function-Matrix],
+      [sehr flexibel über GPIO-Funktionen],
+
+      [Anzahl CAN-FD-Controller],
+      [0],
+      [2],
+      [0],
+
+      [Treiber/ Software workflow],
+      [Melody],
+      [STM- HAL, CubeMX-2],
+      [Pico C/ C++ SDK],
+    ),
+    caption: [Gängige aktuelle Mikrocontroller],
+  )
+]
+Eine engere auswahl der modernsten Mikrocontroller wird im folgenden anhand der aus den Zielen hergeleiteten Kriterien auf einer Skala von 1-3 bewertet.
+
+// entscheidungsmatrix
+
+*Entscheidungsmatrix Mikrocontroller*
+
+Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach relevanz für diesen konkreten anwendungsfall mit einem multiplikator Gewichtet.
+
+
+#figure(
+  table(
+    columns: (auto, auto),
+    align: (left + horizon),
+    inset: 8pt,
+    table.header([*Bewertung*],[*Bedeutung*]),
+    [-1], [nicht vorhanden/ unpassend für Anwendungsfall],
+    [0], [in geringem Umfang vorhanden],
+    [1],[in hoher Qualität vorhanden]
+  ),
+  caption: [Bewertungsskala]
+)
+
+#figure(
+  table(
+    columns: (auto, auto),
+    align: (left + horizon),
+    inset: 8pt,
+    table.header([*Multiplikator*],[*Bedeutung*]),
+    [1], [wichtig, aber nicht entscheident],
+    [2], [sehr wichtig für Anwendungsfall],
+    [3],[äußerste wichtigkeit für konkrete umsetzung]
+  ),
+  caption: [Gewichtungsskala]
+)
+// structs für die komponenten (experimentell)
+#let rp2350=(
+  modernität: 1,
+  singlecore: 2
+)
+
+  #figure(
+    table(
+      columns: (auto, auto, auto, auto, auto),
+      align: (left + horizon),
+      inset: 8pt,
+      table.header(
+        [Eigenschaft],
+        [Gewichtung],
+        [*AVR64DU* @avr64du],
+        [*STM32C5* @stm32c5],
+        [*RP2350* @rp2350],
+      ),
+
+      [Modernität],
+      [1],
+      [1],
+      [1],
+      [0],
+
+      [Single core- Performance],
+      [1],
+      [0],
+      [1],
+      [1],
+
+      [Multi- Core- Architektur],
+      [2],
+      [-1],
+      [-1],
+      [1],
+
+      [RAM-Größe],
+      [3],
+      [-1],
+      [0],
+      [1],
+
+
+      [Flexibilität Schnittstellen],
+      [2],
+      [0],
+      [0],
+      [1],
+
+      [Flexibilität Signal- Routing],
+      [2],
+      [0],
+      [-1],
+      [1],
+
+      [CAN-FD-Integration],
+      [1],
+      [-1],
+      [1],
+      [-1],
+
+      [Qualität Software- Support],
+      [3],
+      [0],
+      [-1],
+      [1],
+
+
+      [Gewichtete Summe],
+      [],
+      [],
+      [],
+      [],
+    ),
+    caption: [Entscheidungsmatrix Mikrocontroller],
+  )
+
+
+#block(breakable: false)[
 == Auswahl eines CAN- FD Controller-Transcievers
+Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittstelle betrachtet. Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
+
+
+  #figure(
+    table(
+      columns: (auto, 1fr, 1fr, 1fr),
+      align: (left + horizon),
+      inset: 8pt,
+      table.header(
+        [Baustein],
+        [*TCAN4550-Q1* @tcan4550q1],
+        [*MCP251863* @mcp251863],
+        [*MCP2518FD* @mcp2518fd],
+      ),
+
+      [Hersteller],
+      [Texas Instruments],
+      [Microchip],
+      [Microchip],
+
+      [Funktion],
+      [CAN-FD-SBC mit Controller und Transceiver],
+      [CAN-FD-Controller mit integriertem Transceiver],
+      [CAN-FD-Controller ohne Transceiver],
+
+      [CAN-FD-Datenrate],
+      [bis 8 Mbit/s],
+      [bis 5 Mbit/s],
+      [bis 8 Mbit/s],
+
+      [SPI-Takt],
+      [bis 18 MHz],
+      [bis 20 MHz],
+      [bis 20 MHz],
+
+      [Nachrichtenspeicher],
+      [2 KB MRAM],
+      [2 KB RAM],
+      [2 KB RAM],
+
+      [Filter],
+      [bis 128 Standard-ID oder 64 Extended-ID Filter],
+      [32 flexible Filter-/Maskenobjekte],
+      [32 flexible Filter-/Maskenobjekte],
+
+      [FIFO-Struktur],
+      [konfigurierbare Rx-/Tx-FIFOs und Tx-Queue],
+      [31 konfigurierbare FIFOs und Tx-Queue],
+      [31 konfigurierbare FIFOs und Tx-Queue],
+
+      [Besonderheit],
+      [integrierter 5V-LDO, Automotive-SBC],
+      [kompakte Ein-Chip-Lösung],
+      [benötigt externen CAN-FD-Transceiver],
+    ),
+    caption: [Verfügbare CAN-FD-Controller-Transceiver],
+  )
+]
 
 == Auswahl eines Speichermediums
+
+Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und microSD betrachtet. Entscheidend sind dabei nutzbare Speicherkapazität, Schreibgeschwindigkeit, Schnittstellenaufwand, integriertes Flash-Management, mechanische Integration und die einfache Auslesbarkeit am PC.
+
+#block(breakable: false)[
+  #figure(
+    table(
+      columns: (auto, 1fr, 1fr, 1fr),
+      align: (left + horizon),
+      inset: 8pt,
+      table.header(
+        [Speichermedium],
+        [*SPI-NAND-Flash* @w25n01gv],
+        [*eMMC* @kingstonemmc],
+        [*microSD* @kingstonmicrosd],
+      ),
+
+      [Beispiel],
+      [Winbond W25N01GV],
+      [Kingston eMMC 5.1],
+      [Kingston Industrial microSD],
+
+      [Schnittstelle],
+      [SPI / Quad-SPI],
+      [eMMC 5.1 HS400],
+      [SD / SPI-Modus],
+
+      [Schreibgeschwindigkeit],
+      [seitenweise, controllerabhängig],
+      [hoch, host- und typabhängig],
+      [bis 80 MB/s],
+
+      [Flash-Controller],
+      [nein, Host verwaltet Wear-Leveling],
+      [ja, ECC und Wear-Leveling integriert],
+      [ja, ECC und Wear-Leveling integriert],
+
+      [Auslesbarkeit am PC],
+      [nur über eigene Firmware],
+      [nur über Adapter/Testhardware],
+      [direkt über Kartenleser],
+
+      [Gehäuse / Integration],
+      [SOIC/WSON, gut lötbar],
+      [BGA, schwer zu löten],
+      [Sockel oder Push-Push-Halter],
+
+      [Verfügbarkeit],
+      [gut als Bauteil],
+      [gut, aber Variantenbindung],
+      [sehr gut als Standardmedium],
+
+      [Kosten pro GB],
+      [hoch],
+      [mittel],
+      [niedrig],
+
+      [Bewertung],
+      [robust, aber hoher Softwareaufwand],
+      [technisch stark, aber aufwendig zu fertigen],
+      [einfach auslesbar und prototypenfreundlich],
+    ),
+    caption: [Vergleich verfügbarer Speichermedien],
+  )
+]
 
 
 == Blockdiagramm
@@ -26,7 +330,7 @@ Core 1 übernimmt ausschließlich das Formatieren und schreiben in das FAT32 Dat
 #align(center)[
   #figure(
     image("pictures/full-system-diagram.svg", width: 80%),
-    caption: [Zeitplanung],
+    caption: [Vollständiger Datenlogger.],
   )
 ]
 

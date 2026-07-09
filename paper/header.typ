@@ -51,9 +51,10 @@
   )
 
   set par(
-    justify: true,
+    justify: false,
     leading: 0.65em,
   )
+  
 
   set heading(numbering: "1.")
 
@@ -105,3 +106,4 @@
   raw(snippet.trim(), lang: lang, block: true)
 }
 
+#show figure.where(kind: table): set block(breakable: true)

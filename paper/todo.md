@@ -6,3 +6,6 @@ Zu heute:
 
 - diagramme farben fixen
 - state machine überlegen
+
+songs:
+sun is up

@@ -33,11 +33,11 @@
 // -------------------------Inhalt-------------------------
 
 #include "01-intro.typ"
-// #include "02-system-arcitecture.typ"
-// #include "03-can-drivers.typ"
-// #include "04-data-storage.typ"
-// #include "05-evaluation.typ"
-// #include "06-reflexion.typ"
+#include "02-system-arcitecture.typ"
+#include "03-can-drivers.typ"
+#include "04-data-storage.typ"
+#include "05-evaluation.typ"
+#include "06-reflexion.typ"
 
 
 // -------------------------Quellen-------------------------
