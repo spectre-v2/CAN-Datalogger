@@ -63,3 +63,12 @@
 #let tcan4550_scores=(
   
 )
+
+#let mcp2518fd_scores=(
+
+)
+
+#let mcp251865_scores=(
+
+  
+)

@@ -1,12 +1,13 @@
 #import "header.typ":*
 #import "02-header.typ":*
 
-= Systemarchitektur
+= Systemarchitektur <system-architecture>
 
+Die Auswahl der Komponenten erfolgt nach der UNIX- Philosophie "Do one thing, and do it well." Jede 
 Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet:
 
 
-=== Auswahl des Mikrocontrollers
+== Auswahl des Mikrocontrollers <microcontroller-selection>
 
 Der Mikrocontroller bildet die zentrale Logikeinheit des Datenloggers. Er übernimmt die Initialisierung aller Peripheriegeräte, die Verarbeitung der empfangenen Nachrichten und die Speicherung. Damit bestimmt er direkt die Robustheit, Erweiterbarkeit und Entwicklungsgeschwindigkeit des Prototyps.
 
@@ -151,7 +152,7 @@ table.header([*Bewertung*], [*Bedeutung*]),
 
 
 #block(breakable: false)[
-== Auswahl eines CAN- FD Controller-Transcievers
+== Auswahl eines CAN- FD Controller-Transcievers <can-fd-controller-selection>
 Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittstelle betrachtet. Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
 
 
@@ -213,10 +214,10 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
 
 #figure(
   table(
-    columns: (auto,auto,auto,auto),
+    columns: (auto,auto,auto,auto,auto),
     align: (left+horizon),
     inset: 1mm,
-    table.header([Controller], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
+    table.header([Eigenschaft], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
     [Modernität],[],[],[],[],
     [Simple externe Beschaltung],[],[],[],[],
     [Hohe CAN- Datenrate],[],[],[],[],
@@ -229,7 +230,7 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
   )
 )
 
-== Auswahl eines Speichermediums
+== Auswahl eines Speichermediums <storage-selection>
 
 Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und microSD betrachtet. Entscheidend sind dabei nutzbare Speicherkapazität, Schreibgeschwindigkeit, Schnittstellenaufwand, integriertes Flash-Management, mechanische Integration und die einfache Auslesbarkeit am PC.
 
@@ -296,7 +297,7 @@ Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und mi
 ]
 
 
-== Blockdiagramm
+== Blockdiagramm <block-diagram>
 
 Dieser Datenlogger besteht aus einem RP2350 und drei Microchip MCP251863 Controller-Transceivern für die CAN-Busse Accu-FD, Main-FD und DV-Can, sowie einer micro SD- Karte.
 Die MCP's bieten die Möglichkeit, Frames relativ einfach mit ID- Masken zu filtern. Sie kommunizieren über SPI mit dem Mcu. 
@@ -309,21 +310,21 @@ Core 1 übernimmt ausschließlich das Formatieren und schreiben in das FAT32 Dat
   )
 ]
 
-== Blockdiagramm des Prototypen
+== Blockdiagramm des Prototypen <prototype-block-diagram>
 #align(center)[
   #figure(
     image("pictures/prototype-diagram.svg", width: 80%),
     caption: [Zeitplanung],
   )
 ]
-=== Vorteile
+=== Vorteile <advantages>
 - Reduzierung der Masse um bis zu 3/4.
 - Effektive Filterung der Frames nach Can-ID.
 - Erprobung des RP2350, sehr flexible und leistungsstarke Plattform welche es in Zukunft ermöglichen könnte, Fahrzeuglogik und -Funktionalität noch stärker in wenige Steuergeräte zu integrieren. 
 - Sehr cleane low level HAL für C/C++
-=== Herausforderungen
+=== Herausforderungen <challenges>
 - Es ist unklar, ob die MCP's genau so gut sind wie die internen Controller eines STM32, und ob sie unter Last zuverlässig sind. Muss getestet werden. 
 - Der Buffer ist begrenzt. Der Mcu hat 520kb RAM. Opfert man 300kb als Buffer, kann man bei hängender SD und 12Mbits auf 3 Can's für `300*10^3 byte ram /(1/8 bytes pro bit * 10^6 * 12 Mbits * 3 Can busse) = 66ms `noch aufzeichnen. Zur Not ist es aber möglich, den Mcu mit externem RAM zu erweitern.
-== Zustandsautomat
+== Zustandsautomat <state-machine>
 So sieht die einbindung von C- Code aus:
 #code-snippet("../main.c","main")
