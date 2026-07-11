@@ -213,7 +213,15 @@ Der Kvaser Memorator Pro 5xHS überzeugt durch sein geringen Gewicht und einfach
 
 == Referenzdesign-Analyse
 
-Anhand von Produktbildern ist erkennbar, dass der Memorator Pro 2, welcher die günstigere Variante mit nur 2 CAN-FD Kanälen darstellt,ein Altera Cyclone- FPGA nutzt. dies ist naheliegend, da spezialisierte Anwendungen der Datenverarbeitung mithilfe von FPGAs besonders echtzeitfähig umgesetzt werden können.
+Auf Produktbildern des Memorator Pro 5- PCBs ist erkennbar, dass dieser einen 3.7V 500mAh Li-ion Batterie verwendet. Als User-interface wird eine Micro-USB Buchse eingesetzt.
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro5-pcb-2.webp", width: 60%),
+    caption: [PCB des Kvaser Memorator Pro 5 @kvaser-pcb]
+  )
+]
+
 
 #align(center)[
   #figure(
@@ -224,46 +232,41 @@ Anhand von Produktbildern ist erkennbar, dass der Memorator Pro 2, welcher die g
 
 #align(center)[
   #figure(
-    image("pictures/memorator-pro5-pcb-2.webp", width: 80%),
-    caption: [PCB des Kvaser Memorator Pro 5 @kvaser-pcb]
-  )
-]
-
-#align(center)[
-  #figure(
-    image("pictures/memorator-pro2-pcb-1.webp", width: 100%),
-    caption: [PCB des Kvaser Memorator Pro 2 @kvaser-pcb]
-  )
-]
-
-#align(center)[
-  #figure(
     image("pictures/memorator-pro2-pcb-2.webp", width: 80%),
     caption: [USB- Anschluss am Kvaser Memorator Pro 5 @kvaser-pcb]
   )
 ]
 
+Anhand von Produktbildern des Memorator Pro 5 ist nicht erkennbar, welche integrierten Schaltkreise genutzt werden.
+Ein Hinweis findet sich allerdings in der minimaleren und günstigeren Ausführung des Datenloggers, dem Memorator Pro 2, welcher nur 2 CAN-FD Kanäle besitzt. 
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro2-pcb-1.webp", width: 100%),
+    caption: [PCB des Kvaser Memorator Pro 2 @kvaser-chip]
+  )
+]
+
+Bei dieser Platine wurde sich offensichtlich für ein Altera Cyclone- FPGA entschlossen. 
+Dies ist technisch eine sehr naheliegende Lösung, da die extrem flexible Gestaltung der digitalen Schaltungen durch individuelle Auswahl von IP-Cores in einem FPGA sich besonders für spezialisierte und hoch Echtzeit- performante Anwendungen eignet. 
+
 #align(center)[
   #figure(
     image("pictures/memorator-pro2-pcb-3.webp", width: 80%),
-    caption: [PCB des Kvaser Memorator Pro 2 mit Akku und SD-Karte @kvaser-pcb]
+    caption: [PCB des Kvaser Memorator Pro 2 mit Akku und SD-Karte @kvaser-chip]
   )
 ]
 
 == Ziele und Umfang <goals-and-scope>
-Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
 
-In dieser Studienarbeit soll zunächst das technische Grundwissen geschaffen werden, um die Entwicklung eines CAN-FD-Datenloggers für ein Formula-Student-Fahrzeug zu ermöglichen. Dazu werden die Kernprinzipien eines naheliegenden Systemaufbaus anhand eines vereinfachten Prototyps erforscht.
+Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Technologien, auswahl von Komponenten, Architektur für die Entwicklung,  eines CAN-FD-Fahrzeugdatenloggers für ein Formula- Student- Fahrzeug. 
 
-Der Prototyp bildet nicht den vollständigen späteren Fahrzeug-Datenlogger ab. Stattdessen wird bewusst ein reduzierter Versuchsaufbau verwendet. Dieser Aufbau konzentriert sich auf die zentrale Funktion des Systems: das Empfangen von CAN-FD-Nachrichten und das dauerhafte Speichern dieser Daten auf einem lokalen Speichermedium.
+Hierzu wird ein vereinfachter Prototyp entwickelt, der die zentralen Funktionen eines solchen Systems validiert: das Empfangen von CAN-FD-Nachrichten und das dauerhafte Speichern dieser Daten auf einem lokalen Speichermedium.
 
-Der Umfang der Studienarbeit beschränkt sich auf einen einzelnen CAN-FD-Empfangskanal. Die Datenübertragung erfolgt nur in eine Richtung. Ein zweiter Testaufbau wird als Sender eingesetzt, um definierte CAN-FD-Nachrichten zu erzeugen.
+Der Prototyp bildet nicht den vollständigen Fahrzeug-Datenlogger mit mehreren Kanälen und dessen integration in die Fahrzeugelektronik ab.
 
-Das Kernsystem basiert auf einem Mikrocontroller. Im Vergleich zu FPGA-basierten Lösungen bietet dieser eine deutlich einfachere Programmierung und eignet sich damit besser für eine schnelle Prototypenentwicklung. Der Fokus liegt auf der Anbindung eines externen CAN-FD-Controllers, der Verarbeitung der empfangenen CAN-FD-Nachrichten und der Speicherung dieser Daten auf einer SD-Karte. Programmierung und Debugging erfolgen über ein USB-Terminal. Die Auswertung der gespeicherten Daten erfolgt durch Entnehmen der SD-Karte und anschließendes Lesen der Datei am PC.
 
-Nicht Bestandteil dieser Studienarbeit sind ein vollständiges Mehrkanal-System, oder eine vollständige Integration in die Fahrzeugelektronik. Diese Punkte sind für ein späteres Gesamtsystem relevant, liegen jedoch außerhalb des betrachteten Umfangs.
 
-Die Studienarbeit gilt als abgeschlossen, wenn das Kernsystem validiert ist. Dafür muss nachgewiesen werden, dass der Prototyp CAN-FD-Nachrichten über einen Empfangskanal zuverlässig erfasst, verarbeitet und dauerhaft auf der SD-Karte speichert. Damit wird die technische Grundlage geschaffen, auf der ein späterer mehrkanaliger Fahrzeug-Datenlogger aufgebaut werden kann.
 
 == Meilensteinplanung <milestones>
 #align(center)[

@@ -3,6 +3,7 @@
 
 = Systemarchitektur <system-architecture>
 
+Das Kernsystem basiert auf einem Mikrocontroller. Im Vergleich zu FPGA-basierten Lösungen bietet dieser eine deutlich einfachere Programmierung und eignet sich damit besser für eine schnelle Prototypenentwicklung. Der Fokus liegt auf der Anbindung eines externen CAN-FD-Controllers, der Verarbeitung der empfangenen CAN-FD-Nachrichten und der Speicherung dieser Daten auf einer SD-Karte. Programmierung und Debugging erfolgen über ein USB-Terminal. Die Auswertung der gespeicherten Daten erfolgt durch Entnehmen der SD-Karte und anschließendes Lesen der Datei am PC.
 Die Auswahl der Komponenten erfolgt nach der UNIX- Philosophie "Do one thing, and do it well." Jede 
 Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet:
 
