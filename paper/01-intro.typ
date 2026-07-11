@@ -31,7 +31,7 @@ Zur Erarbeitung eines funktionalen Konzeptes orientiert sich diese Studienarbeit
 
 Dabei umfasst diese Studienarbeit jediglich Punkte V1 bis V5, sowie einen Unit- Test in stark vereinfachtem Umfang, um gezielt Fachwissen über die technischen Kernprizipien aufzubauen.
 
-Um bei der Systemanforderungsanalyse die abstrakten Wünsche der beteiligten Personen in detaillierte technische Ziele zu fassen, wird sich der Methode der Qualitätsfunktionendarstellung oder auch "Quality Function Deployment" bedient. @qfd
+// Um bei der Systemanforderungsanalyse die abstrakten Wünsche der beteiligten Personen in detaillierte technische Ziele zu fassen, wird sich der Methode der Qualitätsfunktionendarstellung oder auch "Quality Function Deployment" bedient. @qfd
 
 #pagebreak()
 == Anforderungsanalyse <requirements-analysis>
@@ -74,24 +74,22 @@ Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommene
     [*T1:* <t1> Mounting in gängigen Betriebssystemen als standard USB- Device.],
     [Auslesen von Daten wird einfach und zuverlässig.],
 
-    [#link(<a1>)[A1]],
-    [*T2:* <t2> Speicherung der Daten in FAT-32- Format, umwandlung in Datenlogger- Software.],
+    [#link(<a1>)[A1], #link(<a2>)[A2]],
+    [*T2:* <t2> Speicherung der Daten in FAT-32- Format, Umwandlung in Datenlogger- Software.],
     [Nahtlose Weiterverwendung der Daten wird ermöglicht.],
 
-    [#link(<a2>)[A2]],
+    [#link(<a2>)[A2], #link(<a3>)[A3]],
     [*T3:* <t3> Nicht flüchtiges Speichergerät mit Speicher- Controller.],
-    [Software wird vereinfacht, Speichermedium bleibt durch wear-leveling nach vielen Schreibzyklen zuverlässig, nach Poweroff bleiben Daten vorhanden.],
+    [Einfache Software, Speichermedium bleibt durch wear-leveling nach vielen Schreibzyklen zuverlässig, nach Power- off bleiben Daten vorhanden.],
 
-    [#link(<a2>)[A2]],
-    [*T4:* <t4> Zentraler Prozessor mit außreichend RAM],
+    [#link(<a2>)[A2], #link(<a5>)[A5]],
+    [*T4:* <t4> Zentraler Prozessor mit außreichend RAM.],
     [Großer Zwischenspeicher bei größeren Latenzen des permanenten Speichermediums beugen Datenverlust vor.],
   
     [#link(<a2>)[A2]],
-    [*T5:* <t5> Integrierter Energiespeicher],
-    [Nach abschalten der Versorgung wird das System weiter versorgt, um den aktuellen Schreibvorgang anzuschließen. ],
- 
-
-   
+    [*T5:* <t5> Integrierter Energiespeicher.],
+    [Nach Abschalten der Versorgung wird das System weiter versorgt, um den aktuellen Schreibvorgang anzuschließen. ],
+      
       ),
 )
 
@@ -102,9 +100,9 @@ Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommene
     table.header(
      [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*],
     ),
-     [#link(<a3>)[A3]],
-    [*T6:* <t6> Trennung von Funktionalitäten, Modularer Aufbau],
-    [Klar abgegrenzte Zuständigkeiten der Komponenten erleichtern Eingrenzung von Fehlern.],
+     [#link(<a2>)[A2], #link(<a3>)[A3], #link(<a5>)[A5]],
+    [*T6:* <t6> Modulares Design.],
+    [Klare Zuordnung von Funktionalitäten zu Komponenten und Baugruppen erleichtern Entwicklung, Eingrenzung von Fehlern, Anpassung des Designs sowie Integration in größere Baugruppen.],
 
 
     [#link(<a3>)[A3]],
@@ -113,19 +111,16 @@ Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommene
 
 
     [#link(<a3>)[A3]],
-    [*T8:* <t8> Fertigung mit Lötpasten- Schablone und Reflow- Ofen],
-    [Durch definierte Temperaturprofile im Reflow- Ofen wird Lötstellen- Qualität   kontrollierbar.],
+    [*T8:* <t8> Fertigung mit Lötpasten- Schablone und Reflow- Ofen.],
+    [Durch definierte Temperaturprofile im Reflow- Ofen wird Lötstellen- Qualität kontrollierbar.],
 
     [#link(<a3>)[A3]],
     [*T9:* <t9> Nutzung von einfach lötbaren Packages für ICs],
     [Packages mit großem Pitch und außenliegenden, optisch kontrollierbaren Pads ermöglichen Überpfüfung der Lötqualität.],
 
-    [#link(<a4>)[A4]],
+    [#link(<a4>)[A4], #link(<a5>)[A5]],
     [*T10:* <t10> Reduzierung der Platinengröße durch flexibles Routing],
     [Verwendung von Komponenten mit frei konfigurierbaren Pin- Multiplexern reduziert Leiterbahnlängen sowie Anzahl der Vias und Layer.],
-
-
-
   ),
 
 )
@@ -139,27 +134,22 @@ Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommene
     ),
 
     [#link(<a4>)[A4]],
-    [*T11:* <t11> Verwendung von 1mm- Platinen],
-    [Gegenüber den üblichen 1.55mm- Platinen wird der Daterlogger leichter.],
+    [*T11:* <t11> Verwendung von 1mm- Platinen.],
+    [Gegenüber der Verwendung üblichen 1.55mm- Platinen wird der Daterlogger leichter.],
 
-    [#link(<a5>)[A5]],
-    [*T12:* <t12> Modulares Design],
-    [Durch klare Zuordnung von Funktionalitäten zu Komponenten lässt sich das Design einfacher Anpassen und integrieren.],
-
-    [#link(<a5>)[A5]],
+    [#link(<a2>)[A2], #link(<a5>)[A5]],
     [*T13:* <t13> Verwendung von leistungsstarken, aktuellen Komponenten],
-    [Zukünftige Verfügbarkeit, leistungsstarke und gut strukturierte silizium architektur, moderne softwareumgebung für modularität und abstraktion],
+    [Strukturierte Architektur von Hard- und Software beschleunigen das Design, Sicherstellung von zukünftiger Verfügbarkeit und Kompatibilität],
 
-    [#link(<a5>)[A5]],
+    [#link(<a2>)[A2], #link(<a5>)[A5]],
     [*T14:* <t14> Multi-Channel Architektur],
-    [Das Design soll die gleichzeitige Erfassung von drei unabhängigen Dantenbuss ermöglichen, und die mögliche Erweiterung auf weitere Kanäle und andere Datenbusse berücksichtigen.],
+    [Gleichzeitige Erfassung von mehreren unabhängigen Dantenbussen sowie mögliche Erweiterung auf weitere Kanäle und andere Datenbusse sorgen für hohe Kompatibilität.],
       ),
-  caption: [Anforderrungsmatrix],
+  caption: [Anforderungsmatrix],
 )
 
-== Qualitätsfunktionendarstellung <quality-function-deployment>
-
- Um anschließend zu überprüfen, in welchem Maße diese Produktmerkmale den tatsächlichen Anforderungen des Endbenutzers entsprechen, und daraus einen Qualitätsplan abzuleiten, wird die Methode des Quality Function Depoyment eingesetzt.
+// == Qualitätsfunktionendarstellung <quality-function-deployment>
+//  Um anschließend zu überprüfen, in welchem Maße diese Produktmerkmale den tatsächlichen Anforderungen des Endbenutzers entsprechen, und daraus einen Qualitätsplan abzuleiten, wird die Methode des Quality Function Depoyment eingesetzt.
 
 #pagebreak()
 
@@ -217,7 +207,49 @@ Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Proj
   - Quelle: Vector GL Logger Produktseite @vectorgl
 ]
 
-Der Kvaser Memorator Pro 5xHS
+*Fazit*
+
+Der Kvaser Memorator Pro 5xHS überzeugt durch sein geringen Gewicht und einfacher Anbindung von 5 CAN- FD Kanälen eine solide Lösung, weshalb sein Design im Folgenden Analysiert und als technische Referenz genutzt wird.
+
+== Referenzdesign-Analyse
+
+Anhand von Produktbildern ist erkennbar, dass der Memorator Pro 2, welcher die günstigere Variante mit nur 2 CAN-FD Kanälen darstellt,ein Altera Cyclone- FPGA nutzt. dies ist naheliegend, da spezialisierte Anwendungen der Datenverarbeitung mithilfe von FPGAs besonders echtzeitfähig umgesetzt werden können.
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro5-pcb.webp", width: 80%),
+    caption: [PCB des Kvaser Memorator Pro 5 @kvaser-pcb]
+  )
+]
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro5-pcb-2.webp", width: 80%),
+    caption: [PCB des Kvaser Memorator Pro 5 @kvaser-pcb]
+  )
+]
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro2-pcb-1.webp", width: 100%),
+    caption: [PCB des Kvaser Memorator Pro 2 @kvaser-pcb]
+  )
+]
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro2-pcb-2.webp", width: 80%),
+    caption: [USB- Anschluss am Kvaser Memorator Pro 5 @kvaser-pcb]
+  )
+]
+
+#align(center)[
+  #figure(
+    image("pictures/memorator-pro2-pcb-3.webp", width: 80%),
+    caption: [PCB des Kvaser Memorator Pro 2 mit Akku und SD-Karte @kvaser-pcb]
+  )
+]
+
 == Ziele und Umfang <goals-and-scope>
 Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
 
