@@ -24,7 +24,7 @@ Zur Erarbeitung eines funktionalen Konzeptes orientiert sich diese Studienarbeit
 
 #align(center)[
   #figure(
-    image("/paper/pictures/v-model.svg", width: 80%),
+    image("pictures/v-model.svg", width: 80%),
     caption: [V-Modell. @vmod]
   )
 ]
@@ -51,83 +51,112 @@ Der Datenlogger bildet eine wichtige Schnittstelle zwischen Mensch und Maschine.
   Um höchste Leistungsdichte und Energieeffizienz zu erreichen, ist Leichtbau das Kernprinzip des modernen Fahrzeugbaus.
   In der Formula Student gilt dies in besonderem Maße, denn auf das Fahrzeug wirken enorme Quer- und Längsbeschleunigungen, und zusätzliche Masse erhöht nach dem zweiten Newtonschen Gesetz die erforderliche Kraft und damit physikalische Arbeit für diese Beschleunigung. Der Datenlogger muss deshalb leicht, kompakt und mechanisch robust sein. Die Zielmasse orientiert sich an den aktuellen Marktführern, eine umfassende Analyse folgt in @state-of-the-art.
 
-- *A5: Zukunftsfähigkeit* <a5>
-  Systemkkonzepte, technische Anforderungen sowie regulatorischen Rahmenbedingungen sind in höchstem Maße dynamisch. Es bedarf also eines Systems, welches sowohl leicht verständlich, also auch flexibel anpassbar ist. Um ein Design zu erarbeiten, welches eine universelle, erweiterbare Plattform darstellt, wird eine Trennung von Funktionalitäten sowie ein Modularer Aufgebau angestrebt. Durch diese kann die Funktionalität des Datenloggers in Zukunft vollständig in das eingebettete Regelungssystem des Fahrzeuges integriert werden. Das System soll abwärts- sowie aufwärtskompatibel sein, um einerseits als Ersatz für bisherige Lösungen zu dienen, gleichzeitig aber eine Plattform zu bieten, welche gut mit wachsende Anforderungen skaliert.
 
-#pagebreak()
+- *A5: Zukunftsfähigkeit* <a5>
+  Systemkkonzepte, technische Anforderungen sowie regulatorischen Rahmenbedingungen sind in höchstem Maße dynamisch. Es bedarf also eines Systems, welches sowohl leicht verständlich, also auch flexibel anpassbar ist. Das Design soll eine universelle, erweiterbare Plattform darstellen. Durch diese kann die Funktionalität des Datenloggers in Zukunft vollständig in das eingebettete Regelungssystem des Fahrzeuges integriert werden. Das System soll abwärts- sowie aufwärtskompatibel sein, um einerseits als Ersatz für bisherige Lösungen zu dienen, gleichzeitig aber eine Plattform zu bieten, welche gut mit wachsende Anforderungen skaliert.
+
 == Anforderungsmatrix <requirements-matrix>
 
-Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommenen und abstrakten Anforderungen darstellen, müssen nun in konkrete Technische Ziele und Merkmale überführt werden. Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Messbar, Attraktiv, Realistisch, und Terminiert sein. @smart
+Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommenen und abstrakten Anforderungen darstellen, müssen nun in konkrete Technische Ziele und Merkmale überführt werden. Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Messbar, Attraktiv, Realistisch, und Terminierbar sein. @smart
 
 #figure(
   table(
-    columns: (10mm, auto, auto, auto, auto),
+    columns: (1fr, 3fr, 3fr),
     align: left, inset: 2mm,
     table.header(
-     [*Anforderung*], [*Maßnahme*], [*Begründung*], [*Nachweis*], [*Termin*],
+     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*]
     ),
 
-    [A1],
-    [Natives USB- Device.],
-    [Gerät mountet in allen gängigen Betriebssystemen als Standard- USB- Massenspeichergerät, wodurch das Auslesen von Daten einfach und zuverlässig ist.],
-    [Erfolgreiches Auslesen einer empfangenen Nachricht am PC.], 
-    [],
+ 
+  
 
-    [A1],
-    [Speichern der Daten in FAT-32- Format],
-    [Durch die Berechnung dieses Dateiformates innerhalb des Datenloggers ist die nahtlose Weiterverwendung ohne Zusatzsoftware nötig.],
-    [Prüfen der Dateiintegrität.],
-    [],
+    [#link(<a1>)[A1]],
+    [*T1:* <t1> Mounting in gängigen Betriebssystemen als standard USB- Device.],
+    [Auslesen von Daten wird einfach und zuverlässig.],
 
-    [A2],
-    [],
-    [],
-    [],
+    [#link(<a1>)[A1]],
+    [*T2:* <t2> Speicherung der Daten in FAT-32- Format, umwandlung in Datenlogger- Software.],
+    [Nahtlose Weiterverwendung der Daten wird ermöglicht.],
 
-    [A2],
-    [Verwenden einses nicht flüchtigen Speichergerätes mit Speicher- Controller.],
-    [Speichermedium bleibt durch wear-leveling auch nach vielen Schreibzyklen Zuverlässig, nach Poweroff bleiben Daten vorhanden.],
-    [Aufzeichnung, Spannungsabschaltung und anschließende Prüfung der gespeicherten Datei.],
+    [#link(<a2>)[A2]],
+    [*T3:* <t3> Nicht flüchtiges Speichergerät mit Speicher- Controller.],
+    [Software wird vereinfacht, Speichermedium bleibt durch wear-leveling nach vielen Schreibzyklen zuverlässig, nach Poweroff bleiben Daten vorhanden.],
 
-    [A2],
-    [Integration eines Energiespeichers],
+    [#link(<a2>)[A2]],
+    [*T4:* <t4> Zentraler Prozessor mit außreichend RAM],
+    [Großer Zwischenspeicher bei größeren Latenzen des permanenten Speichermediums beugen Datenverlust vor.],
+  
+    [#link(<a2>)[A2]],
+    [*T5:* <t5> Integrierter Energiespeicher],
     [Nach abschalten der Versorgung wird das System weiter versorgt, um den aktuellen Schreibvorgang anzuschließen. ],
-    [Prüfung von Gehäuseformen, Leiterplattenlayout, Lötbarkeit, Programmierzugang und Testpunkten.],
+ 
 
-    [A5],
-    [Multi-Channel Architektur],
-    [Deshalb soll der Datenlogger. Das System muss die gleichzeitige Erfassung von vier unabhängigen CAN-FD-Bussen ermöglichen. Maximal dauerhaft verarbeitbare Eingangsdatenrate, Pufferfüllstand und Speicherlatenz bei definierter Buslast.],
-    [Höhere stabile Datenrate, geringerer Pufferfüllstand und geringere Latenz sind besser.],
-
-    [Trennung von],
-    [A6],
-    [Abschaltsicherheit],
-    [Zeitspanne nach Ausfall der Fahrzeugversorgung, in der ein Schreibvorgang noch abgeschlossen werden kann.],
-    [Längere Überbrückungszeit und reproduzierbar abgeschlossene Dateien sind besser.],
-
-    [A7],
-    [Auslesbarkeit und Datenformat],
-    [Benötigte Schritte und Zeit zum Auslesen auf einem Standard-PC sowie Dokumentationsgrad des Dateiformats.Deshalb soll der Datenlogger als USB- Device vom PC wie ein übliches USB-Massenspeichergerät auslesbar sein.
-    Der Endnutzer soll keine spezielle PC-Software installieren müssen.],
-    [Weniger Schritte, kürzere Auslesezeit und ein klar dokumentiertes Format sind besser.],
-
-    [A8],
-    [Masse und Bauraum],
-    [Gesamtmasse, Leiterplattenfläche und erforderliches Einbauvolumen des vollständigen Datenloggers.],
-    [Geringere Masse und kleinerer Bauraum sind besser.],
-
-    [A9],
-    [Kosten und Verfügbarkeit],
-    [Stücklistenkosten, Anzahl schwer beschaffbarer Bauteile und Lieferbarkeit der Schlüsselkomponenten.],
-    [Niedrigere Kosten und bessere Verfügbarkeit sind besser.],
-
-    [A10],
-    [Erweiterbarkeit und Entwicklungsaufwand],
-    [Freie Schnittstellen, Modularität der Hardware, Treiberqualität und Aufwand für Erweiterung auf weitere Kanäle.],
-    [Mehr Reserven, klarere Modulgrenzen und geringerer Erweiterungsaufwand sind besser.],
-  ),
-  caption: [Anforderungen],
+   
+      ),
 )
+
+#figure(
+  table(
+    columns: (1fr, 3fr, 3fr),
+    align: left, inset: 2mm,
+    table.header(
+     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*],
+    ),
+     [#link(<a3>)[A3]],
+    [*T6:* <t6> Trennung von Funktionalitäten, Modularer Aufbau],
+    [Klar abgegrenzte Zuständigkeiten der Komponenten erleichtern Eingrenzung von Fehlern.],
+
+
+    [#link(<a3>)[A3]],
+    [*T7:* <t7> Testpads auf Platinen],
+    [Leicht zugängliche Testpads machen wichtige Netze per Multimeter überprüfbar.],
+
+
+    [#link(<a3>)[A3]],
+    [*T8:* <t8> Fertigung mit Lötpasten- Schablone und Reflow- Ofen],
+    [Durch definierte Temperaturprofile im Reflow- Ofen wird Lötstellen- Qualität   kontrollierbar.],
+
+    [#link(<a3>)[A3]],
+    [*T9:* <t9> Nutzung von einfach lötbaren Packages für ICs],
+    [Packages mit großem Pitch und außenliegenden, optisch kontrollierbaren Pads ermöglichen Überpfüfung der Lötqualität.],
+
+    [#link(<a4>)[A4]],
+    [*T10:* <t10> Reduzierung der Platinengröße durch flexibles Routing],
+    [Verwendung von Komponenten mit frei konfigurierbaren Pin- Multiplexern reduziert Leiterbahnlängen sowie Anzahl der Vias und Layer.],
+
+
+
+  ),
+
+)
+
+#figure(
+  table(
+    columns: (1fr, 3fr, 3fr),
+    align: left, inset: 2mm,
+    table.header(
+     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*],
+    ),
+
+    [#link(<a4>)[A4]],
+    [*T11:* <t11> Verwendung von 1mm- Platinen],
+    [Gegenüber den üblichen 1.55mm- Platinen wird der Daterlogger leichter.],
+
+    [#link(<a5>)[A5]],
+    [*T12:* <t12> Modulares Design],
+    [Durch klare Zuordnung von Funktionalitäten zu Komponenten lässt sich das Design einfacher Anpassen und integrieren.],
+
+    [#link(<a5>)[A5]],
+    [*T13:* <t13> Verwendung von leistungsstarken, aktuellen Komponenten],
+    [Zukünftige Verfügbarkeit, leistungsstarke und gut strukturierte silizium architektur, moderne softwareumgebung für modularität und abstraktion],
+
+    [#link(<a5>)[A5]],
+    [*T14:* <t14> Multi-Channel Architektur],
+    [Das Design soll die gleichzeitige Erfassung von drei unabhängigen Dantenbuss ermöglichen, und die mögliche Erweiterung auf weitere Kanäle und andere Datenbusse berücksichtigen.],
+      ),
+  caption: [Anforderrungsmatrix],
+)
+
 == Qualitätsfunktionendarstellung <quality-function-deployment>
 
  Um anschließend zu überprüfen, in welchem Maße diese Produktmerkmale den tatsächlichen Anforderungen des Endbenutzers entsprechen, und daraus einen Qualitätsplan abzuleiten, wird die Methode des Quality Function Depoyment eingesetzt.
@@ -187,6 +216,8 @@ Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Proj
   - Preis: auf Anfrage
   - Quelle: Vector GL Logger Produktseite @vectorgl
 ]
+
+Der Kvaser Memorator Pro 5xHS
 == Ziele und Umfang <goals-and-scope>
 Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Konzepte und Technologien für die Entwicklung eines mehrkanaligen CAN-FD-Fahrzeugdatenloggers. Hierzu wird ein vereinfachter Prototyp entwickelt, der die wesentlichen Kernprinzipien eines solchen Systems untersucht und validiert. Die gewonnenen Erkenntnisse bilden die technische Grundlage für die spätere Entwicklung eines leistungsfähigen Datenloggers zur hochpräzisen und synchronen Erfassung kritischer Fahrzeugdaten.
 
