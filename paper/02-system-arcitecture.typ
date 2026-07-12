@@ -5,14 +5,14 @@
 
 Das Kernsystem basiert auf einem Mikrocontroller. Im Vergleich zu FPGA-basierten Lösungen bietet dieser eine deutlich einfachere Programmierung und eignet sich damit besser für eine schnelle Prototypenentwicklung. Der Fokus liegt auf der Anbindung eines externen CAN-FD-Controllers, der Verarbeitung der empfangenen CAN-FD-Nachrichten und der Speicherung dieser Daten auf einer SD-Karte. Programmierung und Debugging erfolgen über ein USB-Terminal. Die Auswertung der gespeicherten Daten erfolgt durch Entnehmen der SD-Karte und anschließendes Lesen der Datei am PC.
 Die Auswahl der Komponenten erfolgt nach der UNIX- Philosophie "Do one thing, and do it well." Jede 
-Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet:
+Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet.
 
 
 == Auswahl des Mikrocontrollers <microcontroller-selection>
 
 Der Mikrocontroller bildet die zentrale Logikeinheit des Datenloggers. Er übernimmt die Initialisierung aller Peripheriegeräte, die Verarbeitung der empfangenen Nachrichten und die Speicherung. Damit bestimmt er direkt die Robustheit, Erweiterbarkeit und Entwicklungsgeschwindigkeit des Prototyps.
 
-Aus den Anforderung #link(<a1>)[A1] (Mindestens 3 CAN-FD Schnittstellen),ergibt sich, dass der Mikrocontroller vor allem eine flexible und anpassbare Plattform bereitstellen muss. Die höchste Gewichtung erhält deshalb die Software-Infrastruktur. Eine klar strukturierte Hardware- Abstraktionsschicht, gute Dokumentation, aktive Beispielprojekte und einfache Debug-Möglichkeiten reduzieren den Entwicklungsaufwand massiv.
+Aus den Anforderung #link(<a1>)[A1] (Mindestens 4 CAN-FD Schnittstellen),ergibt sich, dass der Mikrocontroller vor allem eine flexible und anpassbare Plattform bereitstellen muss. Die höchste Gewichtung erhält deshalb die Software-Infrastruktur. Eine klar strukturierte Hardware- Abstraktionsschicht, gute Dokumentation, aktive Beispielprojekte und einfache Debug-Möglichkeiten reduzieren den Entwicklungsaufwand massiv.
 
 Aus A7 (Auslesbarkeit und Datenformat) ergibt sich, dass der Mikrocontroller einen Hardware- USB- Device- Controller braucht.
 
