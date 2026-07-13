@@ -8,7 +8,9 @@ void mcp_reset(){
     uint8_t command[2];
     command[0]= 0b00000000;
     command[1]= 0b00000000;
-    spi_write_blocking(SPI_PORT,command, 2); 
+    gpio_put(PIN_CS,0);
+    spi_write_blocking(SPI_PORT,command, 2);
+    gpio_put(PIN_CS,1); 
 }
 
 void mcp_write(uint16_t address, uint8_t *tx_buffer, size_t length){

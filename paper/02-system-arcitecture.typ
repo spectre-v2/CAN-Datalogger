@@ -4,8 +4,19 @@
 = Systemarchitektur <system-architecture>
 
 Das Kernsystem basiert auf einem Mikrocontroller. Im Vergleich zu FPGA-basierten Lösungen bietet dieser eine deutlich einfachere Programmierung und eignet sich damit besser für eine schnelle Prototypenentwicklung. Der Fokus liegt auf der Anbindung eines externen CAN-FD-Controllers, der Verarbeitung der empfangenen CAN-FD-Nachrichten und der Speicherung dieser Daten auf einer SD-Karte. Programmierung und Debugging erfolgen über ein USB-Terminal. Die Auswertung der gespeicherten Daten erfolgt durch Entnehmen der SD-Karte und anschließendes Lesen der Datei am PC.
-Die Auswahl der Komponenten erfolgt nach der UNIX- Philosophie "Do one thing, and do it well." Jede 
-Um eine Faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand der harten Ausschlusskriterien recherchiert. Anschließend werden die oberflächlich Passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, welche unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet.
+Die Auswahl der Komponenten erfolgt nach der UNIX-Philosophie „Do one thing, and do it well.“
+Um eine faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand harter Ausschlusskriterien recherchiert. Anschließend werden die passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, die unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet.
+
+Die folgenden Konstruktionsmaßnahmen konkretisieren die Anforderungen aus @requirements-matrix:
+
+- Die Daten werden über eine USB-Schnittstelle bereitgestellt und auf einer microSD-Karte in einem FAT32-Dateisystem abgelegt.
+- Ein nichtflüchtiges Speichermedium mit eigenem Flash-Management und ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Speichervorgang.
+- Ein integrierter Energiespeicher soll den laufenden Schreibvorgang nach dem Abschalten der Versorgung abschließen.
+- Die Hardware wird in Mikrocontroller, CAN-FD-Controller-Transceiver, Speicher und Spannungsversorgung gegliedert; die Software folgt derselben funktionalen Trennung.
+- Testpunkte an relevanten Netzen unterstützen Inbetriebnahme und Fehlersuche.
+- Für die Fertigung sind Lötpastenschablone und Reflow-Ofen vorgesehen; Bauteile werden in optisch prüfbaren, gut lötbaren Gehäusen ausgewählt.
+- Flexible Pin-Multiplexer und sorgfältiges Routing reduzieren Leiterplattenfläche, Vias und Leiterplattenlagen; für den Prototypen ist eine 1-mm-Leiterplatte vorgesehen.
+- Aktuelle, verfügbare Komponenten und eine Mehrkanalarchitektur schaffen Reserven für zusätzliche Busse und Funktionen.
 
 
 == Auswahl des Mikrocontrollers <microcontroller-selection>

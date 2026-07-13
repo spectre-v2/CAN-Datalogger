@@ -40,22 +40,76 @@ Dabei umfasst diese Studienarbeit jediglich Punkte V1 bis V5, sowie einen Unit- 
 Der Datenlogger bildet eine wichtige Schnittstelle zwischen Mensch und Maschine. Er dient als zentrales Werkzeug für Ingenieure zur Erfassung und Auswertung von Fahrzeugdaten, um Konstruktionen zu Evaluieren und iterativ zu verbessern. Aus diesem Grund werden folgende Bedarfe des Endnutzers als Startpunkt für die Anforderungsanalyse verwendet: 
 
 - *A1: Einfache Nutzbarkeit* <a1>
-  Messdaten tragen nur dann zur tatsächlichen Verbesserung des Fahrzeuges bei, wenn sie schnell einfach und ohne besondere Vorkenntnisse ausgewertet werden können. Der Ausleseprozess muss deshalb extrem simpel sein. Die Daten müssen über eine Standardschnittstelle zugänglich sein und in einem offenen, klar dokumentierten Format vorliegen. Die Analyse muss über plattformübergreifend kompatible, frei verfügbare Software möglich sein.
+  Messdaten tragen nur dann zur tatsächlichen Verbesserung des Fahrzeuges bei, wenn sie schnell, einfach und ohne besondere Vorkenntnisse ausgewertet werden können. Der Ausleseprozess muss deshalb extrem simpel sein.
 
 - *A2: Zuverlässige Datenerfassung* <a2>
-  Wichtige Informationen dürfen unter keinen Umständen verloren gehen. Da bei modernen Fahrzeugen enorme Datenmengen mit hohen Geschwindigkeiten auf Datenbussen übertragen werden, muss der Datenlogger echtzeitfähig sein, um auch unter höchster Last mit deterministischen Latenzen zuverlässig Daten zu speichern. Zudem entstehen sehr wertvolle Messdaten meist unmittelbar vor einem Fehler oder vollständigen Systemausfall, weshalb in diesem Szenario der Datenlogger nicht versagen darf. So darf auch ein plötzlicher Spannungsverlust nicht zu einer beschädigten Datei oder zu einem Abbruch der Aufzeichnung führen.
+  Wichtige Informationen dürfen nicht verloren gehen. Die Messdaten müssen auch bei hohen Datenmengen des Fahrzeugs und unmittelbar vor einem Fehler oder vollständigen Systemausfall verlässlich verfügbar sein.
 
 - *A3: Zeit- und Ressourceneffiziente Fertigung.* <a3>
-  In den meisten modernen Industriezweigen, sowie auch in der Formula Student, sind die Produktentwicklungszyklen extrem schnell. So muss das Team von Raceyard innerhalb nur eines halben Jahres einen Rennwagen konstruierten und fertigen. Aus diesem Grund müssen sowohl die Entwicklungszeit von Hardware und Software, sowie auch die Beschaffung der Komponenten, und natürlich die Fertigung und anschließende Inbetriebnahme und eventuelle Fehlersuche des Datenloggers besonders schnell und einfach, und die Kosten gering sein. Qualitätssicherungsmethoden muss hohe Aufmerksamkeit zukommen, Fehlermöglichkeiten müssen in allen Produktentwicklungsphasen systematisch minimiert werden.
+  In den meisten modernen Industriezweigen sowie auch in der Formula Student sind die Produktentwicklungszyklen extrem schnell. Das Team von Raceyard muss innerhalb nur eines halben Jahres einen Rennwagen konstruieren und fertigen. Entwicklung, Beschaffung, Fertigung und Inbetriebnahme des Datenloggers müssen daher mit geringen Zeit- und Kostenaufwand möglich sein.
 
 - *A4: Geringe Masse und Größe* <a4>
   Um höchste Leistungsdichte und Energieeffizienz zu erreichen, ist Leichtbau das Kernprinzip des modernen Fahrzeugbaus.
-  In der Formula Student gilt dies in besonderem Maße, denn auf das Fahrzeug wirken enorme Quer- und Längsbeschleunigungen, und zusätzliche Masse erhöht nach dem zweiten Newtonschen Gesetz die erforderliche Kraft und damit physikalische Arbeit für diese Beschleunigung. Der Datenlogger muss deshalb leicht, kompakt und mechanisch robust sein. Die Zielmasse orientiert sich an den aktuellen Marktführern, eine umfassende Analyse folgt in @state-of-the-art.
+  In der Formula Student gilt dies in besonderem Maße, denn auf das Fahrzeug wirken enorme Quer- und Längsbeschleunigungen, und zusätzliche Masse erhöht nach dem zweiten Newtonschen Gesetz die erforderliche Kraft und damit die physikalische Arbeit für diese Beschleunigung. Der Datenlogger soll den Bauraum und die Fahrdynamik deshalb möglichst wenig beeinträchtigen.
 
 
 - *A5: Zukunftsfähigkeit* <a5>
-  Systemkkonzepte, technische Anforderungen sowie regulatorischen Rahmenbedingungen sind in höchstem Maße dynamisch. Es bedarf also eines Systems, welches sowohl leicht verständlich, also auch flexibel anpassbar ist. Das Design soll eine universelle, erweiterbare Plattform darstellen. Durch diese kann die Funktionalität des Datenloggers in Zukunft vollständig in das eingebettete Regelungssystem des Fahrzeuges integriert werden. Das System soll abwärts- sowie aufwärtskompatibel sein, um einerseits als Ersatz für bisherige Lösungen zu dienen, gleichzeitig aber eine Plattform zu bieten, welche gut mit wachsende Anforderungen skaliert.
+  Systemkonzepte, technische Anforderungen sowie regulatorische Rahmenbedingungen sind in hohem Maße dynamisch. Es bedarf daher eines leicht verständlichen und flexibel anpassbaren Systems, das sowohl bisherige Lösungen ersetzen als auch mit wachsenden Anforderungen skalieren kann.
 
+
+== Anforderungsmatrix <requirements-matrix>
+
+Die in @requirements-analysis beschriebenen Nutzeranforderungen werden im Folgenden in konkrete technische Anforderungen überführt.
+Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Messbar, Attraktiv, Realistisch, und Terminierbar sein. @smart
+
+#figure(
+  table(
+    columns: (1fr, 2fr),
+    align: left, inset: 3mm,
+    table.header(
+     [*Projektanforderung*], [*Technische Anforderung*]
+    ),
+
+    [#link(<a1>)[A1: Einfache Nutzbarkeit]],
+    [*T1: Standardisierte Datenauslese* <t1> #linebreak() Die Messdaten müssen über eine Standardschnittstelle auf gängigen Betriebssystemen ohne proprietäre Software auslesbar sein.],
+
+    [#link(<a1>)[A1: Einfache Nutzbarkeit]],
+    [*T2: Offenes Datenformat* <t2> #linebreak() Die Messdaten müssen in einem offenen, klar dokumentierten Format vorliegen, das mit frei verfügbarer, plattformübergreifender Software analysierbar ist.],
+
+    [#link(<a2>)[A2: Zuverlässige Datenerfassung]],
+    [*T3: Echtzeitfähige Datenerfassung* <t3> #linebreak() Das System muss CAN-FD-Nachrichten bei der vorgesehenen maximalen Buslast mit deterministischen Latenzen und ohne Nachrichtenverlust erfassen.],
+
+    [#link(<a2>)[A2: Zuverlässige Datenerfassung]],
+    [*T4: Ausfallsichere Speicherung* <t4> #linebreak() Messdaten müssen dauerhaft gespeichert werden; ein plötzlicher Spannungsverlust darf weder Dateien beschädigen noch die laufende Aufzeichnung unabgeschlossen beenden.],
+      ),
+)
+
+#figure(
+  table(
+    columns: (1fr, 2fr),
+    align: left, inset: 3mm,
+    table.header(
+     [*Projektanforderung*], [*Technische Anforderung*],
+    ),
+
+    [#link(<a2>)[A2: Zuverlässige Datenerfassung], 
+    
+    #link(<a5>)[A5: Zukunftsfähigkeit]],
+    [*T5: Mehrkanal-Datenerfassung* <t5> #linebreak() Das System muss mindestens vier unabhängige CAN-FD-Busse gleichzeitig erfassen können und für weitere Datenkanäle erweiterbar sein.],
+
+    [#link(<a3>)[A3: Zeit- und ressourceneffiziente Fertigung]],
+    [*T6: Prüfgerechte Fertigung* <t6> #linebreak() Hardware, Bauteile und Schnittstellen müssen mit den im Team verfügbaren Mitteln herstellbar sein Qualitätssicherungsmaßnahmen müssen Fehler systematisch minimieren.],
+
+    [#link(<a4>)[A4: Geringe Masse und Größe]],
+    [*T7: Kompakte, robuste Bauform* <t7> #linebreak() Masse und Volumen dürfen die Größenordnung der besten auf dem Markt verfügbaren Fahrzeugdatenlogger nicht überschreiten.],
+
+    [#link(<a3>)[A3: Zeit- und ressourceneffiziente Fertigung], 
+    
+    #link(<a5>)[A5: Zukunftsfähigkeit]],
+    [*T8: Modulare Erweiterbarkeit* <t8> #linebreak() Hard- und Software müssen in austauschbare Funktionsbereiche gegliedert sein; zusätzliche Schnittstellen und zukünftige Fahrzeugfunktionen bis hin zur Integration in die Fahrzeugregelung müssen ohne grundlegende Neukonstruktion integrierbar sein.],
+      ),
+  caption: [Anforderungsmatrix],
+)
 
 == Stand der Technik <state-of-the-art>
 
@@ -227,96 +281,6 @@ Dies ist technisch eine sehr naheliegende Lösung, da die extrem flexible Gestal
 ]
 
 #pagebreak()
-
-== Anforderungsmatrix <requirements-matrix>
-
-Um die Kriterien aus @requirements-analysis, welche die vom Nutzer wahrgenommenen und abstrakten Anforderungen darstellen, müssen nun, unter Berücksichtigung des Aktuellen Standes der Technik, in konkrete Technische Ziele und Merkmale überführt werden. Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Messbar, Attraktiv, Realistisch, und Terminierbar sein. @smart
-
-#figure(
-  table(
-    columns: (1fr, 3fr, 3fr),
-    align: left, inset: 2mm,
-    table.header(
-     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*]
-    ),
-
-    [#link(<a1>)[A1]],
-    [*T1:* <t1> Mounting in gängigen Betriebssystemen als standard USB- Device.],
-    [Auslesen von Daten wird einfach und zuverlässig.],
-
-    [#link(<a1>)[A1], #link(<a2>)[A2]],
-    [*T2:* <t2> Speicherung der Daten in FAT-32- Format, Umwandlung in Datenlogger- Software.],
-    [Nahtlose Weiterverwendung der Daten wird ermöglicht.],
-
-    [#link(<a2>)[A2], #link(<a3>)[A3]],
-    [*T3:* <t3> Nicht flüchtiges Speichergerät mit Speicher- Controller.],
-    [Einfache Software, Speichermedium bleibt durch wear-leveling nach vielen Schreibzyklen zuverlässig, nach Power- off bleiben Daten vorhanden.],
-
-    [#link(<a2>)[A2], #link(<a5>)[A5]],
-    [*T4:* <t4> Außreichend großer Datenpuffer.],
-    [Großer und performanter Zwischenspeicher beugt bei größeren Latenzen des permanenten Speichermediums Datenverlust vor.],
-  
-    [#link(<a2>)[A2]],
-    [*T5:* <t5> Integrierter Energiespeicher.],
-    [Nach Abschalten der Versorgung wird das System weiter versorgt, um den aktuellen Schreibvorgang anzuschließen. ],
-      
-      ),
-)
-
-#figure(
-  table(
-    columns: (1fr, 3fr, 3fr),
-    align: left, inset: 2mm,
-    table.header(
-     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*],
-    ),
-     [#link(<a2>)[A2], #link(<a3>)[A3], #link(<a5>)[A5]],
-    [*T6:* <t6> Modulares Design.],
-    [Klare Zuordnung von Funktionalitäten zu Komponenten und Baugruppen erleichtern Entwicklung, Eingrenzung von Fehlern, Anpassung des Designs sowie Integration in größere Baugruppen.],
-
-
-    [#link(<a3>)[A3]],
-    [*T7:* <t7> Testpads auf Platinen.],
-    [Leicht zugängliche Testpads machen wichtige Netze per Multimeter überprüfbar.],
-
-
-    [#link(<a3>)[A3]],
-    [*T8:* <t8> Fertigung mit Lötpasten- Schablone und Reflow- Ofen.],
-    [Durch definierte Temperaturprofile im Reflow- Ofen wird Lötstellen- Qualität kontrollierbar.],
-
-    [#link(<a3>)[A3]],
-    [*T9:* <t9> Nutzung von einfach lötbaren Packages für ICs.],
-    [Packages mit großem Pitch und außenliegenden, optisch kontrollierbaren Pads ermöglichen Überpfüfung der Lötqualität.],
-
-    [#link(<a4>)[A4], #link(<a5>)[A5]],
-    [*T10:* <t10> Reduzierung der Platinengröße durch flexibles Routing.],
-    [Verwendung von Komponenten mit frei konfigurierbaren Pin- Multiplexern reduziert Leiterbahnlängen sowie Anzahl der Vias und Layer.],
-  ),
-
-)
-
-#figure(
-  table(
-    columns: (1fr, 3fr, 3fr),
-    align: left, inset: 2mm,
-    table.header(
-     [*Projekt-\Anfor-\derung*], [*Technisches Ziel*], [*Begründung*],
-    ),
-
-    [#link(<a4>)[A4]],
-    [*T11:* <t11> Verwendung von 1mm- Platinen.],
-    [Gegenüber der Verwendung üblichen 1.55mm- Platinen wird der Daterlogger leichter.],
-
-    [#link(<a2>)[A2], #link(<a5>)[A5]],
-    [*T13:* <t13> Verwendung von leistungsstarken, aktuellen Komponenten.],
-    [Strukturierte Architektur von Hard- und Software beschleunigen das Design, Sicherstellung von zukünftiger Verfügbarkeit und Kompatibilität],
-
-    [#link(<a2>)[A2], #link(<a5>)[A5]],
-    [*T14:* <t14> Multi-Channel Architektur],
-    [Gleichzeitige Erfassung von mehreren unabhängigen Dantenbussen sowie mögliche Erweiterung auf weitere Kanäle und andere Datenbusse sorgen für hohe Kompatibilität.],
-      ),
-  caption: [Anforderungsmatrix],
-)
 
 // == Qualitätsfunktionendarstellung <quality-function-deployment>
 //  Um anschließend zu überprüfen, in welchem Maße diese Produktmerkmale den tatsächlichen Anforderungen des Endbenutzers entsprechen, und daraus einen Qualitätsplan abzuleiten, wird die Methode des Quality Function Depoyment eingesetzt.

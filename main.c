@@ -5,6 +5,7 @@
 #include "main.h"
 
 uint8_t spi_rx_buffer[8];
+uint8_t spi_tx_buffer[8];
 
 int main()
 {

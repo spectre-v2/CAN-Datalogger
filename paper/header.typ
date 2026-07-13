@@ -61,7 +61,7 @@
   // -------------------------Überschriften-------------------------
 
   show heading: set text(weight: "medium")
-  show heading.where(level: 1): set block(above: 3em, below: 1em)
+  show heading.where(level: 1): set block(above: 3em, below: 2em)
   show heading.where(level: 2): set block(above: 2em, below: 1em)
   show heading.where(level: 3): set block(above: 2em, below: 1em)
 

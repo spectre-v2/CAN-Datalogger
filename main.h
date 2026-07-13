@@ -4,3 +4,5 @@
 #define PIN_CS   17
 #define PIN_SCK  18
 #define PIN_MOSI 19
+
+#define PICO_LED 25
