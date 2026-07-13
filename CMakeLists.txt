@@ -35,7 +35,8 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(CAN-Datalogger CAN-Datalogger.c )
+add_executable(CAN-Datalogger main.c mcp.c)
+
 
 pico_set_program_name(CAN-Datalogger "CAN-Datalogger")
 pico_set_program_version(CAN-Datalogger "0.1")
