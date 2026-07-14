@@ -27,6 +27,6 @@ int main()
         sleep_ms(10);
         mcp_read_reg(MCP_REG_DEVID, mcp_devid.data_array, sizeof mcp_devid.data_array);
         printf("MCP DEVICE ID: 0x%02X\n", mcp_devid.bits.ID);
-        sleep_ms(1000);
+        sleep_ms(5000);
     }
 }

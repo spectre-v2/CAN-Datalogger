@@ -61,14 +61,120 @@
 )
 
 #let tcan4550_scores=(
-  
+  name: "TCAN4550-Q1",
+  modern: 0,
+  external_circuit: 1,
+  can_rate: 1,
+  spi_rate: 0,
+  memory: 0,
+  filtering: 0,
+  interface: 0,
+  cost: -1,
 )
 
 #let mcp2518fd_scores=(
-
+  name: "MCP2518FD",
+  modern: 0,
+  external_circuit: -1,
+  can_rate: 1,
+  spi_rate: 1,
+  memory: 0,
+  filtering: 1,
+  interface: 0,
+  cost: 1,
 )
 
-#let mcp251865_scores=(
+#let mcp251863_scores=(
+  name: "MCP251863",
+  modern: 1,
+  external_circuit: 1,
+  can_rate: 1,
+  spi_rate: 1,
+  memory: 0,
+  filtering: 1,
+  interface: 1,
+  cost: 0,
+)
 
-  
+// Gewichtungen für die CAN-FD-Controller-Auswahl
+#let can_multi=(
+  modern: 1,
+  external_circuit: 2,
+  can_rate: 3,
+  spi_rate: 2,
+  memory: 3,
+  filtering: 3,
+  interface: 3,
+  cost: 2,
+)
+
+#let can_score(controller)= (
+  controller.modern * can_multi.modern +
+  controller.external_circuit * can_multi.external_circuit +
+  controller.can_rate * can_multi.can_rate +
+  controller.spi_rate * can_multi.spi_rate +
+  controller.memory * can_multi.memory +
+  controller.filtering * can_multi.filtering +
+  controller.interface * can_multi.interface +
+  controller.cost * can_multi.cost
+)
+
+//----------------------Speicher-----------------------
+#let spinand_scores=(
+  name: "SPI-NAND-Flash",
+  capacity: 0,
+  write_speed: 0,
+  interface: 0,
+  flash_management: -1,
+  pc_readability: -1,
+  integration: 1,
+  availability: 0,
+  cost: -1,
+)
+
+#let emmc_scores=(
+  name: "eMMC",
+  capacity: 0,
+  write_speed: 1,
+  interface: -1,
+  flash_management: 1,
+  pc_readability: 0,
+  integration: -1,
+  availability: 0,
+  cost: 0,
+)
+
+#let microsd_scores=(
+  name: "microSD",
+  capacity: 1,
+  write_speed: 1,
+  interface: 1,
+  flash_management: 1,
+  pc_readability: 1,
+  integration: 1,
+  availability: 1,
+  cost: 1,
+)
+
+// Gewichtungen für die Speichermedien-Auswahl
+#let storage_multi=(
+  capacity: 1,
+  write_speed: 3,
+  interface: 2,
+  flash_management: 3,
+  pc_readability: 3,
+  integration: 2,
+  availability: 1,
+  cost: 2,
+)
+
+#let storage_score(medium)= (
+  medium.capacity * storage_multi.capacity +
+  medium.write_speed * storage_multi.write_speed +
+  medium.interface * storage_multi.interface +
+  medium.flash_management * storage_multi.flash_management +
+  medium.pc_readability * storage_multi.pc_readability +
+  medium.integration * storage_multi.integration +
+  medium.availability * storage_multi.availability +
+  medium.cost * storage_multi.cost
 )

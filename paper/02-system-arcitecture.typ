@@ -3,38 +3,31 @@
 
 = Systemarchitektur <system-architecture>
 
-Das Kernsystem basiert auf einem Mikrocontroller. Im Vergleich zu FPGA-basierten Lösungen bietet dieser eine deutlich einfachere Programmierung und eignet sich damit besser für eine schnelle Prototypenentwicklung. Der Fokus liegt auf der Anbindung eines externen CAN-FD-Controllers, der Verarbeitung der empfangenen CAN-FD-Nachrichten und der Speicherung dieser Daten auf einer SD-Karte. Programmierung und Debugging erfolgen über ein USB-Terminal. Die Auswertung der gespeicherten Daten erfolgt durch Entnehmen der SD-Karte und anschließendes Lesen der Datei am PC.
-Die Auswahl der Komponenten erfolgt nach der UNIX-Philosophie „Do one thing, and do it well.“
-Um eine faktenbasierte Auswahl von Systemkomponenten treffen zu können, wurde zunächst anhand harter Ausschlusskriterien recherchiert. Anschließend werden die passenden Komponenten anhand ihrer detaillierten technischen Eigenschaften, die unmittelbar aus den Systemanforderungen hergeleitet sind, nach folgendem Schema bewertet.
+== Grundarchitektur
 
-Die folgenden Konstruktionsmaßnahmen konkretisieren die Anforderungen aus @requirements-matrix:
+Der Datenlogger wird als modularer Datenpfad aus Mikrocontroller, externen CAN-FD-Controllern, microSD-Karte und USB-Schnittstelle aufgebaut. Jede Komponente übernimmt dabei eine klar abgegrenzte Aufgabe. Das reduziert den Entwicklungsaufwand (#link(<t6>)[T6]), erleichtert die prüfgerechte Fertigung (#link(<t7>)[T7]) und erlaubt spätere Erweiterungen ohne grundlegende Neukonstruktion (#link(<t9>)[T9]).
 
-- Die Daten werden über eine USB-Schnittstelle bereitgestellt und auf einer microSD-Karte in einem FAT32-Dateisystem abgelegt.
-- Ein nichtflüchtiges Speichermedium mit eigenem Flash-Management und ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Speichervorgang.
-- Ein integrierter Energiespeicher soll den laufenden Schreibvorgang nach dem Abschalten der Versorgung abschließen.
-- Die Hardware wird in Mikrocontroller, CAN-FD-Controller-Transceiver, Speicher und Spannungsversorgung gegliedert; die Software folgt derselben funktionalen Trennung.
-- Testpunkte an relevanten Netzen unterstützen Inbetriebnahme und Fehlersuche.
-- Für die Fertigung sind Lötpastenschablone und Reflow-Ofen vorgesehen; Bauteile werden in optisch prüfbaren, gut lötbaren Gehäusen ausgewählt.
-- Flexible Pin-Multiplexer und sorgfältiges Routing reduzieren Leiterplattenfläche, Vias und Leiterplattenlagen; für den Prototypen ist eine 1-mm-Leiterplatte vorgesehen.
-- Aktuelle, verfügbare Komponenten und eine Mehrkanalarchitektur schaffen Reserven für zusätzliche Busse und Funktionen.
+=== Mikrocontroller
 
+Der Mikrocontroller koordiniert die Peripherie, verarbeitet empfangene Nachrichten und steuert die Datenspeicherung. Gegenüber einer FPGA-Lösung bietet er eine besser zugängliche Entwicklungsumgebung, Debug-Möglichkeiten und verfügbare Softwarebibliotheken; damit unterstützt er die schnelle Entwicklung unmittelbar (#link(<t6>)[T6]). Ausreichende Rechenleistung, RAM und flexible Schnittstellen sind erforderlich, um den Datenstrom mit deterministischen Latenzen zu verarbeiten (#link(<t3>)[T3]) und mehrere externe Controller sowie das Speichermedium anzubinden (#link(<t5>)[T5]).
+
+=== Externe CAN-FD-Controller
+
+Die Forderung nach mindestens vier unabhängigen CAN-FD-Bussen (#link(<t5>)[T5]) wird nicht von einem einzelnen, üblichen Mikrocontroller mit integrierten CAN-FD-Controllern erfüllt. Der Mikrocontroller mit den meisten integrierten CAN-FD-Controllern ist der STM32G474, welcher drei Controller bietet. @stm32g4 Aus diesem Grund wird jeder Bus über einen spezialisierten externen CAN-FD-Controller angebunden. Dessen Filter und Empfangspuffer entlasten den Mikrocontroller und unterstützen eine verlustfreie Echtzeiterfassung (#link(<t3>)[T3]). Die Anzahl der Kanäle kann durch zusätzliche gleichartige Controller erweitert werden (#link(<t9>)[T9]).
+
+=== microSD-Karte
+
+Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisystem gespeichert. Das Standardmedium kann ohne Spezialhardware am PC gelesen werden und unterstützt damit die standardisierte Datenauslese (#link(<t1>)[T1]); ein offen dokumentiertes Logformat erfüllt zusätzlich die Anforderungen an das Datenformat (#link(<t2>)[T2]). Das integrierte Flash-Management der Karte sowie ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Schreibvorgang und tragen zur ausfallsicheren Speicherung bei (#link(<t4>)[T4]).
+
+=== USB-Schnittstelle und Platine
+
+USB dient als Standardschnittstelle für Programmierung, Debugging und die direkte Datenauslese (#link(<t1>)[T1], #link(<t6>)[T6]). Die Leiterplatte trennt Mikrocontroller, CAN-FD-Anbindung, Speicher und Spannungsversorgung in klar prüfbare Funktionsbereiche (#link(<t7>)[T7], #link(<t9>)[T9]). Gut lötbare Gehäuse, Testpunkte und ein für die Fertigung geeignetes Layout vereinfachen Inbetriebnahme und Qualitätssicherung (#link(<t6>)[T6], #link(<t7>)[T7]); eine kompakte Platzierung reduziert zugleich Masse und Volumen (#link(<t8>)[T8]).
+
+Die nachfolgenden Komponentenauswahlen vergleichen zunächst harte Ausschlusskriterien und bewerten die verbleibenden Optionen anschließend anhand der technischen Anforderungen.
 
 == Auswahl des Mikrocontrollers <microcontroller-selection>
 
-Der Mikrocontroller bildet die zentrale Logikeinheit des Datenloggers. Er übernimmt die Initialisierung aller Peripheriegeräte, die Verarbeitung der empfangenen Nachrichten und die Speicherung. Damit bestimmt er direkt die Robustheit, Erweiterbarkeit und Entwicklungsgeschwindigkeit des Prototyps.
-
-Aus den Anforderung #link(<a1>)[A1] (Mindestens 4 CAN-FD Schnittstellen),ergibt sich, dass der Mikrocontroller vor allem eine flexible und anpassbare Plattform bereitstellen muss. Die höchste Gewichtung erhält deshalb die Software-Infrastruktur. Eine klar strukturierte Hardware- Abstraktionsschicht, gute Dokumentation, aktive Beispielprojekte und einfache Debug-Möglichkeiten reduzieren den Entwicklungsaufwand massiv.
-
-Aus A7 (Auslesbarkeit und Datenformat) ergibt sich, dass der Mikrocontroller einen Hardware- USB- Device- Controller braucht.
-
-Aus A5 (Datenrate und Pufferverhalten) sowie A4 (Datenintigrität) ergeben sich ausreichender SRAM, um größere datenmengen speichern zu können, hohe Rechenleistung und flexible Schnittstellen entscheidend. Der SRAM wird für Empfangspuffer, Zwischenspeicher und Dateisystemoperationen benötigt. Die Rechenleistung bestimmt, wie stabil der Datenpfad bei hoher Eingangsdatenrate bleibt. Flexible Peripherie, insbesondere mehrere SPI-Schnittstellen oder rekonfigurierbare I/O-Blöcke, erleichtert die Anbindung externer CAN-FD-Controller und der SD-Karte.
-
-Zusätzlich ist eine hohe Flexibilität beim Pin-Routing vorteilhaft. Sie vereinfacht das Leiterplattendesign und reduziert Engstellen beim Layout. Ein nativer USB-Device-Controller ist ebenfalls relevant, da Programmierung und Debugging über USB erfolgen sollen. Für den Prototyp muss der Mikrocontroller außerdem in einem gut lötbaren Gehäuse verfügbar sein. BGA-Gehäuse werden ausgeschlossen, da sie die Fertigung und Fehlersuche unnötig erschweren.
-
-Die Auswahl des Mikrocontrollers erfolgt daher nicht allein über einzelne Maximalwerte. Entscheidend ist die Kombination aus Software-Support, Speichergröße, Rechenleistung, Schnittstellenflexibilität, einfacher Fertigung und klarer Erweiterbarkeit des Gesamtsystems.
-
-Ein integrierter CAN-FD-Controller ist für diese Systemarchitektur nicht zwingend erforderlich. Stattdessen wird ein externer CAN-FD-Controller eingesetzt. Dadurch wird die CAN-FD-Logik vom Mikrocontroller entkoppelt. Diese Architektur ist skalierbarer, da mehrere externe Controller über flexible Schnittstellen angebunden werden können. Gleichzeitig übernehmen die Controller bereits einen Teil der Nachrichtenfilterung und entlasten damit den Mikrocontroller. Der Mikrocontroller muss dadurch nicht jede Nachricht direkt auf Bitebene verarbeiten, sondern liest nur relevante Empfangspuffer aus.
-
+Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzeitverarbeitung (#link(<t3>)[T3]) vor allem mehrere flexible Schnittstellen für CAN-FD-Controller und Speichermedium (#link(<t5>)[T5]). Hohe Priorität haben außerdem eine gut dokumentierte Software-Infrastruktur und einfache Debug-Möglichkeiten (#link(<t6>)[T6]), ein fertigungsgerechtes Gehäuse (#link(<t7>)[T7]) sowie Reserven für spätere Erweiterungen (#link(<t9>)[T9]).
 
 #block(breakable: false)[
 
@@ -92,10 +85,11 @@ table.header([*Bewertung*], [*Bedeutung*]),
 
   #figure(
     table(
-      columns: (auto, auto, auto, auto, auto),
+      columns: (auto, auto, auto, auto, auto, auto),
       align: (left + horizon),
       inset: 8pt,
       table.header(
+        [T-Nr.],
         [Eigenschaft],
         [Gewichtung],
         [*AVR64DU* @avr64du],
@@ -103,24 +97,28 @@ table.header([*Bewertung*], [*Bedeutung*]),
         [*RP2350* @rp2350],
       ),
 
+      [#link(<t9>)[T9]],
       [Modernität],
       [#mcu_multi.modern],
       [#avr64du_scores.modern],
       [#stm32c5_scores.modern],
       [#rp2350_scores.modern],
 
+      [#link(<t3>)[T3]],
       [Single core- Performance],
       [#mcu_multi.core_perf],
       [#avr64du_scores.core_perf],
       [#stm32c5_scores.core_perf],
       [#rp2350_scores.core_perf],
 
+      [#link(<t3>)[T3]],
       [Multi- Core- Architektur],
       [#mcu_multi.multicore],
       [#avr64du_scores.multicore],
       [#stm32c5_scores.multicore],
       [#rp2350_scores.multicore],
 
+      [#link(<t3>)[T3]],
       [RAM-Größe],
       [#mcu_multi.ramsize],
       [#avr64du_scores.ramsize],
@@ -128,24 +126,28 @@ table.header([*Bewertung*], [*Bedeutung*]),
       [#rp2350_scores.ramsize],
 
 
+      [#link(<t5>)[T5]],
       [Flexibilität Schnittstellen],
       [#mcu_multi.interface],
       [#avr64du_scores.interface],
       [#stm32c5_scores.interface],
       [#rp2350_scores.interface],
 
+      [#link(<t7>)[T7]],
       [Flexibilität Signal- Routing],
       [#mcu_multi.signalrout],
       [#avr64du_scores.signalrout],
       [#stm32c5_scores.signalrout],
       [#rp2350_scores.signalrout],
 
+      [#link(<t5>)[T5]],
       [CAN-FD-Integration],
       [#mcu_multi.canfdinteg],
       [#avr64du_scores.canfdinteg],
       [#stm32c5_scores.canfdinteg],
       [#rp2350_scores.canfdinteg],
 
+      [#link(<t6>)[T6]],
       [Qualität Software- Support],
       [#mcu_multi.software],
       [#avr64du_scores.software],
@@ -153,6 +155,7 @@ table.header([*Bewertung*], [*Bedeutung*]),
       [#rp2350_scores.software],
 
 
+      [],
       [Gewichtete Summe],
       [],
       [#mcu_score(avr64du_scores)],
@@ -192,7 +195,7 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
 
       [CAN-FD-Datenrate],
       [8 Mbit/s],
-      [5 Mbit/s],
+      [8 Mbit/s],
       [8 Mbit/s],
 
       [SPI-Takt],
@@ -220,26 +223,23 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
   )
 ]
 
-//hier bewertungsmatrix einfügen
-
-//kriterien: modernität, hohe datenrate,interface- geschwindigkeit, simplizität der interface- implementierung, buffer/ speichergröße, Kosten 
-
 #figure(
   table(
-    columns: (auto,auto,auto,auto,auto),
+    columns: (auto,auto,auto,auto,auto,auto),
     align: (left+horizon),
     inset: 1mm,
-    table.header([Eigenschaft], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
-    [Modernität],[],[],[],[],
-    [Simple externe Beschaltung],[],[],[],[],
-    [Hohe CAN- Datenrate],[],[],[],[],
-    [Hohe SPI- Datenrate],[],[],[],[],
-    [Großer Datenspeicher],[],[],[],[],
-    [Effektivität der Filterung],[],[],[],[],
-    [Simplizität des Interfaces],[],[],[],[],
-    [Geringe Kosten],[],[],[],[],
-
-  )
+    table.header([T-Nr.], [Eigenschaft], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
+    [#link(<t9>)[T9]],[Modernität],[#can_multi.modern],[#tcan4550_scores.modern],[#mcp251863_scores.modern],[#mcp2518fd_scores.modern],
+    [#link(<t7>)[T7]],[Simple externe Beschaltung],[#can_multi.external_circuit],[#tcan4550_scores.external_circuit],[#mcp251863_scores.external_circuit],[#mcp2518fd_scores.external_circuit],
+    [#link(<t3>)[T3]],[Hohe CAN- Datenrate],[#can_multi.can_rate],[#tcan4550_scores.can_rate],[#mcp251863_scores.can_rate],[#mcp2518fd_scores.can_rate],
+    [#link(<t3>)[T3]],[Hohe SPI- Datenrate],[#can_multi.spi_rate],[#tcan4550_scores.spi_rate],[#mcp251863_scores.spi_rate],[#mcp2518fd_scores.spi_rate],
+    [#link(<t3>)[T3]],[Großer Datenspeicher],[#can_multi.memory],[#tcan4550_scores.memory],[#mcp251863_scores.memory],[#mcp2518fd_scores.memory],
+    [#link(<t3>)[T3]],[Effektivität der Filterung],[#can_multi.filtering],[#tcan4550_scores.filtering],[#mcp251863_scores.filtering],[#mcp2518fd_scores.filtering],
+    [#link(<t6>)[T6]],[Simplizität des Interfaces],[#can_multi.interface],[#tcan4550_scores.interface],[#mcp251863_scores.interface],[#mcp2518fd_scores.interface],
+    [#link(<t7>)[T7]],[Geringe Kosten],[#can_multi.cost],[#tcan4550_scores.cost],[#mcp251863_scores.cost],[#mcp2518fd_scores.cost],
+    [],[*Gewichtete Summe*],[],[*#can_score(tcan4550_scores)*],[*#can_score(mcp251863_scores)*],[*#can_score(mcp2518fd_scores)*],
+  ),
+  caption: [Entscheidungsmatrix CAN-FD-Controller],
 )
 
 == Auswahl eines Speichermediums <storage-selection>
@@ -308,13 +308,30 @@ Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und mi
   )
 ]
 
+#figure(
+  table(
+    columns: (auto, auto, auto, auto, auto, auto),
+    align: (left + horizon),
+    inset: 1mm,
+    table.header([T-Nr.], [Eigenschaft], [Multiplikator], [*SPI-NAND-Flash* @w25n01gv], [*eMMC* @kingstonemmc], [*microSD* @kingstonmicrosd]),
+    [#link(<t4>)[T4]], [Nutzbare Speicherkapazität], [#storage_multi.capacity], [#spinand_scores.capacity], [#emmc_scores.capacity], [#microsd_scores.capacity],
+    [#link(<t3>)[T3]], [Schreibgeschwindigkeit], [#storage_multi.write_speed], [#spinand_scores.write_speed], [#emmc_scores.write_speed], [#microsd_scores.write_speed],
+    [#link(<t6>)[T6]], [Schnittstellenaufwand], [#storage_multi.interface], [#spinand_scores.interface], [#emmc_scores.interface], [#microsd_scores.interface],
+    [#link(<t4>)[T4]], [Integriertes Flash-Management], [#storage_multi.flash_management], [#spinand_scores.flash_management], [#emmc_scores.flash_management], [#microsd_scores.flash_management],
+    [#link(<t1>)[T1]], [Auslesbarkeit am PC], [#storage_multi.pc_readability], [#spinand_scores.pc_readability], [#emmc_scores.pc_readability], [#microsd_scores.pc_readability],
+    [#link(<t7>)[T7]], [Mechanische Integration], [#storage_multi.integration], [#spinand_scores.integration], [#emmc_scores.integration], [#microsd_scores.integration],
+    [#link(<t9>)[T9]], [Verfügbarkeit], [#storage_multi.availability], [#spinand_scores.availability], [#emmc_scores.availability], [#microsd_scores.availability],
+    [#link(<t7>)[T7]], [Geringe Kosten], [#storage_multi.cost], [#spinand_scores.cost], [#emmc_scores.cost], [#microsd_scores.cost],
+    [], [*Gewichtete Summe*], [], [*#storage_score(spinand_scores)*], [*#storage_score(emmc_scores)*], [*#storage_score(microsd_scores)*],
+  ),
+  caption: [Entscheidungsmatrix Speichermedium],
+)
+
+Die microSD-Karte erzielt die höchste gewichtete Bewertung. Sie verbindet eine direkte PC-Auslesbarkeit mit integriertem Flash-Management, geringem Integrationsaufwand und ausreichender Schreibgeschwindigkeit und wird daher als Speichermedium eingesetzt.
+
 
 == Blockdiagramm <block-diagram>
 
-Dieser Datenlogger besteht aus einem RP2350 und drei Microchip MCP251863 Controller-Transceivern für die CAN-Busse Accu-FD, Main-FD und DV-Can, sowie einer micro SD- Karte.
-Die MCP's bieten die Möglichkeit, Frames relativ einfach mit ID- Masken zu filtern. Sie kommunizieren über SPI mit dem Mcu. 
-Core 0 des Mcu ist für Echtzeit- Handling der eingehenden Frames zuständig und schreibt diese in den RAM- Buffer.
-Core 1 übernimmt ausschließlich das Formatieren und schreiben in das FAT32 Dateisystem der SD, da dies rechenintensiv ist und größere Latenzen haben kann.
 #align(center)[
   #figure(
     image("pictures/full-system-diagram.svg", width: 80%),

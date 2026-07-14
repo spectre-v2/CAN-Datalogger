@@ -1,12 +1,13 @@
-Zu heute:
+mcp treiber testen sobald platine da ist!!
 
-- Einleitung fertig schreiben
-- Meilensteinplanung
-- kvaser referenzen checken, bilder von platinen!
+diagramme anpassen:
 
-- diagramme farben fixen
-- state machine überlegen
+    Farben einheitlich
+
+    4 can Kanäle und nicht beschriftet
+
+    Sender soll Linux Automation Candlelight FD sein.
 
 songs:
-sun is up
-dirtybounce- noimage
+memory of fanelia
+
