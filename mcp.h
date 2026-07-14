@@ -320,7 +320,7 @@ void mcp_reset();
 
 void mcp_write_reg(uint16_t address, uint8_t *tx_buffer, size_t length);
 
-void mcp_read_reg(uint16_t address,uint8_t *rx_buffer,size_t length);
+void mcp_read_reg(uint16_t address,uint8_t *rx_buffer, size_t length);
 
 void mcp_init();
 

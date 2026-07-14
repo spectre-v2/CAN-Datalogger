@@ -13,17 +13,17 @@ void mcp_reset(){
     gpio_put(PIN_CS,1); 
 }
 
-void mcp_write_reg(uint16_t address, uint8_t *tx_buffer){
+void mcp_write_reg(uint16_t address, uint8_t *tx_buffer, size_t length){
     uint8_t command[2];
     command[0]=MCP_COMMAND_WRITE | (address >>8);
     command[1]=address & 0b000011111111;
     gpio_put(PIN_CS, 0);
     spi_write_blocking(SPI_PORT, command, 2);
-    spi_write_blocking(SPI_PORT, tx_buffer, sizeof tx_buffer);
+    spi_write_blocking(SPI_PORT, tx_buffer, length);
     gpio_put(PIN_CS, 1);
 }
 
-void mcp_read_reg(uint16_t address,uint8_t *rx_buffer){
+void mcp_read_reg(uint16_t address, uint8_t *rx_buffer, size_t length){
 
     uint8_t command[2];
 
@@ -32,7 +32,7 @@ void mcp_read_reg(uint16_t address,uint8_t *rx_buffer){
 
     gpio_put(PIN_CS, 0);
     spi_write_blocking(SPI_PORT, command, 2);   //send 2 entries of command array
-    spi_read_blocking(SPI_PORT, 0b00000000, rx_buffer, sizeof rx_buffer); //send empty bytes and write recieved data in buffer
+    spi_read_blocking(SPI_PORT, 0b00000000, rx_buffer, length); //send empty bytes and write recieved data in buffer
     gpio_put(PIN_CS, 1);
 }
 
@@ -93,10 +93,10 @@ void mcp_init(){
     };
     
     
-    mcp_write_reg(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array);
-    mcp_write_reg(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array);
-    mcp_write_reg(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array);
-    mcp_write_reg(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array);
-    mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array);
+    mcp_write_reg(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg);
+    mcp_write_reg(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1nbtcfg);
+    mcp_write_reg(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1nbtcfg);
+    mcp_write_reg(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1nbtcfg);
+    mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1nbtcfg);
 
 }
