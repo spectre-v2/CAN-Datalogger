@@ -4,8 +4,7 @@
 #include "mcp.h"
 #include "main.h"
 
-uint8_t spi_rx_buffer[8];
-uint8_t spi_tx_buffer[8];
+MCP_DEVID_t mcp_devid = {0};
 
 int main()
 {
@@ -25,9 +24,9 @@ int main()
 
     while (true) {
         mcp_reset();
-        sleep_ms(1000);
-        mcp_read(MCP_REG_DEVID,spi_rx_buffer,1);
-        printf("MCP DEVICE ID: 0x%02X\n", spi_rx_buffer[0]);
+        sleep_ms(10);
+        mcp_read_reg(MCP_REG_DEVID,mcp_devid.data_array,4);
+        printf("MCP DEVICE ID: 0x%02X\n", mcp_devid.bits.ID);
         sleep_ms(1000);
     }
 }

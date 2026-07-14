@@ -1,3 +1,4 @@
+#pragma once
 // SPI Defines
 #define SPI_PORT spi0
 #define PIN_MISO 16
