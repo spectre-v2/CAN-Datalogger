@@ -4,25 +4,30 @@
 #include "mcp.h"
 #include "main.h"
 
+//docs:start:mcp_reset
 void mcp_reset(){
     uint8_t command[2];
     command[0]= 0b00000000;
     command[1]= 0b00000000;
-    gpio_put(PIN_CS,0);
-    spi_write_blocking(SPI_PORT,command, 2);
-    gpio_put(PIN_CS,1); 
+    gpio_put(pin_can0_cs,0);
+    spi_write_blocking(spi_port_can0,command, 2);
+    gpio_put(pin_can0_cs,1); 
 }
+//docs:end:mcp_reset
 
+//docs:start:mcp_write_register
 void mcp_write_reg(uint16_t address, uint8_t *tx_buffer, size_t length){
     uint8_t command[2];
     command[0]=MCP_COMMAND_WRITE | (address >>8);
     command[1]=address & 0b000011111111;
-    gpio_put(PIN_CS, 0);
-    spi_write_blocking(SPI_PORT, command, 2);
-    spi_write_blocking(SPI_PORT, tx_buffer, length);
-    gpio_put(PIN_CS, 1);
+    gpio_put(pin_can0_cs, 0);
+    spi_write_blocking(spi_port_can0, command, 2);
+    spi_write_blocking(spi_port_can0, tx_buffer, length);
+    gpio_put(pin_can0_cs, 1);
 }
+//docs:end:mcp_write_register
 
+//docs:start:mcp_read_register
 void mcp_read_reg(uint16_t address, uint8_t *rx_buffer, size_t length){
 
     uint8_t command[2];
@@ -30,15 +35,20 @@ void mcp_read_reg(uint16_t address, uint8_t *rx_buffer, size_t length){
     command[0]= MCP_COMMAND_READ | (address>>8);    //4 command bits + first 4 address bits
     command[1]= address & 0b000011111111;   //last 8 address bits
 
-    gpio_put(PIN_CS, 0);
-    spi_write_blocking(SPI_PORT, command, 2);   //send 2 entries of command array
-    spi_read_blocking(SPI_PORT, 0b00000000, rx_buffer, length); //send empty bytes and write recieved data in buffer
-    gpio_put(PIN_CS, 1);
+    gpio_put(pin_can0_cs, 0);
+    spi_write_blocking(spi_port_can0, command, 2);   //send 2 entries of command array
+    spi_read_blocking(spi_port_can0, 0b00000000, rx_buffer, length); //send empty bytes and write recieved data in buffer
+    gpio_put(pin_can0_cs, 1);
+
 }
+//docs:end:mcp_read_register
 
 void mcp_init(){
 
+    printf("Initializing MCP2518... ");
 
+
+    //docs:start:mcp_bit_timing
     MCP_C1NBTCFG_t mcp_c1nbtcfg = { //nominal data rate to 500kbit/s
         .bits = {
             .SJW=0b0001111,     //allowed sample point adjustment to synchronize bus
@@ -56,8 +66,9 @@ void mcp_init(){
             .BRP= 0b00000000
         },
     };
+    //docs:end:mcp_bit_timing
 
-
+    //docs:start:mcp_receive_fifo
     MCP_C1FIFOCON_t mcp_c1fifocon1 = {
         .bits = {
             .PLSIZE= 0b111, //64 byte payload
@@ -74,10 +85,19 @@ void mcp_init(){
             .RXOVIE= 0,
             .TFERFFIE= 0,
             .TFHRFHIE= 0,
-            .TFNRFNIE= 0
+            .TFNRFNIE= 1
 
         },
     };
+    //docs:end:mcp_receive_fifo
+
+    //docs:start:mcp_receive_interrupt
+    MCP_C1INT_t mcp_c1int = {
+        .bits = {
+            .RXIE = 1, //recieve message interrupt enable
+        }
+    };
+    //docs:end:mcp_receive_interrupt
 
     MCP_C1FLTCON_t mcp_c1fltcon = {
         .bits = {
@@ -89,14 +109,19 @@ void mcp_init(){
     MCP_C1CON_t mcp_c1con = {
         .bits = {
             .REQOP = 0b000  //request normal can-FD mode
-        },
+        }
     };
     
     
-    mcp_write_reg(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg);
-    mcp_write_reg(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1nbtcfg);
-    mcp_write_reg(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1nbtcfg);
-    mcp_write_reg(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1nbtcfg);
-    mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1nbtcfg);
+    //docs:start:mcp_apply_configuration
+    mcp_write_reg(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
+    mcp_write_reg(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
+    mcp_write_reg(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
+    mcp_write_reg(MCP_REG_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
+    mcp_write_reg(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
+    mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
+    //docs:end:mcp_apply_configuration
+
+    printf("MCP2518 initialized. \n");
 
 }

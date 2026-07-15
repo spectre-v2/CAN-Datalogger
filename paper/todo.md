@@ -8,6 +8,10 @@ diagramme anpassen:
 
     Sender soll Linux Automation Candlelight FD sein.
 
+
+klar machen dass wir nur bis 2 Mbit/s testen wegen software bug des candlelight FD.
+
+
 songs:
 memory of fanelia
 

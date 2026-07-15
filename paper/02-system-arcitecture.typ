@@ -5,7 +5,7 @@
 
 == Grundarchitektur
 
-Der Datenlogger wird als modularer Datenpfad aus Mikrocontroller, externen CAN-FD-Controllern, microSD-Karte und USB-Schnittstelle aufgebaut. Jede Komponente übernimmt dabei eine klar abgegrenzte Aufgabe. Das reduziert den Entwicklungsaufwand (#link(<t6>)[T6]), erleichtert die prüfgerechte Fertigung (#link(<t7>)[T7]) und erlaubt spätere Erweiterungen ohne grundlegende Neukonstruktion (#link(<t9>)[T9]).
+Der Datenlogger wird als modularer Datenpfad aus Mikrocontroller, externen CAN-FD-Controllern, microSD-Karte und USB-Schnittstelle aufgebaut. Jede Komponente übernimmt dabei eine klar abgegrenzte Aufgabe. Das reduziert den Entwicklungsaufwand (#link(<t6>)[T6]), erleichtert die prüfgerechte Fertigung (#link(<t7>)[T7]) und erlaubt spätere Erweiterungen ohne grundlegende Neukonstruktion (#link(<t9>)[T9]). 
 
 === Mikrocontroller
 
@@ -23,7 +23,12 @@ Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisy
 
 USB dient als Standardschnittstelle für Programmierung, Debugging und die direkte Datenauslese (#link(<t1>)[T1], #link(<t6>)[T6]). Die Leiterplatte trennt Mikrocontroller, CAN-FD-Anbindung, Speicher und Spannungsversorgung in klar prüfbare Funktionsbereiche (#link(<t7>)[T7], #link(<t9>)[T9]). Gut lötbare Gehäuse, Testpunkte und ein für die Fertigung geeignetes Layout vereinfachen Inbetriebnahme und Qualitätssicherung (#link(<t6>)[T6], #link(<t7>)[T7]); eine kompakte Platzierung reduziert zugleich Masse und Volumen (#link(<t8>)[T8]).
 
+=== Sender
+
+Um den Prototypen sinnvoll testen zu können, wird ein USB zu CAN- FD sender verwendet.
+
 Die nachfolgenden Komponentenauswahlen vergleichen zunächst harte Ausschlusskriterien und bewerten die verbleibenden Optionen anschließend anhand der technischen Anforderungen.
+
 
 == Auswahl des Mikrocontrollers <microcontroller-selection>
 
@@ -33,7 +38,7 @@ Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzei
 
   #figure(
     table(
-      columns: (auto, auto, auto, auto), align: (left + horizon), inset: 8pt,
+      columns: (auto, auto, auto, auto), align: (left + horizon), inset: STD_INSET,
 
       table.header([Mikrocontroller],[*AVR64DU* @avr64du],[*STM32C5* @stm32c5],[*RP2350* @rp2350],),
 
@@ -62,7 +67,7 @@ Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bew
   table(
     columns: (auto, auto),
     align: (left + horizon),
-    inset: 8pt,
+    inset: STD_INSET,
 table.header([*Bewertung*], [*Bedeutung*]),
 [-1], [Keine oder ungeeignete Umsetzung des Kriteriums],
 [0],  [Ausreichende Erfüllung des Kriteriums],
@@ -74,7 +79,7 @@ table.header([*Bewertung*], [*Bedeutung*]),
   table(
     columns: (auto, auto),
     align: (left + horizon),
-    inset: 8pt,
+    inset: STD_INSET,
  table.header([*Multiplikator*], [*Bewertungsrelevanz*]),
 [1], [Grundlegende Relevanz für die Systemauswahl],
 [2], [Hoher Einfluss auf die Eignung im Anwendungsfall],
@@ -87,7 +92,7 @@ table.header([*Bewertung*], [*Bedeutung*]),
     table(
       columns: (auto, auto, auto, auto, auto, auto),
       align: (left + horizon),
-      inset: 8pt,
+      inset: STD_INSET,
       table.header(
         [T-Nr.],
         [Eigenschaft],
@@ -175,7 +180,7 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
     table(
       columns: (auto, 1fr, 1fr, 1fr),
       align: (left + horizon),
-      inset: 8pt,
+      inset: STD_INSET,
       table.header(
         [Baustein],
         [*TCAN4550-Q1* @tcan4550q1],
@@ -227,7 +232,7 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
   table(
     columns: (auto,auto,auto,auto,auto,auto),
     align: (left+horizon),
-    inset: 1mm,
+    inset: STD_INSET,
     table.header([T-Nr.], [Eigenschaft], [Multiplikator],[*TCAN4550-Q1* @tcan4550q1], [*MCP251863* @mcp251863], [*MCP2518FD* @mcp2518fd],),
     [#link(<t9>)[T9]],[Modernität],[#can_multi.modern],[#tcan4550_scores.modern],[#mcp251863_scores.modern],[#mcp2518fd_scores.modern],
     [#link(<t7>)[T7]],[Simple externe Beschaltung],[#can_multi.external_circuit],[#tcan4550_scores.external_circuit],[#mcp251863_scores.external_circuit],[#mcp2518fd_scores.external_circuit],
@@ -251,7 +256,7 @@ Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und mi
     table(
       columns: (auto, 1fr, 1fr, 1fr),
       align: (left + horizon),
-      inset: 8pt,
+      inset: STD_INSET,
       table.header(
         [Speichermedium],
         [*SPI-NAND-Flash* @w25n01gv],
@@ -312,11 +317,11 @@ Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und mi
   table(
     columns: (auto, auto, auto, auto, auto, auto),
     align: (left + horizon),
-    inset: 1mm,
+    inset: STD_INSET,
     table.header([T-Nr.], [Eigenschaft], [Multiplikator], [*SPI-NAND-Flash* @w25n01gv], [*eMMC* @kingstonemmc], [*microSD* @kingstonmicrosd]),
-    [#link(<t4>)[T4]], [Nutzbare Speicherkapazität], [#storage_multi.capacity], [#spinand_scores.capacity], [#emmc_scores.capacity], [#microsd_scores.capacity],
-    [#link(<t3>)[T3]], [Schreibgeschwindigkeit], [#storage_multi.write_speed], [#spinand_scores.write_speed], [#emmc_scores.write_speed], [#microsd_scores.write_speed],
-    [#link(<t6>)[T6]], [Schnittstellenaufwand], [#storage_multi.interface], [#spinand_scores.interface], [#emmc_scores.interface], [#microsd_scores.interface],
+    [#link(<t4>)[T4]], [Nutzbare Speicher- \kapazität], [#storage_multi.capacity], [#spinand_scores.capacity], [#emmc_scores.capacity], [#microsd_scores.capacity],
+    [#link(<t3>)[T3]], [Schreib-\geschwindigkeit], [#storage_multi.write_speed], [#spinand_scores.write_speed], [#emmc_scores.write_speed], [#microsd_scores.write_speed],
+    [#link(<t6>)[T6]], [Schnittstellen Komplexität], [#storage_multi.interface], [#spinand_scores.interface], [#emmc_scores.interface], [#microsd_scores.interface],
     [#link(<t4>)[T4]], [Integriertes Flash-Management], [#storage_multi.flash_management], [#spinand_scores.flash_management], [#emmc_scores.flash_management], [#microsd_scores.flash_management],
     [#link(<t1>)[T1]], [Auslesbarkeit am PC], [#storage_multi.pc_readability], [#spinand_scores.pc_readability], [#emmc_scores.pc_readability], [#microsd_scores.pc_readability],
     [#link(<t7>)[T7]], [Mechanische Integration], [#storage_multi.integration], [#spinand_scores.integration], [#emmc_scores.integration], [#microsd_scores.integration],
@@ -346,14 +351,4 @@ Die microSD-Karte erzielt die höchste gewichtete Bewertung. Sie verbindet eine 
     caption: [Zeitplanung],
   )
 ]
-=== Vorteile <advantages>
-- Reduzierung der Masse um bis zu 3/4.
-- Effektive Filterung der Frames nach Can-ID.
-- Erprobung des RP2350, sehr flexible und leistungsstarke Plattform welche es in Zukunft ermöglichen könnte, Fahrzeuglogik und -Funktionalität noch stärker in wenige Steuergeräte zu integrieren. 
-- Sehr cleane low level HAL für C/C++
-=== Herausforderungen <challenges>
-- Es ist unklar, ob die MCP's genau so gut sind wie die internen Controller eines STM32, und ob sie unter Last zuverlässig sind. Muss getestet werden. 
-- Der Buffer ist begrenzt. Der Mcu hat 520kb RAM. Opfert man 300kb als Buffer, kann man bei hängender SD und 12Mbits auf 3 Can's für `300*10^3 byte ram /(1/8 bytes pro bit * 10^6 * 12 Mbits * 3 Can busse) = 66ms `noch aufzeichnen. Zur Not ist es aber möglich, den Mcu mit externem RAM zu erweitern.
-== Zustandsautomat <state-machine>
-So sieht die einbindung von C- Code aus:
-#code-snippet("../main.c","main")
+

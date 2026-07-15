@@ -92,7 +92,7 @@ Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Mes
 #figure(
   table(
     columns: (1fr, 2fr),
-    align: left, inset: 3mm,
+    align: left, inset: STD_INSET,
     table.header(
      [*Projektanforderung*], [*Technische Anforderung*],
     ),
@@ -111,11 +111,17 @@ Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Mes
     [#link(<a4>)[A4: Geringe Masse und Größe]],
     [*T8: Kompakte, robuste Bauform* <t8> #linebreak() Masse und Volumen dürfen die Größenordnung der besten auf dem Markt verfügbaren Fahrzeugdatenlogger nicht überschreiten.],
 
-    [#link(<a3>)[A3: Zeit- und ressourceneffiziente Fertigung], 
-    
-    #link(<a5>)[A5: Zukunftsfähigkeit]],
+    [#link(<a3>)[A3: Zeit- und ressourceneffiziente Fertigung], #link(<a5>)[A5: Zukunftsfähigkeit]],
+
     [*T9: Modulare Erweiterbarkeit* <t9> #linebreak() Hard- und Software müssen in austauschbare Funktionsbereiche gegliedert sein; zusätzliche Schnittstellen und zukünftige Fahrzeugfunktionen bis hin zur Integration in die Fahrzeugregelung müssen ohne grundlegende Neukonstruktion integrierbar sein.],
+
+
+    [#link(<a5>)[A5: Zukunftsfähigkeit]],[*T10: Verwendung moderner Komponenten* #linebreak()
+    ]
+
       ),
+
+    
   caption: [Anforderungsmatrix],
 )
 

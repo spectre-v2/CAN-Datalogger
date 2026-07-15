@@ -85,6 +85,8 @@
 #let medium_grey=rgb("#e8e8e8")
 #let dark_grey=rgb("#d9d9d9")
 
+#let STD_INSET= 3mm
+
 
 
 
@@ -96,7 +98,7 @@
   let end-tag = "docs:end:" + marker
 
   let start-idx = content.position(start-tag)
-  let end-idx = content.position(end-tag)
+  let end-idx = content.position("//" + end-tag)
 
   let snippet = content.slice(
     start-idx + start-tag.len(), 
@@ -106,4 +108,5 @@
   raw(snippet.trim(), lang: lang, block: true)
 }
 
-#show figure.where(kind: table): set block(breakable: true)
+
+
