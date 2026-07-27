@@ -5,6 +5,8 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 
+#define MCP_RAM_BASE 0x400
+
 //docs:start:commands
 // MCP command bits
 #define MCP_COMMAND_WRITE 0b00100000
@@ -34,8 +36,6 @@
 
 #define MCP_REG_OSC         0b111000000000  // 0xE00 - Oscillator Control Register
 #define MCP_REG_IOCON       0b111000000100  // 0xE04 - I/O Control Register
-#define MCP_REG_DEVID       0b111000010100  // 0xE14 - Device ID Register
-
 
 //Register manipulation on the mcp2518 works by writing and reading 32- bit arrays using SPI.
 //SPI can only work with arrays, that is why unions are used to sort the data into bit fields for easy manipulation.
@@ -308,22 +308,10 @@ typedef union {
     } bits;
 } MCP_IOCON_t;                       // I/O Control Register
 
-
-
-// nur zm testen, später wieder löschen wenn spi funktioniert, weil braucht keiner
-typedef union {
-    uint8_t data_array[4];
-    struct __attribute__((packed)) {
-    uint32_t REV : 4;                // Device Revision bits
-    uint32_t ID : 4;                 // Device Identifier bits
-    uint32_t unimplemented1 : 24;
-    } bits;
-} MCP_DEVID_t;                       // Device ID Register
-
 void mcp_reset();
 
-void mcp_write_reg(uint16_t address, uint8_t *tx_buffer, size_t length);
+void mcp_write_reg(uint16_t address, void *tx_buffer, size_t length);
 
-void mcp_read_reg(uint16_t address,uint8_t *rx_buffer, size_t length);
+void mcp_read_reg(uint16_t address, void *rx_buffer, size_t length);
 
 void mcp_init();

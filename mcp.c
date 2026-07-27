@@ -6,29 +6,40 @@
 
 //docs:start:mcp_reset
 void mcp_reset(){
+    printf("Resetting MCP2518... ");
     uint8_t command[2];
     command[0]= 0b00000000;
     command[1]= 0b00000000;
     gpio_put(pin_can0_cs,0);
+        sleep_us(1);
     spi_write_blocking(spi_port_can0,command, 2);
+        sleep_us(1);
     gpio_put(pin_can0_cs,1); 
+    printf("done.\n");
 }
 //docs:end:mcp_reset
 
 //docs:start:mcp_write_register
-void mcp_write_reg(uint16_t address, uint8_t *tx_buffer, size_t length){
+void mcp_write_reg(uint16_t address, void *tx_buffer, size_t length){
+    printf("Attempting MCP2518 Register modification... ");
+
     uint8_t command[2];
     command[0]=MCP_COMMAND_WRITE | (address >>8);
     command[1]=address & 0b000011111111;
     gpio_put(pin_can0_cs, 0);
+    sleep_us(1);
     spi_write_blocking(spi_port_can0, command, 2);
     spi_write_blocking(spi_port_can0, tx_buffer, length);
+    sleep_us(1);
     gpio_put(pin_can0_cs, 1);
+
+    printf("done.\n");
 }
 //docs:end:mcp_write_register
 
 //docs:start:mcp_read_register
-void mcp_read_reg(uint16_t address, uint8_t *rx_buffer, size_t length){
+void mcp_read_reg(uint16_t address, void *rx_buffer, size_t length){
+    printf("Attempting MCP2518 Register retrieve... ");
 
     uint8_t command[2];
 
@@ -40,8 +51,10 @@ void mcp_read_reg(uint16_t address, uint8_t *rx_buffer, size_t length){
     spi_read_blocking(spi_port_can0, 0b00000000, rx_buffer, length); //send empty bytes and write recieved data in buffer
     gpio_put(pin_can0_cs, 1);
 
+    printf("done.\n");
 }
 //docs:end:mcp_read_register
+
 
 void mcp_init(){
 
@@ -49,21 +62,25 @@ void mcp_init(){
 
 
     //docs:start:mcp_bit_timing
-    MCP_C1NBTCFG_t mcp_c1nbtcfg = { //nominal data rate to 500kbit/s
+    //nominal data rate: 500kbit/s
+    //sample point: 80%
+    //system clock: 20MHz
+    MCP_C1NBTCFG_t mcp_c1nbtcfg = { 
         .bits = {
-            .SJW=0b0001111,     //allowed sample point adjustment to synchronize bus
-            .TSEG2=0b0001111,   //time quantums after sample
-            .TSEG1=0b00111110,  //time quantums before sample
-            .BRP=0b00000000     //system clock prescaler for can-controller
+            .SJW= 3,    //4 TQ allowed sample point adjustment to synchronize bus
+            .TSEG2= 7, // 8 time quantums after sample
+            .TSEG1= 30,  //31 time quantums before sample
+            .BRP= 0     //system clock prescaler for can-controller
         },
     };
 
-    MCP_C1DBTCFG_t mcp_c1dbtcfg = { //data phase rate to 2Mbit/s
+    //data phase rate to 2Mbit/s
+    MCP_C1DBTCFG_t mcp_c1dbtcfg = { 
         .bits = {
-            .SJW= 0b0011,
-            .TSEG2= 0b0011,
-            .TSEG1= 0b01110,
-            .BRP= 0b00000000
+            .SJW= 1,
+            .TSEG2= 1,
+            .TSEG1= 6,
+            .BRP= 0
         },
     };
     //docs:end:mcp_bit_timing
@@ -72,21 +89,7 @@ void mcp_init(){
     MCP_C1FIFOCON_t mcp_c1fifocon1 = {
         .bits = {
             .PLSIZE= 0b111, //64 byte payload
-            .FSIZE= 0b00000, //one message only
-            .TXAT= 0b00, //rx only
-            .TXPRI= 0b00000, //rx only
-            .FRESET= 0,
-            .TXREQ= 0,
-            .UINC = 0,
-            .TXEN= 0,
-            .RTREN= 0,
-            .RXTSEN= 0,
-            .TXATIE= 0,
-            .RXOVIE= 0,
-            .TFERFFIE= 0,
-            .TFHRFHIE= 0,
-            .TFNRFNIE= 1
-
+            .TFNRFNIE= 1, // Recieve-Fifo not empty Interrupt enabled.
         },
     };
     //docs:end:mcp_receive_fifo
@@ -101,14 +104,14 @@ void mcp_init(){
 
     MCP_C1FLTCON_t mcp_c1fltcon = {
         .bits = {
-            .FLTEN0= 0b1, //enable filter 0
-            .F0BP=0b00001 //save hits in fifo 1
+            .FLTEN0= 1, //enable filter 0
+            .F0BP=  1 //save hits in fifo 1
         }
     };
 
     MCP_C1CON_t mcp_c1con = {
         .bits = {
-            .REQOP = 0b000  //request normal can-FD mode
+            .REQOP = 0  //request normal can-FD mode
         }
     };
     
@@ -122,6 +125,6 @@ void mcp_init(){
     mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
     //docs:end:mcp_apply_configuration
 
-    printf("MCP2518 initialized. \n");
+    printf("done.\n");
 
 }
