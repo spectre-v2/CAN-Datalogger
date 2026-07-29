@@ -102,12 +102,15 @@ void mcp_init(){
     };
     //docs:end:mcp_receive_interrupt
 
+    
+    //docs:start:mcp_receive_filter
     MCP_C1FLTCON_t mcp_c1fltcon = {
         .bits = {
             .FLTEN0= 1, //enable filter 0
             .F0BP=  1 //save hits in fifo 1
         }
     };
+    //docs:end:mcp_receive_filter
 
     MCP_C1CON_t mcp_c1con = {
         .bits = {

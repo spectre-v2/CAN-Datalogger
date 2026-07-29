@@ -8,6 +8,8 @@
 #let supervisor = "Achim Boll"
 
 // -------------------------Dokumenteinstellungen-------------------------
+// 
+
 
 #let thesis(body) = {
   set page(
@@ -77,6 +79,11 @@
     below: 1em,
   )
 
+  // Abstand nach allen Tabellen
+  show figure.where(kind: table): set block(
+    below: 4em,
+  )
+
   body
 }
   // ------------------------Globale Variablen-------------------------
@@ -107,6 +114,5 @@
 
   raw(snippet.trim(), lang: lang, block: true)
 }
-
 
 

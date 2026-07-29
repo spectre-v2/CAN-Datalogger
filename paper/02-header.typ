@@ -19,9 +19,9 @@
   multicore: -1,
   ramsize: 0,
   interface: 0,
-  signalrout: -1,
+  signalrout: 0,
   canfdinteg: 1,
-  software: -1,
+  software: 0,
 )
 
 #let rp2350_scores=(
@@ -40,7 +40,7 @@
 #let mcu_multi=(
   modern: 1,
   core_perf: 1,
-  multicore: 2,
+  multicore: 1,
   ramsize: 3,
   interface: 2,
   signalrout: 2,
@@ -100,12 +100,12 @@
 #let can_multi=(
   modern: 1,
   external_circuit: 2,
-  can_rate: 3,
+  can_rate: 2,
   spi_rate: 2,
   memory: 3,
-  filtering: 3,
+  filtering: 2,
   interface: 3,
-  cost: 2,
+  cost: 1,
 )
 
 #let can_score(controller)= (

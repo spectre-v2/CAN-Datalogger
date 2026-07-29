@@ -5,19 +5,19 @@
 
 == Grundarchitektur
 
-Der Datenlogger wird als modularer Datenpfad aus Mikrocontroller, externen CAN-FD-Controllern, microSD-Karte und USB-Schnittstelle aufgebaut. Jede Komponente übernimmt dabei eine klar abgegrenzte Aufgabe. Das reduziert den Entwicklungsaufwand (#link(<t6>)[T6]), erleichtert die prüfgerechte Fertigung (#link(<t7>)[T7]) und erlaubt spätere Erweiterungen ohne grundlegende Neukonstruktion (#link(<t9>)[T9]). 
+Der Datenlogger wird als modularer Datenpfad aus CAN-FD-Controllern, Mikrocontroller mit USB- Schnittstelle und microSD-Karte aufgebaut. Jede Komponente übernimmt dabei eine klar abgegrenzte Aufgabe. Das reduziert den Entwicklungsaufwand (#link(<t6>)[T6]), erleichtert die prüfgerechte Fertigung (#link(<t7>)[T7]) und erlaubt spätere Erweiterungen ohne grundlegende Neukonstruktion (#link(<t9>)[T9]). 
 
 === Mikrocontroller
 
-Der Mikrocontroller koordiniert die Peripherie, verarbeitet empfangene Nachrichten und steuert die Datenspeicherung. Gegenüber einer FPGA-Lösung bietet er eine besser zugängliche Entwicklungsumgebung, Debug-Möglichkeiten und verfügbare Softwarebibliotheken; damit unterstützt er die schnelle Entwicklung unmittelbar (#link(<t6>)[T6]). Ausreichende Rechenleistung, RAM und flexible Schnittstellen sind erforderlich, um den Datenstrom mit deterministischen Latenzen zu verarbeiten (#link(<t3>)[T3]) und mehrere externe Controller sowie das Speichermedium anzubinden (#link(<t5>)[T5]).
+Der Mikrocontroller koordiniert die Peripherie, verarbeitet empfangene Nachrichten und steuert die Datenspeicherung. Gegenüber einer FPGA-Lösung bietet er eine besser zugängliche Entwicklungsumgebung, Debug-Möglichkeiten und verfügbare Softwarebibliotheken; damit unterstützt er die schnelle Entwicklung (#link(<t6>)[T6]). Ausreichende Rechenleistung, RAM und flexible Schnittstellen sind erforderlich, um den Datenstrom mit deterministischen Latenzen zu verarbeiten (#link(<t3>)[T3]) und mehrere externe Controller sowie das Speichermedium anzubinden (#link(<t5>)[T5]).
 
 === Externe CAN-FD-Controller
 
-Die Forderung nach mindestens vier unabhängigen CAN-FD-Bussen (#link(<t5>)[T5]) wird nicht von einem einzelnen, üblichen Mikrocontroller mit integrierten CAN-FD-Controllern erfüllt. Der Mikrocontroller mit den meisten integrierten CAN-FD-Controllern ist der STM32G474, welcher drei Controller bietet. @stm32g4 Aus diesem Grund wird jeder Bus über einen spezialisierten externen CAN-FD-Controller angebunden. Dessen Filter und Empfangspuffer entlasten den Mikrocontroller und unterstützen eine verlustfreie Echtzeiterfassung (#link(<t3>)[T3]). Die Anzahl der Kanäle kann durch zusätzliche gleichartige Controller erweitert werden (#link(<t9>)[T9]).
+Die Forderung nach mindestens vier unabhängigen CAN-FD-Bussen (#link(<t5>)[T5]) kann nicht von einem einzelnen, üblichen Mikrocontroller mit integrierten CAN-FD-Controllern erfüllt werden. Im niedrigen Preissegment bietet aktuell jediglich der STM32G474 drei CAN-FD-Controller. @stm32g4 Aus diesem Grund wird jeder Bus über einen spezialisierten externen CAN-FD-Controller angebunden. Dessen Filter und Empfangspuffer sollen den Mikrocontroller entlasten und unterstützen eine verlustfreie Echtzeiterfassung (#link(<t3>)[T3]). Die Anzahl der Kanäle kann durch zusätzliche gleichartige Controller erweitert werden (#link(<t9>)[T9]).
 
 === microSD-Karte
 
-Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisystem gespeichert. Das Standardmedium kann ohne Spezialhardware am PC gelesen werden und unterstützt damit die standardisierte Datenauslese (#link(<t1>)[T1]); ein offen dokumentiertes Logformat erfüllt zusätzlich die Anforderungen an das Datenformat (#link(<t2>)[T2]). Das integrierte Flash-Management der Karte sowie ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Schreibvorgang und tragen zur ausfallsicheren Speicherung bei (#link(<t4>)[T4]).
+Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisystem gespeichert. Das Standardmedium kann ohne Spezialhardware am PC gelesen werden und unterstützt damit die standardisierte Datenauslese (#link(<t1>)[T1]); ein offen dokumentiertes Logformat soll die Auswertung somit einfach gestalten (#link(<t2>)[T2]). Das integrierte Flash-Management der Karte sowie ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Schreibvorgang und tragen zur ausfallsicheren Speicherung bei (#link(<t4>)[T4]).
 
 === USB-Schnittstelle und Platine
 
@@ -25,42 +25,49 @@ USB dient als Standardschnittstelle für Programmierung, Debugging und die direk
 
 === Sender
 
-Um den Prototypen sinnvoll testen zu können, wird ein USB zu CAN- FD sender verwendet.
+Um den Prototypen sinnvoll testen zu können, wird das USB- zu CAN-FD Interface Candlelight FD des Herstellers Linux Automation GmbH verwendet. Dieses basiert seinerseits auf einem STM32G0 und bietet die einfachste Möglichkeit, Nachrichten mit inkrementell angepasstem Inhalt zu versenden, um schlussendlich die Vollständigkeit des Datensatzes zu überprüfen.
+
 
 Die nachfolgenden Komponentenauswahlen vergleichen zunächst harte Ausschlusskriterien und bewerten die verbleibenden Optionen anschließend anhand der technischen Anforderungen.
 
 
 == Auswahl des Mikrocontrollers <microcontroller-selection>
 
-Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzeitverarbeitung (#link(<t3>)[T3]) vor allem mehrere flexible Schnittstellen für CAN-FD-Controller und Speichermedium (#link(<t5>)[T5]). Hohe Priorität haben außerdem eine gut dokumentierte Software-Infrastruktur und einfache Debug-Möglichkeiten (#link(<t6>)[T6]), ein fertigungsgerechtes Gehäuse (#link(<t7>)[T7]) sowie Reserven für spätere Erweiterungen (#link(<t9>)[T9]).
+Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzeitverarbeitung (#link(<t3>)[T3]) vor allem mehrere flexible Schnittstellen für CAN-FD-Controller und Speichermedium (#link(<t5>)[T5]). Hohe Priorität haben außerdem eine gut dokumentierte Software-Infrastruktur und einfache Debug-Möglichkeiten (#link(<t6>)[T6]), ein fertigungsgerechtes Gehäuse (#link(<t7>)[T7]) sowie Reserven für spätere Erweiterungen (#link(<t9>)[T9]). In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigsten Hersteller gelistet.
 
+
+
+                
 #block(breakable: false)[
 
   #figure(
     table(
       columns: (auto, auto, auto, auto), align: (left + horizon), inset: STD_INSET,
 
-      table.header([Mikrocontroller],[*AVR64DU* @avr64du],[*STM32C5* @stm32c5],[*RP2350* @rp2350],),
+      table.header([Mikrocontroller],
+      [*AVR64DU* @avr64du #figure(image("pictures/avr64du32.png"))],
+      [*STM32-C5* @stm32c5 #figure(image("pictures/stm32c5.webp"))],
+      [*RP2350* @rp2350 #figure(image("pictures/rp2350.png"))],
+      ),
 
       [Hersteller],[Microchip],[STMicroelectronics],[Raspberry Pi],
       [Veröffentlichung],[2026],[2026],[2024],
-      [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[32-Bit Cortex-M33 / RISC-V],
+      [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[2x 32-Bit Cortex-M33 + 2x 32-Bit RISC-V],
       [Anzahl Prozessoren],[1],[1],[2],
       [RAM-Größe],[8 KB],[bis 256 KB],[520 KB],
       [Schnittstellen],[1x SPI, 1x I²C, 2x USART, USB FS],[USB, OctoSPI, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
       [Pin-Multiplexer],[PORTMUX eingeschränkt],[Alternate-Function-Matrix],[sehr flexibel über GPIO-Funktionen],
       [Anzahl CAN-FD-Controller],[0],[2],[0],
       [Treiber/ Software workflow],[Melody],[STM- HAL, CubeMX-2],[Pico C/ C++ SDK]),
-
+    
       caption: [Gängige aktuelle Mikrocontroller],
   )
 ]
 
-Eine engere auswahl der modernsten Mikrocontroller wird im folgenden anhand der aus den Zielen hergeleiteten Kriterien auf einer Skala von 1-3 bewertet.
 
 *Entscheidungsmatrix Mikrocontroller*
 
-Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach Relevanz für diesen konkreten Anwendungsfall mit einem Multiplikator Gewichtet.
+Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach Relevanz für diesen konkreten Anwendungsfall mit einem Multiplikator gewichtet.
 
 
 #figure(
@@ -169,6 +176,7 @@ table.header([*Bewertung*], [*Bedeutung*]),
     ),
     caption: [Entscheidungsmatrix Mikrocontroller],
   )
+
 
 
 #block(breakable: false)[
@@ -351,4 +359,3 @@ Die microSD-Karte erzielt die höchste gewichtete Bewertung. Sie verbindet eine 
     caption: [Zeitplanung],
   )
 ]
-

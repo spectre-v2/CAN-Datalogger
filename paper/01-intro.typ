@@ -130,9 +130,9 @@ Diese müssen dem SMART- Prinzip folgen, das heißt, sie müssen Spezifisch, Mes
 Auf dem Markt existieren nur eine geringe Anzahl an CAN-FD-Datenloggern, die diesen Anforderungen entsprechen. 
 
 Datenlogger, die für die Automobilindustrie entwickelt wurden, sind meist als robuste Multi-Bus-Logger mit umfangreicher Konnektivität ausgeführt. Die größten Einschränkungen sind dabei oft die Anzahl der CAN-FD-Kanäle, das Gewicht und Volumen sowie der Anschaffungspreis.
-Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Projekts und dienen als technische Referenz:
+Die hier gelisteten Geräte entsprechen am ehesten den Anforderungen dieses Projekts und dienen als technische Referenz.
 
-Die öffentlich einsehbaren Eigenschaften der angebotenen Produkte werden nach folgendem Schema gewertet. Die Eigenschaften sind in allen Tabellen den jeweiligen technischen Anforderungen T1 bis T9 zugeordnet. Auf eine Gewichtung der Kriterien wird aus Gründen der Einfachheit verzichtet.
+Die öffentlich einsehbaren Eigenschaften der angebotenen Produkte werden nach folgendem Schema gewertet. Die Eigenschaften sind in allen Tabellen den jeweiligen technischen Anforderungen T1 bis T9 zugeordnet. 
 
 #align(center)[
   #figure(
@@ -227,7 +227,7 @@ caption: [Evaluation des Kvaser Memorator Pro 5 @kvaser]
     columns: (1fr, 4fr, 1fr),
     align: left, inset: 2mm,
     table.header([Technische\ Anforderung],[Eigenschaft],[Bewertung]),
-    [#link(<t1>)[T1]],[Auswertung mit CANalyzer oder CANoe],[1],
+    [#link(<t1>)[T1]],[Auswertung mit Vector Signalizer],[1],
     [#link(<t1>)[T1]],[Drahtlose Datenübertragung über 3G],[0],
     [#link(<t4>)[T4]],[Speicherung auf SSD oder SD-Karte],[1],
     [#link(<t7>)[T7]],[Preis nicht öffentlich angegeben],[-1],
@@ -310,8 +310,7 @@ Ziel dieser Studienarbeit ist die Erforschung der grundlegenden Technologien, au
 
 Hierzu wird ein vereinfachter Prototyp entwickelt, der die zentralen Funktionen eines solchen Systems validiert: das Empfangen von CAN-FD-Nachrichten und das dauerhafte Speichern dieser Daten auf einem lokalen Speichermedium.
 
-Der Prototyp bildet nicht den vollständigen Fahrzeug-Datenlogger mit mehreren Kanälen und dessen integration in die Fahrzeugelektronik ab.
-
+Das Konzept gilt als Valide, wenn nachgewiesen werden kann, dass der Datenlogger von einem externen Sender mit einer Geschwindigkeit von 1 Mbit/s in der Arbitationsphase und 2 Mbit/s in der Datenphase CAN-FD Frames über einen längeren Zeitraum Verlustfrei abspeichert.
 
 == Meilensteinplanung <milestones>
 #align(center)[

@@ -57,6 +57,7 @@ target_include_directories(CAN-Datalogger PRIVATE
 # Add any user requested libraries
 target_link_libraries(CAN-Datalogger 
         hardware_spi
+        hardware_dma
         )
 
 pico_add_extra_outputs(CAN-Datalogger)
