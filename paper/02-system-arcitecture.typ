@@ -176,12 +176,13 @@ table.header([*Bewertung*], [*Bedeutung*]),
     ),
     caption: [Entscheidungsmatrix Mikrocontroller],
   )
+*Fazit*
 
-
+Der RP2350 eignet sich vorallem durch seie flexiblen pin-multiplexer, die freie Gestaltung von seriellen Schnittstellen mithilfe von Programmable- Input- Output  State Machines (PIO-SM), großem SRAM und Dual-Core RISC-V Prozessoren, sowie aufgrund seiner übersichtlichen, gut dokumentierten C/C++ Entwicklungsumgebung. Für die schnelle Prototypenentwicklung steht die Entwicklungsplatine Raspberry Pico 2 zur Verfügung.
 
 #block(breakable: false)[
 == Auswahl eines CAN- FD Controller-Transcievers <can-fd-controller-selection>
-Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittstelle betrachtet. Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
+Für die Anbindung der externen CAN-FD-Busse werden Controller . Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
 
 
   #figure(
@@ -254,6 +255,17 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller mit SPI-Schnittst
   ),
   caption: [Entscheidungsmatrix CAN-FD-Controller],
 )
+
+Der MCP251863 bietet eine integrierte Lösung, welche RAM, CAN-Controller sowie Bus-Transciever auf einem Chip vereint. Seine übersichtliche Registerstruktur, schnelles SPI- Interface und flexible Filterobjekte machen ihn besonders geeignet. Der CAN-Controller des MCP251863 ist mit dem des MCP2518-FD identisch, der einzige Unterschied besteht darin, dass der MCP2518-FD keinen internen CAN- Transciever besitzt.
+Für die Entwicklung eines Prototypen wird aufgrund einfacher Verfügbarkeit ein fertiges Modul verwendet, welches einen MCP2518-FD und einen ATA6563-Transciever kombiniert. Dies ist Softwaretechnisch vollständig äquivalent.
+
+#align(center)[
+  #figure(
+    image("pictures/mcp2518fd-module.jpg", width: 40%),
+    caption: [MCP-2518-FD Modul.@mcp2518fd-module],
+  )
+]
+
 
 == Auswahl eines Speichermediums <storage-selection>
 

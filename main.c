@@ -10,6 +10,7 @@ volatile bool mcp0_pending = false;
 
 //docs:start:can0_irq_handler
 void can0_irq(uint gpio, uint32_t event_mask){
+        printf("Entering CAN-0 interrupt service routine...");
     mcp0_pending= 1;
 }
 //docs:end:can0_irq_handler
@@ -84,8 +85,8 @@ int main()
     //docs:start:can0_scheduler
     while(1){
         if(mcp0_pending) can0_callback();
-        
     }
+    
     //docs:end:can0_scheduler
         
     

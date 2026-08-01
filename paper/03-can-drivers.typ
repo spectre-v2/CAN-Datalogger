@@ -1,4 +1,5 @@
 #import "header.typ":*
+
 = Senden von CAN-FD Nachrichten
 
 Der Candlelight FD bietet den Vorteil, dass dieser vom Linux-Kernel mithilfe seines integrierten Treibers Socketcan als natives Netzwerkinterface erkannt wird. 
@@ -47,23 +48,22 @@ Jedes Register des MCP2818FD ist 32 Bit breit und besitzt eine 12-Bit-Startadres
 
 #code-snippet("../mcp.h", "commands")
 
-Da SPI immer mit Byte- Arrays arbeitet, muss ein solches für einen erfolgreichen SPI- transfer zunächst aus dem Befehl sowie der Zieladresse im Addressraum des MCP2518FD zusammengesetzt werden. 
-Das erste Befehlsbyte enthält den vier Bit breiten SPI-Befehl sowie die oberen vier Bits der Registeradresse. Das zweite Byte überträgt die verbleibenden acht Bits der Adresse. Anschließend werden die eigentlichen Daten gesendet.
+Da SPI immer mit Byte- Arrays arbeitet @picosdk-hardware-spi, muss ein solches für einen erfolgreichen SPI- transfer zunächst aus dem Befehl sowie der Zieladresse im Addressraum des MCP2518FD zusammengesetzt werden. 
+Das erste Befehlsbyte enthält den vier Bit breiten SPI-Befehl sowie die oberen vier Bits der Registeradresse. Das zweite Byte überträgt die verbleibenden acht Bits der Adresse. Anschließend werden die eigentlichen Daten gesendet. @mcp2518fd
 
 #code-snippet("../mcp.c", "mcp_write_register")
 
-Beim Lesen eines Registers des MCP2518FD wird zunächst dieselbe Adressphase gesendet. Da SPI Vollduplex ist, werden beim Lesen Nullbytes gesendet, um den benötigten Takt zu erzeugen. Gleichzeitig werden die vom MCP2518-FD gesendeten Bytes im Empfangspuffer gespeichert.
+Beim Lesen eines Registers des MCP2518FD wird zunächst ebenfalls 2 Bytes aus Befehl und Zieladdresse gesendet. Da SPI Vollduplex ist, werden anschließend so viele Nullbytes gesendet, wie von der Zieladresse an Daten gelesen werden sollen, um den Bus zu takten. Gleichzeitig werden die vom MCP2518-FD gesendeten Bytes im Empfangspuffer gespeichert.
 
 #code-snippet("../mcp.c", "mcp_read_register")
 
 Damit die 32 Bit eines Registers sowohl byteweise über SPI als auch feldweise im Programm nutzbar sind, werden sie als Union abgebildet. `data_array` ist das Übertragungsformat, da die SPI- Treiber des mikrocontrollers immer mit 8-Bit Arrays arbeiten, und `bits` ordnet den Datenfeldern ihre eigentliche Bedeutung zu.
 
-
 #code-snippet("../mcp.h", "union")
 
 === Konfiguration des Empfangspfads
 
-Nach einem Reset beginnt die Initialisierung mit den Bitzeiten der nominalen CAN-Phase (500 kbit/s) und der Datenphase (2 Mbit/s). Die Felder `BRP`, `TSEG1`, `TSEG2` und `SJW` bestimmen dabei den Systemtakt- Prescaler und den Abtastzeitpunkt, sowie die maximal zulässige Zeitspanne, mit der der MCP2518 seine eigene Zeitbasis anhand der Datenflanken auf dem CAN-Bus synchronisieren darf.
+Nach einem Reset beginnt die Initialisierung mit den Bitzeiten der nominalen CAN-Phase (1 Mbit/s) und der Datenphase (2 Mbit/s). Die Felder `BRP`, `TSEG1`, `TSEG2` und `SJW` bestimmen dabei den Systemtakt- Prescaler und den Abtastzeitpunkt, sowie die maximal zulässige Zeitspanne, mit der der MCP2518 seine eigene Zeitbasis anhand der Datenflanken auf dem CAN-Bus synchronisieren darf.
 
 #code-snippet("../mcp.c", "mcp_bit_timing")
 
@@ -77,7 +77,7 @@ Filter 0 leitet zunächst alle Nachrichten in FIFO 1. Zusätzlich schaltet `RXIE
 
 #code-snippet("../mcp.c", "mcp_receive_filter")
 
-Die vorbereiteten Registerbilder werden anschließend jeweils vollständig, also mit vier Byte, geschrieben. Erst der letzte Zugriff fordert den Normalbetrieb im CAN-FD-Modus an. Dadurch ist die Empfangskette konfiguriert, bevor der Controller am Bus arbeitet.
+Die vorbereiteten Register- Objekte werden anschließend jeweils vollständig geschrieben. Erst der letzte Zugriff fordert den Normalbetrieb im CAN-FD-Modus an. 
 
 #code-snippet("../mcp.c", "mcp_apply_configuration")
 
@@ -95,7 +95,7 @@ Der Reset-Befehl wird bei aktivem Chip Select übertragen. Nach einer kurzen War
 
 === Interruptgesteuertes Auslesen
 
-Eine empfangene Nachricht zieht die Interrupt-Leitung des MCP2518FD auf Low. Die Interrupt-Routine führt selbst keine SPI-Übertragung aus, sondern setzt nur ein Flag. So bleibt sie kurz und der eigentliche Zugriff erfolgt kontrolliert in der Hauptschleife.
+Eine empfangene Nachricht zieht die Interrupt- Leitung des MCP2518FD auf Low. Die Interrupt-Routine führt selbst keine SPI-Übertragung aus, sondern setzt nur ein Flag. So bleibt sie kurz und der eigentliche Zugriff erfolgt kontrolliert in der Hauptschleife.
 
 #code-snippet("../main.c", "can0_irq_handler")
 
