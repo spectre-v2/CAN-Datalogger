@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
+#include "hardware/dma.h"
 #include "mcp.h"
 #include "main.h"
+
 
 //docs:start:mcp_reset
 void mcp_reset(){
@@ -61,15 +63,14 @@ void mcp_init(){
     printf("Initializing MCP2518... ");
 
 
-    //docs:start:mcp_bit_timing
     //nominal data rate: 500kbit/s
-    //sample point: 80%
-    //system clock: 20MHz
+    //sample point: 87%, weil der Candlelight FD auch auf dieser Sample rate arbeitet
+    //system clock: 20Mhz
     MCP_C1NBTCFG_t mcp_c1nbtcfg = { 
         .bits = {
-            .SJW= 3,    //4 TQ allowed sample point adjustment to synchronize bus
-            .TSEG2= 7, // 8 time quantums after sample
-            .TSEG1= 30,  //31 time quantums before sample
+            .SJW= 4,    //5 TQ allowed sample point adjustment to synchronize bus
+            .TSEG2= 4, // 5 time quantums after sample
+            .TSEG1= 33,  //34 time quantums before sample
             .BRP= 0     //system clock prescaler for can-controller
         },
     };
@@ -114,6 +115,7 @@ void mcp_init(){
 
     MCP_C1CON_t mcp_c1con = {
         .bits = {
+            .ISOCRCEN = 1, //use ISO-CAN-FD
             .REQOP = 0  //request normal can-FD mode
         }
     };

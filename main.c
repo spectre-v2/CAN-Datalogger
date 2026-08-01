@@ -1,3 +1,4 @@
+#include <hardware/gpio.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
@@ -10,14 +11,14 @@ volatile bool mcp0_pending = false;
 
 //docs:start:can0_irq_handler
 void can0_irq(uint gpio, uint32_t event_mask){
-        printf("Entering CAN-0 interrupt service routine...");
+        printf("Entering CAN-0 interrupt service routine...\n");
     mcp0_pending= 1;
 }
 //docs:end:can0_irq_handler
 
 //docs:start:can0_receive_callback
 void can0_callback(){
-    printf("Entering CAN-0 recieve callback... ");
+    printf("Entering CAN-0 recieve callback... \n");
 
     //Retrieve the address offset of the recieved CAN-Message stored in message ram from C1FIFOUA1
     uint32_t offset_tmp = 0;
@@ -36,7 +37,12 @@ void can0_callback(){
     //reset pending flag
     mcp0_pending = 0;
     printf("done.\n");
-    printf("Recieved Message ID: %d", can_rx_buffer.can_message.SID);
+
+    printf("Recieved message ID: %X\n", can_rx_buffer.can_message.SID);
+    printf("Recieved message payload byte 0: %X\n", can_rx_buffer.can_message.can_payload[0]);
+    printf("Recieved message payload byte 1: %X\n", can_rx_buffer.can_message.can_payload[1]);
+    printf("Recieved message payload byte 2: %X\n", can_rx_buffer.can_message.can_payload[2]);
+    printf("Recieved message payload byte 3: %X\n", can_rx_buffer.can_message.can_payload[3]);
 }
 //docs:end:can0_receive_callback
 
@@ -61,6 +67,9 @@ int main()
     gpio_put(pin_can0_cs, 1);
     //docs:end:can0_spi_setup
 
+    uint dma_channel_spi_rx = dma_claim_unused_channel(true);
+    uint dma_channel_spi_tx = dma_claim_unused_channel(true);
+
     //pico2 led for debugging
     gpio_set_function(pin_pico2_led, GPIO_FUNC_SIO);
     gpio_set_dir(pin_pico2_led, GPIO_OUT);
@@ -70,6 +79,10 @@ int main()
     mcp_reset();
     sleep_ms(5);
     mcp_init();
+    sleep_ms(5);
+
+        
+        
     //docs:end:can0_controller_start
 
     //docs:start:can0_irq_setup
@@ -77,8 +90,7 @@ int main()
     gpio_set_function(pin_can0_irq, GPIO_FUNC_SIO);
     gpio_set_dir(pin_can0_irq, GPIO_IN);
     gpio_pull_up(pin_can0_irq);
-    gpio_set_irq_callback(can0_irq);
-    gpio_set_irq_enabled(pin_can0_irq, GPIO_IRQ_LEVEL_LOW, 1);
+    gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
     
     //task scheduler

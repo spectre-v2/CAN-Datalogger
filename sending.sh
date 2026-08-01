@@ -4,7 +4,7 @@
 set -e
 
 CAN_INTERFACE="can0"
-CAN_MESSAGE="123##1DEADBEEF"
+CAN_MESSAGE="123##0DEADBEEF"
 
 echo "Available network interfaces:"
 ip link show
@@ -13,7 +13,7 @@ echo
 echo "Configuring ${CAN_INTERFACE}..."
 
 sudo ip link set "$CAN_INTERFACE" down
-sudo ip link set "$CAN_INTERFACE" type can bitrate 1000000 dbitrate 2000000 fd on
+sudo ip link set "$CAN_INTERFACE" type can bitrate 500000 dbitrate 2000000 fd on
 sudo ip link set "$CAN_INTERFACE" up
 
 echo
@@ -24,4 +24,3 @@ echo
 echo "Sending CAN FD test message ${CAN_MESSAGE}..."
 cansend "$CAN_INTERFACE" "$CAN_MESSAGE"
 
-echo "Test message sent successfully."
