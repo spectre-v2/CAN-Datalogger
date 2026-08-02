@@ -1,5 +1,6 @@
 #include <hardware/gpio.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 
@@ -9,11 +10,11 @@
 #include "can_ring_buffer.h"
 #include "sd.h"
 
-static volatile bool can0_pending = false;
+volatile bool can0_pending = false;
 
 //docs:start:can0_irq
-static void can0_irq(uint gpio, uint32_t event_mask){
-    can0_pending = true;
+void can0_irq(uint gpio, uint32_t event_mask){
+    can0_pending= 1;
 }
 //docs:end:can0_irq
 
@@ -21,10 +22,10 @@ static void can0_irq(uint gpio, uint32_t event_mask){
 
 
 //docs:start:can0_receive_callback
-static void can0_callback(void){
+void can0_callback(){
     printf("Entering CAN-0 recieve callback... \n");
 
-    can0_pending = false;
+    can0_pending = 0;
 
     uint32_t tmp_offset;
     can_message_object_t tmp_can_message_buffer;
@@ -76,7 +77,6 @@ int main()
     gpio_put(pin_can0_cs, 1);
     //docs:end:can0_spi_setup
 
-    //pico2 led for debugging
     gpio_set_function(pin_pico2_led, GPIO_FUNC_SIO);
     gpio_set_dir(pin_pico2_led, GPIO_OUT);
     
@@ -95,15 +95,12 @@ int main()
     gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
     
-    //task scheduler
     //docs:start:can0_scheduler
     while(1){
         sleep_ms(10000);
         if(can0_pending) can0_callback();
         
-        printf("Ring buffer element count: %lu\n", (unsigned long)can_ring_get_count());
-        
-        
+        printf("Ring buffer element count: %lu\n", can_ring_count);
 
     }
     

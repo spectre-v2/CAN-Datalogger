@@ -61,7 +61,7 @@ typedef union {
         uint32_t TXBWS : 4;              // Transmit Bandwidth Sharing bits
     } bits;
 
-} MCP_C1CON_t;                       // CAN Control Register
+} MCP_REG_C1CON_t;                   // CAN Control Register
 
 //docs:start:union
 typedef union {
@@ -74,7 +74,7 @@ typedef union {
     uint32_t TSEG1 : 8;              // Time Segment 1 bits
     uint32_t BRP : 8;                // Baud Rate Prescaler bits
     } bits;
-} MCP_C1NBTCFG_t;                    // Nominal Bit Time Configuration Register
+} MCP_REG_C1NBTCFG_t;                // Nominal Bit Time Configuration Register
 //docs:end:union
 
 typedef union {
@@ -88,7 +88,7 @@ typedef union {
     uint32_t unimplemented3 : 3;
     uint32_t BRP : 8;                // Baud Rate Prescaler bits
     } bits;
-} MCP_C1DBTCFG_t;                    // Data Bit Time Configuration Register
+} MCP_REG_C1DBTCFG_t;                // Data Bit Time Configuration Register
 
 
 typedef union {
@@ -104,7 +104,7 @@ typedef union {
     uint32_t EDGFLTEN : 1;           // Enable Edge Filtering during Bus Integration bit
     uint32_t unimplemented4 : 6;
     } bits;
-} MCP_C1TDC_t;                       // Transmitter Delay Compensation Register
+} MCP_REG_C1TDC_t;                   // Transmitter Delay Compensation Register
 
 typedef union {
     uint8_t data_array[4];
@@ -138,7 +138,7 @@ typedef union {
     uint32_t WAKIE : 1;              // Bus Wake-up Interrupt Enable bit
     uint32_t IVMIE : 1;              // Invalid Message Interrupt Enable bit
     } bits;
-} MCP_C1INT_t;                       // Interrupt Register
+} MCP_REG_C1INT_t;                   // Interrupt Register
 
 typedef union {
     uint8_t data_array[4];
@@ -146,21 +146,21 @@ typedef union {
     uint32_t unimplemented1 : 1;
     uint32_t RFIF : 31;              // Receive FIFO Interrupt Pending bits
     } bits;
-} MCP_C1RXIF_t;                      // Receive Interrupt Flag Register
+} MCP_REG_C1RXIF_t;                  // Receive Interrupt Flag Register
 
 typedef union {
     uint8_t data_array[4];
     struct __attribute__((packed)) {
     uint32_t TFIF : 32;              // Transmit FIFO/TXQ Interrupt Pending bits
     } bits;
-} MCP_C1TXIF_t;                      // Transmit Interrupt Flag Register
+} MCP_REG_C1TXIF_t;                  // Transmit Interrupt Flag Register
 
 typedef union {
     uint8_t data_array[4];
     struct __attribute__((packed)) {
     uint32_t TXREQ : 32;             // Message Send Request bits
     } bits;
-} MCP_C1TXREQ_t;                     // Transmit Request Register
+} MCP_REG_C1TXREQ_t;                 // Transmit Request Register
 
 typedef union {
     uint8_t data_array[4];
@@ -175,7 +175,7 @@ typedef union {
     uint32_t TXBO : 1;               // Transmitter Bus Off State bit
     uint32_t unimplemented1 : 10;
     } bits;
-} MCP_C1TREC_t;                      // Transmit/Receive Error Count Register
+} MCP_REG_C1TREC_t;                  // Transmit/Receive Error Count Register
 
 typedef union {
     uint8_t data_array[4];
@@ -198,7 +198,7 @@ typedef union {
     uint32_t FSIZE : 5;              // FIFO Size bits
     uint32_t PLSIZE : 3;             // Payload Size bits
     } bits;
-} MCP_C1FIFOCON_t;                   // FIFO Control Register
+} MCP_REG_C1FIFOCON_t;               // FIFO Control Register
 
 typedef union {
     uint8_t data_array[4];
@@ -214,14 +214,14 @@ typedef union {
     uint32_t FIFOCI : 5;             // FIFO Message Index bits
     uint32_t unimplemented1 : 19;
     } bits;
-} MCP_C1FIFOSTA_t;                   // FIFO Status Register
+} MCP_REG_C1FIFOSTA_t;               // FIFO Status Register
 
 typedef union {
     uint8_t data_array[4];
     struct __attribute__((packed)) {
     uint32_t FIFOUA : 32;            // FIFO User Address bits
     } bits;
-} MCP_C1FIFOUA_t;                    // FIFO User Address Register
+} MCP_REG_C1FIFOUA_t;                // FIFO User Address Register
 
 typedef union {
     uint8_t data_array[4];
@@ -239,7 +239,7 @@ typedef union {
     uint32_t unimplemented4 : 2;
     uint32_t FLTEN3 : 1;             // Enable Filter 3 to Accept Messages bit
     } bits;
-} MCP_C1FLTCON_t;                    // Filter Control Register
+} MCP_REG_C1FLTCON_t;                // Filter Control Register
 
 typedef union {
     uint8_t data_array[4];
@@ -250,7 +250,7 @@ typedef union {
     uint32_t EXIDE : 1;              // Extended Identifier Enable bit
     uint32_t unimplemented1 : 1;
     } bits;
-} MCP_C1FLTOBJ_t;                    // Filter Object Register
+} MCP_REG_C1FLTOBJ_t;                // Filter Object Register
 
 typedef union {
     uint8_t data_array[4];
@@ -261,7 +261,7 @@ typedef union {
     uint32_t MIDE : 1;               // Identifier Receive Mode bit
     uint32_t unimplemented1 : 1;
     } bits;
-} MCP_C1MASK_t;                      // Mask Register
+} MCP_REG_C1MASK_t;                  // Mask Register
 
 typedef union {
     uint8_t data_array[4];
@@ -280,7 +280,7 @@ typedef union {
     uint32_t SCLKRDY : 1;            // Synchronized System Clock Divisor bit
     uint32_t unimplemented5 : 19;
     } bits;
-} MCP_OSC_t;                         // Oscillator Control Register
+} MCP_REG_OSC_t;                     // Oscillator Control Register
 
 typedef union {
     uint8_t data_array[4];
@@ -304,7 +304,7 @@ typedef union {
     uint32_t INTOD : 1;              // Interrupt Pins Open Drain Mode bit
     uint32_t unimplemented6 : 1;
     } bits;
-} MCP_IOCON_t;                       // I/O Control Register
+} MCP_REG_IOCON_t;                   // I/O Control Register
 
 void mcp_reset(void);
 

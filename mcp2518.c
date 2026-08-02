@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
+#include "hardware/gpio.h"
 #include "hardware/spi.h"
-#include "hardware/dma.h"
 #include "mcp2518.h"
 #include "board.h"
 
@@ -66,7 +66,7 @@ void mcp_init(void){
     //nominal data rate: 500kbit/s
     //sample point: 87%, weil der Candlelight FD auch auf dieser Sample rate arbeitet
     //system clock: 20Mhz
-    MCP_C1NBTCFG_t mcp_c1nbtcfg = { 
+    MCP_REG_C1NBTCFG_t mcp_c1nbtcfg = {
         .bits = {
             .SJW= 4,    //5 TQ allowed sample point adjustment to synchronize bus
             .TSEG2= 4, // 5 time quantums after sample
@@ -76,7 +76,7 @@ void mcp_init(void){
     };
 
     //data phase rate to 2Mbit/s
-    MCP_C1DBTCFG_t mcp_c1dbtcfg = { 
+    MCP_REG_C1DBTCFG_t mcp_c1dbtcfg = {
         .bits = {
             .SJW= 1,
             .TSEG2= 1,
@@ -87,7 +87,7 @@ void mcp_init(void){
     //docs:end:mcp_bit_timing
 
     //docs:start:mcp_receive_fifo
-    MCP_C1FIFOCON_t mcp_c1fifocon1 = {
+    MCP_REG_C1FIFOCON_t mcp_c1fifocon1 = {
         .bits = {
             
             .PLSIZE= 0b111, //64 byte payload
@@ -98,7 +98,7 @@ void mcp_init(void){
     //docs:end:mcp_receive_fifo
 
     //docs:start:mcp_receive_interrupt
-    MCP_C1INT_t mcp_c1int = {
+    MCP_REG_C1INT_t mcp_c1int = {
         .bits = {
             .RXIE = 1, //recieve message interrupt enable
         }
@@ -107,7 +107,7 @@ void mcp_init(void){
 
     
     //docs:start:mcp_receive_filter
-    MCP_C1FLTCON_t mcp_c1fltcon = {
+    MCP_REG_C1FLTCON_t mcp_c1fltcon = {
         .bits = {
             .FLTEN0= 1, //enable filter 0
             .F0BP=  1 //save hits in fifo 1
@@ -115,7 +115,7 @@ void mcp_init(void){
     };
     //docs:end:mcp_receive_filter
 
-    MCP_C1CON_t mcp_c1con = {
+    MCP_REG_C1CON_t mcp_c1con = {
         .bits = {
             .ISOCRCEN = 1, //use ISO-CAN-FD
             .REQOP = 0  //request normal can-FD mode
