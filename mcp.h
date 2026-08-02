@@ -310,8 +310,8 @@ typedef union {
 
 void mcp_reset();
 
-void mcp_write_reg(uint16_t address, void *tx_buffer, size_t length);
+void mcp_write(uint16_t address, void *tx_buffer, size_t length);
 
-void mcp_read_reg(uint16_t address, void *rx_buffer, size_t length);
+void mcp_read(uint16_t address, void *rx_buffer, size_t length);
 
 void mcp_init();

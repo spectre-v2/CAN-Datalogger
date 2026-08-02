@@ -22,7 +22,7 @@ void mcp_reset(){
 //docs:end:mcp_reset
 
 //docs:start:mcp_write_register
-void mcp_write_reg(uint16_t address, void *tx_buffer, size_t length){
+void mcp_write(uint16_t address, void *tx_buffer, size_t length){
     printf("Attempting MCP2518 Register modification... ");
 
     uint8_t command[2];
@@ -40,9 +40,9 @@ void mcp_write_reg(uint16_t address, void *tx_buffer, size_t length){
 //docs:end:mcp_write_register
 
 //docs:start:mcp_read_register
-void mcp_read_reg(uint16_t address, void *rx_buffer, size_t length){
+void mcp_read(uint16_t address, void *rx_buffer, size_t length){
     printf("Attempting MCP2518 Register retrieve... ");
-
+    
     uint8_t command[2];
 
     command[0]= MCP_COMMAND_READ | (address>>8);    //4 command bits + first 4 address bits
@@ -89,7 +89,9 @@ void mcp_init(){
     //docs:start:mcp_receive_fifo
     MCP_C1FIFOCON_t mcp_c1fifocon1 = {
         .bits = {
+            
             .PLSIZE= 0b111, //64 byte payload
+            .FSIZE= 0b11001, //26 Messages fifo-depth
             .TFNRFNIE= 1, // Recieve-Fifo not empty Interrupt enabled.
         },
     };
@@ -122,12 +124,12 @@ void mcp_init(){
     
     
     //docs:start:mcp_apply_configuration
-    mcp_write_reg(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
-    mcp_write_reg(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
-    mcp_write_reg(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
-    mcp_write_reg(MCP_REG_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
-    mcp_write_reg(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
-    mcp_write_reg(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
+    mcp_write(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
+    mcp_write(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
+    mcp_write(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
+    mcp_write(MCP_REG_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
+    mcp_write(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
+    mcp_write(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
     //docs:end:mcp_apply_configuration
 
     printf("done.\n");

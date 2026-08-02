@@ -11,6 +11,8 @@
 
 #define pin_pico2_led 25
 
+#define can_ring_size 3600 //half of rp2350- ram for ringbuffer
+
 //Datatype for CAN-FD Messages
 typedef union{
     uint8_t data_array[72];
