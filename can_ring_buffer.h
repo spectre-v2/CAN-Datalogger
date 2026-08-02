@@ -8,5 +8,5 @@
 
 extern uint32_t can_ring_count;
 
-void can_ring_save(const can_message_object_t *message);
-void can_ring_fetch(can_message_object_t *message);
+void can_ring_save(const can_message_object_t *new_entry);
+void can_ring_fetch(can_message_object_t *fetched_entry);

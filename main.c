@@ -63,7 +63,7 @@ int main()
     while (!stdio_usb_connected()) { //wait for usb terminal connection
         sleep_ms(10);
     }
-        sleep_ms(10000);
+
     //docs:start:can0_spi_setup
     // SPI initialisation
     spi_init(spi_port_can0, 20*1000*1000);
