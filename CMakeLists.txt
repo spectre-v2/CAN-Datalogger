@@ -35,7 +35,12 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(CAN-Datalogger main.c mcp.c)
+add_executable(CAN-Datalogger
+        main.c
+        mcp2518.c
+        can_ring_buffer.c
+        sd.c
+)
 
 
 pico_set_program_name(CAN-Datalogger "CAN-Datalogger")
@@ -61,4 +66,3 @@ target_link_libraries(CAN-Datalogger
         )
 
 pico_add_extra_outputs(CAN-Datalogger)
-

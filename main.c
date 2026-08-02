@@ -2,38 +2,18 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
-#include "hardware/dma.h"
 
-#include "mcp.h"
-#include "main.h"
+#include "mcp2518.h"
+#include "board.h"
+#include "can_types.h"
+#include "can_ring_buffer.h"
+#include "sd.h"
 
-volatile bool mcp0_pending = false;
-
-//ring- buffer for can-messages
-can_message_object_t can_ring[can_ring_size];
-
-uint32_t can_ring_read_index = 0;
-uint32_t can_ring_write_index = 0;
-uint32_t can_ring_count = 0; 
-
-void can_ring_push(can_message_object_t *message){
-    can_ring[can_ring_write_index]= *message;
-    can_ring_write_index ++;
-    if(can_ring_write_index >= can_ring_size) can_ring_write_index = 0;
-    can_ring_count ++;
-}
-
-void can_ring_pop(can_message_object_t *message){
-    *message = can_ring[can_ring_read_index];
-    can_ring_read_index ++;
-    if(can_ring_read_index >= can_ring_size) can_ring_read_index = 0;
-    can_ring_count --; 
-}
-
+static volatile bool can0_pending = false;
 
 //docs:start:can0_irq
-void can0_irq(uint gpio, uint32_t event_mask){
-    mcp0_pending= 1;
+static void can0_irq(uint gpio, uint32_t event_mask){
+    can0_pending = true;
 }
 //docs:end:can0_irq
 
@@ -41,30 +21,29 @@ void can0_irq(uint gpio, uint32_t event_mask){
 
 
 //docs:start:can0_receive_callback
-void can0_callback(){
+static void can0_callback(void){
     printf("Entering CAN-0 recieve callback... \n");
 
-        //reset pending flag
-    mcp0_pending = 0;
+    can0_pending = false;
 
     uint32_t tmp_offset;
     can_message_object_t tmp_can_message_buffer;
 
     do {
         //Retrieve the address offset of the recieved CAN-Message stored in message ram from C1FIFOUA1
-        mcp_read(MCP_REG_C1FIFOUA1, &tmp_offset, sizeof tmp_offset);
+        mcp_read(MCP_REG_ADR_C1FIFOUA1, &tmp_offset, sizeof tmp_offset);
 
         //Read this message address and write into temp. message buffer.
         mcp_read(tmp_offset + MCP_RAM_BASE, tmp_can_message_buffer.data_array, sizeof tmp_can_message_buffer.data_array);
 
         //save message in ringbuffer
-        can_ring_push(&tmp_can_message_buffer);
+        can_ring_save(&tmp_can_message_buffer);
 
         //set UINC bit in C1FIFOCON1 to prompt load operation of next message offset into C1FIFOUA1
         MCP_C1FIFOCON_t tmp_c1fifocon;
-        mcp_read(MCP_REG_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+        mcp_read(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
         tmp_c1fifocon.bits.UINC= 1;
-        mcp_write(MCP_REG_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+        mcp_write(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
 
 
     }while(!gpio_get(pin_can0_irq));
@@ -74,6 +53,7 @@ void can0_callback(){
     printf("done.\n");
 }
 //docs:end:can0_receive_callback
+
 
 int main()
 {
@@ -119,9 +99,9 @@ int main()
     //docs:start:can0_scheduler
     while(1){
         sleep_ms(10000);
-        if(mcp0_pending) can0_callback();
+        if(can0_pending) can0_callback();
         
-        printf("Ring buffer element count: %lu\n", can_ring_count);
+        printf("Ring buffer element count: %lu\n", (unsigned long)can_ring_get_count());
         
         
 

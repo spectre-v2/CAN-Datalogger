@@ -2,12 +2,12 @@
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include "hardware/dma.h"
-#include "mcp.h"
-#include "main.h"
+#include "mcp2518.h"
+#include "board.h"
 
 
 //docs:start:mcp_reset
-void mcp_reset(){
+void mcp_reset(void){
     printf("Resetting MCP2518... ");
     uint8_t command[2];
     command[0]= 0b00000000;
@@ -22,7 +22,7 @@ void mcp_reset(){
 //docs:end:mcp_reset
 
 //docs:start:mcp_write_register
-void mcp_write(uint16_t address, void *tx_buffer, size_t length){
+void mcp_write(uint16_t address, const void *tx_buffer, size_t length){
     printf("Attempting MCP2518 Register modification... ");
 
     uint8_t command[2];
@@ -45,12 +45,12 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
     
     uint8_t command[2];
 
-    command[0]= MCP_COMMAND_READ | (address>>8);    //4 command bits + first 4 address bits
-    command[1]= address & 0b000011111111;   //last 8 address bits
+    command[0]= MCP_COMMAND_READ | (address>>8);    //4 command bits + first 4 address bits according to datasheet
+    command[1]= address & 0b000011111111;   //filtering lower 8 address bits
 
     gpio_put(pin_can0_cs, 0);
-    spi_write_blocking(spi_port_can0, command, 2);   //send 2 entries of command array
-    spi_read_blocking(spi_port_can0, 0b00000000, rx_buffer, length); //send empty bytes and write recieved data in buffer
+    spi_write_blocking(spi_port_can0, command, 2); 
+    spi_read_blocking(spi_port_can0, 0b00000000, rx_buffer, length); //sending empty bytes and write recieved data in buffer
     gpio_put(pin_can0_cs, 1);
 
     printf("done.\n");
@@ -58,7 +58,7 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
 //docs:end:mcp_read_register
 
 
-void mcp_init(){
+void mcp_init(void){
 
     printf("Initializing MCP2518... ");
 
@@ -124,12 +124,12 @@ void mcp_init(){
     
     
     //docs:start:mcp_apply_configuration
-    mcp_write(MCP_REG_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
-    mcp_write(MCP_REG_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
-    mcp_write(MCP_REG_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
-    mcp_write(MCP_REG_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
-    mcp_write(MCP_REG_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
-    mcp_write(MCP_REG_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
+    mcp_write(MCP_REG_ADR_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
+    mcp_write(MCP_REG_ADR_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
+    mcp_write(MCP_REG_ADR_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
+    mcp_write(MCP_REG_ADR_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
+    mcp_write(MCP_REG_ADR_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
+    mcp_write(MCP_REG_ADR_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
     //docs:end:mcp_apply_configuration
 
     printf("done.\n");

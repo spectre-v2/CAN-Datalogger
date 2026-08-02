@@ -2,8 +2,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include "pico/stdlib.h"
-#include "hardware/spi.h"
 
 #define MCP_RAM_BASE 0x400
 
@@ -16,26 +14,26 @@
 
 //docs:start:core_register_addresses
 // MCP2518FD register addresses 
-#define MCP_REG_C1CON       0b000000000000  // 0x000 - CAN Control Register
-#define MCP_REG_C1NBTCFG    0b000000000100  // 0x004 - Nominal Bit Time Configuration Register
-#define MCP_REG_C1DBTCFG    0b000000001000  // 0x008 - Data Bit Time Configuration Register
-#define MCP_REG_C1TDC       0b000000001100  // 0x00C - Transmitter Delay Compensation Register
-#define MCP_REG_C1INT       0b000000011100  // 0x01C - Interrupt Register
-#define MCP_REG_C1RXIF      0b000000100000  // 0x020 - Receive Interrupt Flag Register
-#define MCP_REG_C1TXIF      0b000000100100  // 0x024 - Transmit Interrupt Flag Register
-#define MCP_REG_C1TXREQ     0b000000110000  // 0x030 - Transmit Request Register
-#define MCP_REG_C1TREC      0b000000110100  // 0x034 - Transmit/Receive Error Count Register
+#define MCP_REG_ADR_C1CON       0b000000000000  // 0x000 - CAN Control Register
+#define MCP_REG_ADR_C1NBTCFG    0b000000000100  // 0x004 - Nominal Bit Time Configuration Register
+#define MCP_REG_ADR_C1DBTCFG    0b000000001000  // 0x008 - Data Bit Time Configuration Register
+#define MCP_REG_ADR_C1TDC       0b000000001100  // 0x00C - Transmitter Delay Compensation Register
+#define MCP_REG_ADR_C1INT       0b000000011100  // 0x01C - Interrupt Register
+#define MCP_REG_ADR_C1RXIF      0b000000100000  // 0x020 - Receive Interrupt Flag Register
+#define MCP_REG_ADR_C1TXIF      0b000000100100  // 0x024 - Transmit Interrupt Flag Register
+#define MCP_REG_ADR_C1TXREQ     0b000000110000  // 0x030 - Transmit Request Register
+#define MCP_REG_ADR_C1TREC      0b000000110100  // 0x034 - Transmit/Receive Error Count Register
 //docs:end:core_register_addresses
-#define MCP_REG_C1FIFOCON1  0b000001011100  // 0x05C - FIFO 1 Control Register
-#define MCP_REG_C1FIFOSTA1  0b000001100000  // 0x060 - FIFO 1 Status Register
-#define MCP_REG_C1FIFOUA1   0b000001100100  // 0x064 - FIFO 1 User Address Register
+#define MCP_REG_ADR_C1FIFOCON1  0b000001011100  // 0x05C - FIFO 1 Control Register
+#define MCP_REG_ADR_C1FIFOSTA1  0b000001100000  // 0x060 - FIFO 1 Status Register
+#define MCP_REG_ADR_C1FIFOUA1   0b000001100100  // 0x064 - FIFO 1 User Address Register
 
-#define MCP_REG_C1FLTCON0   0b000111010000  // 0x1D0 - Filter Control Register 0
-#define MCP_REG_C1FLTOBJ0   0b000111110000  // 0x1F0 - Filter Object Register 0
-#define MCP_REG_C1MASK0     0b000111110100  // 0x1F4 - Mask Register 0
+#define MCP_REG_ADR_C1FLTCON0   0b000111010000  // 0x1D0 - Filter Control Register 0
+#define MCP_REG_ADR_C1FLTOBJ0   0b000111110000  // 0x1F0 - Filter Object Register 0
+#define MCP_REG_ADR_C1MASK0     0b000111110100  // 0x1F4 - Mask Register 0
 
-#define MCP_REG_OSC         0b111000000000  // 0xE00 - Oscillator Control Register
-#define MCP_REG_IOCON       0b111000000100  // 0xE04 - I/O Control Register
+#define MCP_REG_ADR_OSC         0b111000000000  // 0xE00 - Oscillator Control Register
+#define MCP_REG_ADR_IOCON       0b111000000100  // 0xE04 - I/O Control Register
 
 //Register manipulation on the mcp2518 works by writing and reading 32- bit arrays using SPI.
 //SPI can only work with arrays, that is why unions are used to sort the data into bit fields for easy manipulation.
@@ -308,10 +306,10 @@ typedef union {
     } bits;
 } MCP_IOCON_t;                       // I/O Control Register
 
-void mcp_reset();
+void mcp_reset(void);
 
-void mcp_write(uint16_t address, void *tx_buffer, size_t length);
+void mcp_write(uint16_t address, const void *tx_buffer, size_t length);
 
 void mcp_read(uint16_t address, void *rx_buffer, size_t length);
 
-void mcp_init();
+void mcp_init(void);
