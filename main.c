@@ -9,6 +9,7 @@
 #include "can_types.h"
 #include "can_ring_buffer.h"
 #include "sd.h"
+#include "fatfs_core.h"
 
 volatile bool can0_pending = false;
 
@@ -94,6 +95,27 @@ int main()
     gpio_pull_up(pin_can0_irq);
     gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
+
+    /////////////////
+    
+    //fatfs setup
+    FATFS fatfs_file_object;
+    f_mount(&fatfs_file_object, "mounted_object", 1);
+
+    //opening the file and writing
+    FIL new_file;
+    char* filename = "test.txt";
+    f_write(&new_file, filename, FA_OPEN_APPEND | FA_WRITE);
+
+    char message[] = "hi";
+    UINT written = 0;
+    f_close(&fil);
+
+    f_unmount("mounted_drive");
+
+    ///////////
+
+
 
     //docs:start:can0_scheduler
     while(1){

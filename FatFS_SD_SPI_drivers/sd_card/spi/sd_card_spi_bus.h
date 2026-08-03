@@ -15,18 +15,14 @@ specific language governing permissions and limitations under the License.
 #pragma once
 
 #include <stdint.h>
-//
+
 #include "pico/stdlib.h"
-//
+
 #include "pico_time_delay.h"
 #include "sd_card_noop_debug.h"
 #include "pico_spi_dma_transport.h"
 #include "sd_card_manager.h"
 #include "sd_card_timeouts.h"
-
-#ifdef NDEBUG
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
 
 void sd_spi_go_low_frequency(sd_card_t *this);
 void sd_spi_go_high_frequency(sd_card_t *this);
@@ -39,8 +35,6 @@ what the card should be ready for communication) is provided to eliminate power-
 synchronization problems.
 */
 void sd_spi_send_initializing_sequence(sd_card_t *sd_card_p);
-
-//FIXME: sd_spi_read, sd_spi_write, and sd_spi_write_read should return an error code on timeout.
 
 static inline uint8_t sd_spi_read(sd_card_t *sd_card_p) {
     uint8_t received = SPI_FILL_CHAR;

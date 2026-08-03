@@ -184,12 +184,6 @@
 //
 #include "sd_card_spi_protocol.h"
 
-#if defined(NDEBUG) || !USE_DBG_PRINTF
-#  pragma GCC diagnostic ignored "-Wunused-function"
-#  pragma GCC diagnostic ignored "-Wunused-variable"
-#  pragma GCC diagnostic ignored "-Wunused-parameter"
-#endif
-
 #ifndef TRACE
 #  define TRACE 0
 #endif

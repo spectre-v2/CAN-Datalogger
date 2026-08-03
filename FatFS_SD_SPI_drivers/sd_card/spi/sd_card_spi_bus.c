@@ -16,21 +16,14 @@ specific language governing permissions and limitations under the License.
 #include <inttypes.h>
 #include <stdint.h>
 #include <string.h>
-//
+
 #include "hardware/gpio.h"
-//
+
 #include "sd_card_noop_debug.h"
 #include "pico_time_delay.h"
 #include "pico_spi_dma_transport.h"
-//
-#if !defined(USE_DBG_PRINTF) || defined(NDEBUG)
-#  pragma GCC diagnostic ignored "-Wunused-variable"
-#endif
-//
-#include "sd_card_spi_bus.h"
 
-// #define TRACE_PRINTF(fmt, args...)
-// #define TRACE_PRINTF printf
+#include "sd_card_spi_bus.h"
 
 void sd_spi_go_high_frequency(sd_card_t *sd_card_p) {
     uint actual = spi_set_baudrate(sd_card_p->spi_if_p->spi->hw_inst, sd_card_p->spi_if_p->spi->baud_rate);

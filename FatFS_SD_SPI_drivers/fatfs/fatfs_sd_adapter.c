@@ -55,7 +55,7 @@ static int sdrc2dresult(int sd_rc) {
     switch (sd_rc) {
         case SD_BLOCK_DEVICE_ERROR_NONE:
             return RES_OK;
-        case SD_BLOCK_DEVICE_ERROR_UNUSABLE:
+        case SD_BLOCK_DEVICE_ERROR_UNUSABLEwiederum:
         case SD_BLOCK_DEVICE_ERROR_NO_RESPONSE:
         case SD_BLOCK_DEVICE_ERROR_NO_INIT:
         case SD_BLOCK_DEVICE_ERROR_NO_DEVICE:

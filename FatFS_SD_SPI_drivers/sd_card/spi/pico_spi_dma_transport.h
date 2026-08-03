@@ -93,7 +93,6 @@ static inline void spi_unlock(spi_t *spi_p) {
 /* 
 This uses the Pico LED to show SD card activity.
 You can use it to get a rough idea of utilization.
-Warning: Pico W uses GPIO 25 for SPI communication to the CYW43439.
 
 You can enable this by putting something like
     add_compile_definitions(USE_LED=1)
