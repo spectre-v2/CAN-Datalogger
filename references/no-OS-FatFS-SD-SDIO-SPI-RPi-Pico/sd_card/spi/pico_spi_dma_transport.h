@@ -1,4 +1,4 @@
-/* spi.h
+/* pico_spi_dma_transport.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -28,12 +28,8 @@ specific language governing permissions and limitations under the License.
 #include "hardware/irq.h"
 #include "hardware/spi.h"
 //
-#include "my_debug.h"
-#include "sd_timeouts.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sd_card_noop_debug.h"
+#include "sd_card_timeouts.h"
 
 #define SPI_FILL_CHAR (0xFF)
 
@@ -117,8 +113,3 @@ in CMakeLists.txt, for example.
 #  define LED_INIT()
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-/* [] END OF FILE */

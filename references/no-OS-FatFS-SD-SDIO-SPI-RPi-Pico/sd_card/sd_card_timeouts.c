@@ -1,5 +1,5 @@
 
-#include "sd_timeouts.h"
+#include "sd_card_timeouts.h"
 
 sd_timeouts_t sd_timeouts __attribute__((weak)) = {
     .sd_command = 2000, // Timeout in ms for response

@@ -14,10 +14,6 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /*!< Block size supported for SD card is 512 bytes */
 // Only HC block size is supported.
 static const size_t sd_block_size = 512;
@@ -91,13 +87,10 @@ typedef enum {                          /* Number on wire in parens */
 //------------------------------------------------------------------------------
 
 ///* Disk Status Bits (DSTATUS) */
-// See diskio.h.
+// See fatfs_diskio.h.
 // enum {
 //    STA_NOINIT = 0x01, /* Drive not initialized */
 //    STA_NODISK = 0x02, /* No medium in the drive */
 //    STA_PROTECT = 0x04 /* Write protected */
 //};
 
-#ifdef __cplusplus
-}
-#endif

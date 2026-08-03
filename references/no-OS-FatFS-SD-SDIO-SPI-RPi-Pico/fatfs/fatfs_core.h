@@ -22,14 +22,10 @@
 #ifndef FF_DEFINED
 #define FF_DEFINED	80286	/* Revision ID */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#include "ffconf.h"		/* FatFs configuration options */
+#include "fatfs_config_minimal.h"		/* FatFs configuration options */
 
 #if FF_DEFINED != FFCONF_DEF
-#error Wrong configuration file (ffconf.h).
+#error Wrong configuration file (fatfs_config_minimal.h).
 #endif
 
 
@@ -43,7 +39,7 @@ typedef unsigned __int64 QWORD;
 #define isnan(v) _isnan(v)
 #define isinf(v) (!_finite(v))
 
-#elif (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L) || defined(__cplusplus)	/* C99 or later */
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L	/* C99 or later */
 #define FF_INTDEF 2
 #include <stdint.h>
 typedef unsigned int	UINT;	/* int must be 16-bit or 32-bit */
@@ -421,9 +417,5 @@ void ff_mutex_give (int vol);		/* Unlock sync object */
 #define AM_DIR	0x10	/* Directory */
 #define AM_ARC	0x20	/* Archive */
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* FF_DEFINED */

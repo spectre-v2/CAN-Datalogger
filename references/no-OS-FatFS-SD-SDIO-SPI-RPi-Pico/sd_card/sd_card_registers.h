@@ -1,11 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "util.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sd_card_bit_utils.h"
 
 /*
 +-----------------------+-------+-------+-----------+
@@ -147,6 +143,3 @@ static inline uint32_t CSD_sectors(CSD_t csd) /*  const  */ {
     }
 }
 
-#ifdef __cplusplus
-}
-#endif

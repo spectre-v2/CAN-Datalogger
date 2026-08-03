@@ -4,7 +4,7 @@
 set -e
 
 CAN_INTERFACE="can0"
-CAN_MESSAGE="123##0DEADBEEF"
+CAN_MESSAGE="123##1DEADBEEF"
 
 echo "Available network interfaces:"
 ip link show

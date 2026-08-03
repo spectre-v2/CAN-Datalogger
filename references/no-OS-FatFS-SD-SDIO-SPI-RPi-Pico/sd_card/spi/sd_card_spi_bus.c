@@ -1,4 +1,4 @@
-/* sd_spi.c
+/* sd_card_spi_bus.c
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use 
@@ -19,15 +19,15 @@ specific language governing permissions and limitations under the License.
 //
 #include "hardware/gpio.h"
 //
-#include "my_debug.h"
-#include "delays.h"
-#include "my_spi.h"
+#include "sd_card_noop_debug.h"
+#include "pico_time_delay.h"
+#include "pico_spi_dma_transport.h"
 //
 #if !defined(USE_DBG_PRINTF) || defined(NDEBUG)
 #  pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 //
-#include "sd_spi.h"
+#include "sd_card_spi_bus.h"
 
 // #define TRACE_PRINTF(fmt, args...)
 // #define TRACE_PRINTF printf
@@ -62,4 +62,3 @@ void sd_spi_send_initializing_sequence(sd_card_t *sd_card_p) {
     gpio_put(sd_card_p->spi_if_p->ss_gpio, old_ss);
 }
 
-/* [] END OF FILE */

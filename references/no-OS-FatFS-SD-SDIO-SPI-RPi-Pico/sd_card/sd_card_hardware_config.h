@@ -1,4 +1,4 @@
-/* hw_config.h
+/* sd_card_hardware_config.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -15,11 +15,7 @@ specific language governing permissions and limitations under the License.
 
 #include <stddef.h>
 
-#include "sd_card.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sd_card_manager.h"
 
 /* FatFS supports up to 10 logical drives. By default, each logical
 drive is associated with the physical drive in same drive number. */
@@ -37,8 +33,3 @@ sd_card_t* sd_get_by_num(size_t num);
 extern const char* VolumeStr[FF_VOLUMES]; /* User defined volume ID */
 #endif
 
-#ifdef __cplusplus
-}
-#endif
-
-/* [] END OF FILE */

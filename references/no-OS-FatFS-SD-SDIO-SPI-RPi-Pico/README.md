@@ -6,12 +6,22 @@ card over SPI.
 
 Kept layers:
 
-- `src/ff15/source`: ChaN FatFs core.
-- `src/src/glue.c`: FatFs `diskio` glue to the SD-card block driver.
-- `src/sd_driver`: SD-card block driver, pruned to SPI only.
-- `src/sd_driver/SPI`: Pico SPI transport for SD cards.
-- `src/include`: minimal configuration and headers needed by the retained C code.
+- `fatfs`: ChaN FatFs core and the FatFs-to-SD-card disk I/O adapter.
+- `sd_card`: generic SD-card state, configuration, timeouts, CRC, and register helpers.
+- `sd_card/spi`: SD-card SPI protocol, SD-specific SPI bus helpers, and Pico SPI/DMA transport.
 - `examples/simple`: minimal mount/open/write/close example and hardware config.
+
+Important files:
+
+- `fatfs/fatfs_core.c`: FatFs filesystem implementation.
+- `fatfs/fatfs_core.h`: FatFs public API.
+- `fatfs/fatfs_config_minimal.h`: minimal FatFs feature configuration.
+- `fatfs/fatfs_diskio.h`: block-device API expected by FatFs.
+- `fatfs/fatfs_sd_card_diskio_adapter.c`: implementation of FatFs disk I/O using `sd_card_t`.
+- `sd_card/sd_card_manager.c`: generic SD-card setup, status, card-detect, and locking.
+- `sd_card/spi/sd_card_spi_protocol.c`: SD-card command and block protocol over SPI.
+- `sd_card/spi/sd_card_spi_bus.c`: SD-specific SPI select/deselect and clock helpers.
+- `sd_card/spi/pico_spi_dma_transport.c`: Pico SDK SPI/DMA transport.
 
 Removed:
 
@@ -43,9 +53,9 @@ f_close(&file);
 f_unmount("");
 ```
 
-Hardware pins live in `examples/simple/hw_config.c`.
+Hardware pins live in `examples/simple/example_sd_card_hardware_config.c`.
 The CMake target is `fatfs_sd_spi`; your application still needs to compile one
-`hw_config.c` that provides `sd_get_num()` and `sd_get_by_num()`.
+hardware config C file that provides `sd_get_num()` and `sd_get_by_num()`.
 
 This reference expects the card to already be formatted as FAT/FAT32. exFAT is
 disabled to keep the code small.

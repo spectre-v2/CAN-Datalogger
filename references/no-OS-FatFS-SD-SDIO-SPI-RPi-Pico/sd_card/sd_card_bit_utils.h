@@ -1,4 +1,4 @@
-/* util.h
+/* sd_card_bit_utils.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use 
@@ -18,12 +18,7 @@ specific language governing permissions and limitations under the License.
 #include <stdint.h>
 #include <string.h>
 //
-#include "my_debug.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+#include "sd_card_noop_debug.h"
 
 typedef int (*printer_t)(const char* format, ...);
 
@@ -78,7 +73,3 @@ static inline uint32_t ext_bits16(unsigned char const *data, int msb, int lsb) {
     return ext_bits(16, data, msb, lsb);
 }
 
-#ifdef __cplusplus
-}
-#endif
-/* [] END OF FILE */

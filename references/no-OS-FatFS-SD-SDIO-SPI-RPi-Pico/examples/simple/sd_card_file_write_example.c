@@ -1,4 +1,4 @@
-/* main.c
+/* sd_card_file_write_example.c
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -16,11 +16,11 @@ specific language governing permissions and limitations under the License.
 //
 #include "pico/stdlib.h"
 //
-#include "hw_config.h"
-#include "ff.h"
+#include "sd_card_hardware_config.h"
+#include "fatfs_core.h"
 
 /**
- * @file main.c
+ * @file sd_card_file_write_example.c
  * @brief Minimal example of writing to a file on SD card
  * @details
  * This program demonstrates the following:

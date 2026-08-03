@@ -1,4 +1,4 @@
-/* sd_card.c
+/* sd_card_manager.c
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -21,17 +21,17 @@ specific language governing permissions and limitations under the License.
 //
 #include "pico/mutex.h"
 //
-#include "SPI/sd_card_spi.h"
-#include "hw_config.h"  // Hardware Configuration of the SPI and SD Card "objects"
-#include "my_debug.h"
-#include "sd_card_constants.h"
-#include "sd_regs.h"
-#include "sd_timeouts.h"
-#include "util.h"
+#include "spi/sd_card_spi_protocol.h"
+#include "sd_card_hardware_config.h"  // Hardware Configuration of the SPI and SD Card "objects"
+#include "sd_card_noop_debug.h"
+#include "sd_card_protocol_constants.h"
+#include "sd_card_registers.h"
+#include "sd_card_timeouts.h"
+#include "sd_card_bit_utils.h"
 //
-#include "diskio.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
+#include "fatfs_diskio.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
 //
-#include "sd_card.h"
+#include "sd_card_manager.h"
 
 #define TRACE_PRINTF(fmt, args...)
 // #define TRACE_PRINTF printf
@@ -320,4 +320,3 @@ bool sd_allocation_unit(sd_card_t *sd_card_p, size_t *au_size_bytes_p) {
     return false;
 }
 
-/* [] END OF FILE */

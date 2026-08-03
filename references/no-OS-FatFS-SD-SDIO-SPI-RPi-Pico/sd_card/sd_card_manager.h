@@ -1,4 +1,4 @@
-/* sd_card.h
+/* sd_card_manager.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -24,18 +24,14 @@ specific language governing permissions and limitations under the License.
 #include "hardware/gpio.h"
 #include "pico/mutex.h"
 //
-#include "ff.h"
+#include "fatfs_core.h"
 //
-#include "SPI/my_spi.h"
-#include "SPI/sd_card_spi.h"
-#include "diskio.h"
-#include "sd_card_constants.h"
-#include "sd_regs.h"
-#include "util.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "spi/pico_spi_dma_transport.h"
+#include "spi/sd_card_spi_protocol.h"
+#include "fatfs_diskio.h"
+#include "sd_card_protocol_constants.h"
+#include "sd_card_registers.h"
+#include "sd_card_bit_utils.h"
 
 typedef enum { SD_IF_NONE, SD_IF_SPI } sd_if_t;
 
@@ -122,8 +118,3 @@ sd_card_t *sd_get_by_drive_prefix(const char *const name);
 // sd_init_driver() must be called before this:
 char const *sd_get_drive_prefix(sd_card_t *sd_card_p);
 
-#ifdef __cplusplus
-}
-#endif
-
-/* [] END OF FILE */

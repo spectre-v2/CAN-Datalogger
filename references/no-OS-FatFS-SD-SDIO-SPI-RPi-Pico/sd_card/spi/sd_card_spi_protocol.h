@@ -1,4 +1,4 @@
-/* sd_card_spi.h
+/* sd_card_spi_protocol.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use
@@ -14,16 +14,8 @@ specific language governing permissions and limitations under the License.
 
 #pragma once
 
-#include "sd_card.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sd_card_manager.h"
 
 void sd_spi_ctor(sd_card_t *sd_card_p);  // Constructor for sd_card_t
 uint32_t sd_go_idle_state(sd_card_t *sd_card_p);
 
-#ifdef __cplusplus
-}
-#endif
-/* [] END OF FILE */

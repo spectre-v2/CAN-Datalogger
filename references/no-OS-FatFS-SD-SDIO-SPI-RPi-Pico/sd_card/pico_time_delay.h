@@ -53,18 +53,10 @@ call to millis() returns 0xFFFFFFFF:
 #include "pico.h"
 #include "pico/stdlib.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 static inline uint32_t millis() {
     __compiler_memory_barrier();
     return time_us_64() / 1000;
     __compiler_memory_barrier();
-}
-
-static inline void delay_ms(uint32_t ulTime_ms) {
-    sleep_ms(ulTime_ms);
 }
 
 static inline uint64_t micros() {
@@ -73,7 +65,3 @@ static inline uint64_t micros() {
     __compiler_memory_barrier();
 }
 
-#ifdef __cplusplus
-}
-#endif
-/* [] END OF FILE */

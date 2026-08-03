@@ -1,4 +1,4 @@
-#include "hw_config.h"
+#include "sd_card_hardware_config.h"
 
 /* Configuration of hardware SPI object */
 static spi_t spi = {

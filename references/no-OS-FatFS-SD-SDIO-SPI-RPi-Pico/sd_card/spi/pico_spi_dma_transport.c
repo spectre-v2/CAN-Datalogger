@@ -25,12 +25,12 @@ specific language governing permissions and limitations under the License.
 #include "pico/platform.h"
 #include "pico/stdlib.h"
 //
-#include "delays.h"
-#include "hw_config.h"
-#include "my_debug.h"
-#include "util.h"
+#include "pico_time_delay.h"
+#include "sd_card_hardware_config.h"
+#include "sd_card_noop_debug.h"
+#include "sd_card_bit_utils.h"
 //
-#include "my_spi.h"
+#include "pico_spi_dma_transport.h"
 
 #ifndef USE_DBG_PRINTF
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -358,4 +358,3 @@ bool my_spi_init(spi_t *spi_p) {
     return true;
 }
 
-/* [] END OF FILE */

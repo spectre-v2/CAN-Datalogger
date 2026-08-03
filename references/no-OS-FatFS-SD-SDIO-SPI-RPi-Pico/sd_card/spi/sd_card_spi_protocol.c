@@ -1,5 +1,5 @@
 /**
- * @file sd_card_spi.c
+ * @file sd_card_spi_protocol.c
  * @brief SD Card SPI Driver
  *
  * @section License
@@ -171,18 +171,18 @@
 #include <string.h>
 #include <stdarg.h>
 //
-#include "crc.h"
-#include "diskio.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
-#include "hw_config.h"  // Hardware Configuration of the SPI and SD Card "objects"
-#include "my_debug.h"
-#include "delays.h"
-#include "sd_card.h"
-#include "sd_card_constants.h"
-#include "sd_spi.h"
-#include "sd_timeouts.h"
-#include "util.h"
+#include "sd_card_crc.h"
+#include "fatfs_diskio.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
+#include "sd_card_hardware_config.h"  // Hardware Configuration of the SPI and SD Card "objects"
+#include "sd_card_noop_debug.h"
+#include "pico_time_delay.h"
+#include "sd_card_manager.h"
+#include "sd_card_protocol_constants.h"
+#include "sd_card_spi_bus.h"
+#include "sd_card_timeouts.h"
+#include "sd_card_bit_utils.h"
 //
-#include "sd_card_spi.h"
+#include "sd_card_spi_protocol.h"
 
 #if defined(NDEBUG) || !USE_DBG_PRINTF
 #  pragma GCC diagnostic ignored "-Wunused-function"
@@ -1728,4 +1728,3 @@ void sd_spi_ctor(sd_card_t *sd_card_p) {
     }
 }
 
-/* [] END OF FILE */

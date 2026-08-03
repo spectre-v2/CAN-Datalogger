@@ -17,7 +17,7 @@ specific language governing permissions and limitations under the License.
  * This code is under the zlib license, permitting free commercial use.
  */
 
-#include "crc.h"
+#include "sd_card_crc.h"
 
 const char m_Crc7Table[] = {0x00, 0x09, 0x12, 0x1B, 0x24, 0x2D, 0x36,
 	0x3F, 0x48, 0x41, 0x5A, 0x53, 0x6C, 0x65, 0x7E, 0x77, 0x19, 0x10, 0x0B,
@@ -376,4 +376,3 @@ uint16_t crc16(uint8_t const *data, int const length)
 	return crc16ibm_3740_word(crc, data, length);
 }
 
-/* [] END OF FILE */

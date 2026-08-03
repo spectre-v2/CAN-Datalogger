@@ -1,4 +1,4 @@
-/* crc.h
+/* sd_card_crc.h
 Copyright 2021 Carl John Kugler III
 
 Licensed under the Apache License, Version 2.0 (the License); you may not use 
@@ -70,4 +70,3 @@ uint16_t crc16(uint8_t const *data, int const length);
 
 #endif
 
-/* [] END OF FILE */

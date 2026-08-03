@@ -5,11 +5,7 @@
 #ifndef _DISKIO_DEFINED
 #define _DISKIO_DEFINED
 
-#include "ff.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "fatfs_core.h"
 
 /* Status of Disk Functions */
 typedef BYTE	DSTATUS;
@@ -71,9 +67,5 @@ DRESULT disk_ioctl (BYTE pdrv, BYTE cmd, void* buff);
 #define ATA_GET_REV			20	/* Get F/W revision */
 #define ATA_GET_MODEL		21	/* Get model name */
 #define ATA_GET_SN			22	/* Get serial number */
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
