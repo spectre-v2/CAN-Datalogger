@@ -8,11 +8,10 @@
 /*-----------------------------------------------------------------------*/
 //
 //
-#include "sd_card_hardware_config.h"
 #include "sd_card_noop_debug.h"
-#include "sd_card_manager.h"
+#include "sd_card_spi.h"
 //
-#include "fatfs_diskio.h" /* Declarations of disk functions */
+#include "fatfs_sd_adapter.h" /* Declarations of disk functions */
 
 #define TRACE_PRINTF(fmt, args...)
 //#define TRACE_PRINTF printf  // task_printf
@@ -24,10 +23,7 @@
 DSTATUS disk_status(BYTE pdrv /* Physical drive number to identify the drive */
 ) {
     TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    sd_card_t *sd_card_p = sd_get_by_num(pdrv);
-    if (!sd_card_p) return RES_PARERR;
-    sd_card_detect(sd_card_p);   // Fast: just a GPIO read
-    return sd_card_p->state.m_Status;  // See http://elm-chan.org/fsw/ff/doc/dstat.html
+    return pdrv == 0 ? sd_card_status() : STA_NOINIT;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -39,40 +35,8 @@ DSTATUS disk_initialize(
 ) {
     TRACE_PRINTF(">>> %s\n", __FUNCTION__);
 
-    bool ok = sd_init_driver();
-    if (!ok) return RES_NOTRDY;
-
-    sd_card_t *sd_card_p = sd_get_by_num(pdrv);
-    if (!sd_card_p) return RES_PARERR;
-    DSTATUS ds = disk_status(pdrv);
-    if (STA_NODISK & ds) 
-        return ds;
-    // See http://elm-chan.org/fsw/ff/doc/dstat.html
-    return sd_card_p->init(sd_card_p);  
+    return pdrv == 0 ? sd_card_init() : STA_NOINIT;
 }
-
-static int sdrc2dresult(int sd_rc) {
-    switch (sd_rc) {
-        case SD_BLOCK_DEVICE_ERROR_NONE:
-            return RES_OK;
-        case SD_BLOCK_DEVICE_ERROR_UNUSABLEwiederum:
-        case SD_BLOCK_DEVICE_ERROR_NO_RESPONSE:
-        case SD_BLOCK_DEVICE_ERROR_NO_INIT:
-        case SD_BLOCK_DEVICE_ERROR_NO_DEVICE:
-            return RES_NOTRDY;
-        case SD_BLOCK_DEVICE_ERROR_PARAMETER:
-        case SD_BLOCK_DEVICE_ERROR_UNSUPPORTED:
-            return RES_PARERR;
-        case SD_BLOCK_DEVICE_ERROR_WRITE_PROTECTED:
-            return RES_WRPRT;
-        case SD_BLOCK_DEVICE_ERROR_CRC:
-        case SD_BLOCK_DEVICE_ERROR_WOULD_BLOCK:
-        case SD_BLOCK_DEVICE_ERROR_ERASE:
-        case SD_BLOCK_DEVICE_ERROR_WRITE:
-        default:
-            return RES_ERROR;
-            }
-        }
 
 /*-----------------------------------------------------------------------*/
 /* Read Sector(s)                                                        */
@@ -84,10 +48,8 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive number to identify the drive */
                   UINT count    /* Number of sectors to read */
 ) {
     TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    sd_card_t *sd_card_p = sd_get_by_num(pdrv);
-    if (!sd_card_p) return RES_PARERR;
-    int rc = sd_card_p->read_blocks(sd_card_p, buff, sector, count);
-    return sdrc2dresult(rc);
+    if (pdrv != 0) return RES_PARERR;
+    return sd_card_read_blocks(buff, sector, count) ? RES_OK : RES_ERROR;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -102,10 +64,8 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive number to identify the drive */
                    UINT count        /* Number of sectors to write */
 ) {
     TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    sd_card_t *sd_card_p = sd_get_by_num(pdrv);
-    if (!sd_card_p) return RES_PARERR;
-    int rc = sd_card_p->write_blocks(sd_card_p, buff, sector, count);
-    return sdrc2dresult(rc);
+    if (pdrv != 0) return RES_PARERR;
+    return sd_card_write_blocks(buff, sector, count) ? RES_OK : RES_ERROR;
 }
 
 #endif
@@ -119,8 +79,7 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
                    void *buff /* Buffer to send/receive control data */
 ) {
     TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    sd_card_t *sd_card_p = sd_get_by_num(pdrv);
-    if (!sd_card_p) return RES_PARERR;
+    if (pdrv != 0) return RES_PARERR;
     switch (cmd) {
         case GET_SECTOR_COUNT: {  // Retrieves number of available sectors, the
                                   // largest allowable LBA + 1, on the drive
@@ -130,7 +89,7 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
                                   // volume/partition to be created. It is
                                   // required when FF_USE_MKFS == 1.
             static LBA_t n;
-            n = sd_card_p->get_num_sectors(sd_card_p);
+            n = sd_card_sector_count();
             *(LBA_t *)buff = n;
             if (!n) return RES_ERROR;
             return RES_OK;
@@ -149,8 +108,7 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
             return RES_OK;
         }
         case CTRL_SYNC:
-            sd_card_p->sync(sd_card_p);
-            return RES_OK;
+            return sd_card_sync() ? RES_OK : RES_ERROR;
         default:
             return RES_PARERR;
     }

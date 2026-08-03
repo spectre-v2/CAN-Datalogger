@@ -11,13 +11,10 @@ target_compile_definitions(fatfs_sd_spi INTERFACE
 
 target_sources(fatfs_sd_spi INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/fatfs/fatfs_core.c
-    ${CMAKE_CURRENT_LIST_DIR}/fatfs/fatfs_sd_card_diskio_adapter.c
-    ${CMAKE_CURRENT_LIST_DIR}/sd_card/sd_card_crc.c
-    ${CMAKE_CURRENT_LIST_DIR}/sd_card/sd_card_manager.c
+    ${CMAKE_CURRENT_LIST_DIR}/fatfs/fatfs_sd_adapter.c
     ${CMAKE_CURRENT_LIST_DIR}/sd_card/sd_card_timeouts.c
-    ${CMAKE_CURRENT_LIST_DIR}/sd_card/spi/pico_spi_dma_transport.c
-    ${CMAKE_CURRENT_LIST_DIR}/sd_card/spi/sd_card_spi_bus.c
-    ${CMAKE_CURRENT_LIST_DIR}/sd_card/spi/sd_card_spi_protocol.c
+    ${CMAKE_CURRENT_LIST_DIR}/sd_card/spi_transport.c
+    ${CMAKE_CURRENT_LIST_DIR}/sd_card/sd_card_spi.c
 )
 target_include_directories(fatfs_sd_spi INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/fatfs
@@ -26,8 +23,6 @@ target_include_directories(fatfs_sd_spi INTERFACE
 )
 
 target_link_libraries(fatfs_sd_spi INTERFACE
-    hardware_dma
     hardware_spi
-    hardware_sync
     pico_stdlib
 )

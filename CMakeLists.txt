@@ -33,13 +33,14 @@ project(CAN-Datalogger C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+add_subdirectory(FatFS_SD_SPI_drivers)
+
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(CAN-Datalogger
         main.c
         mcp2518.c
         can_ring_buffer.c
-        sd.c
 )
 
 
@@ -52,7 +53,8 @@ pico_enable_stdio_usb(CAN-Datalogger 1)
 
 # Add the standard library to the build
 target_link_libraries(CAN-Datalogger
-        pico_stdlib)
+        pico_stdlib
+        fatfs_sd_spi)
 
 # Add the standard include files to the build
 target_include_directories(CAN-Datalogger PRIVATE

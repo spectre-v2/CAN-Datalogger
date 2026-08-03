@@ -21,7 +21,7 @@
 
 #include <string.h>
 #include "fatfs_core.h"			/* Declarations of FatFs API */
-#include "fatfs_diskio.h"		/* Declarations of device I/O functions */
+#include "fatfs_sd_adapter.h"	/* Declarations of device I/O functions */
 
 
 /*--------------------------------------------------------------------------

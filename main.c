@@ -8,7 +8,6 @@
 #include "board.h"
 #include "can_types.h"
 #include "can_ring_buffer.h"
-#include "sd.h"
 #include "fatfs_core.h"
 
 volatile bool can0_pending = false;
@@ -98,20 +97,16 @@ int main()
 
     /////////////////
     
-    //fatfs setup
-    FATFS fatfs_file_object;
-    f_mount(&fatfs_file_object, "mounted_object", 1);
+    FATFS fs;
+    FIL file;
+    UINT bytes_written;
+    const char text[] = "hi\r\n";
 
-    //opening the file and writing
-    FIL new_file;
-    char* filename = "test.txt";
-    f_write(&new_file, filename, FA_OPEN_APPEND | FA_WRITE);
-
-    char message[] = "hi";
-    UINT written = 0;
-    f_close(&fil);
-
-    f_unmount("mounted_drive");
+    f_mount(&fs, "", 1);
+    f_open(&file, "TEST.TXT", FA_OPEN_APPEND | FA_WRITE);
+    f_write(&file, text, sizeof text - 1, &bytes_written);
+    f_close(&file);
+    f_unmount("");
 
     ///////////
 
