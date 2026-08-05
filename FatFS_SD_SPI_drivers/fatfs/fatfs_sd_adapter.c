@@ -7,14 +7,8 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 //
-//
-#include "sd_card_noop_debug.h"
 #include "sd_card_spi.h"
-//
 #include "fatfs_sd_adapter.h" /* Declarations of disk functions */
-
-#define TRACE_PRINTF(fmt, args...)
-//#define TRACE_PRINTF printf  // task_printf
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -22,8 +16,8 @@
 
 DSTATUS disk_status(BYTE pdrv /* Physical drive number to identify the drive */
 ) {
-    TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    return pdrv == 0 ? sd_card_status() : STA_NOINIT;
+    (void)pdrv;
+    return sd_card_status();
 }
 
 /*-----------------------------------------------------------------------*/
@@ -33,9 +27,8 @@ DSTATUS disk_status(BYTE pdrv /* Physical drive number to identify the drive */
 DSTATUS disk_initialize(
     BYTE pdrv /* Physical drive number to identify the drive */
 ) {
-    TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-
-    return pdrv == 0 ? sd_card_init() : STA_NOINIT;
+    (void)pdrv;
+    return sd_card_init();
 }
 
 /*-----------------------------------------------------------------------*/
@@ -47,9 +40,9 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive number to identify the drive */
                   LBA_t sector, /* Start sector in LBA */
                   UINT count    /* Number of sectors to read */
 ) {
-    TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    if (pdrv != 0) return RES_PARERR;
-    return sd_card_read_blocks(buff, sector, count) ? RES_OK : RES_ERROR;
+    (void)pdrv;
+    if (sd_card_read_blocks(buff, sector, count)) return RES_OK;
+    return RES_ERROR;
 }
 
 /*-----------------------------------------------------------------------*/
@@ -63,9 +56,9 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive number to identify the drive */
                    LBA_t sector,     /* Start sector in LBA */
                    UINT count        /* Number of sectors to write */
 ) {
-    TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    if (pdrv != 0) return RES_PARERR;
-    return sd_card_write_blocks(buff, sector, count) ? RES_OK : RES_ERROR;
+    (void)pdrv;
+    if (sd_card_write_blocks(buff, sector, count)) return RES_OK;
+    return RES_ERROR;
 }
 
 #endif
@@ -78,8 +71,8 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
                    BYTE cmd,  /* Control code */
                    void *buff /* Buffer to send/receive control data */
 ) {
-    TRACE_PRINTF(">>> %s\n", __FUNCTION__);
-    if (pdrv != 0) return RES_PARERR;
+    (void)pdrv;
+
     switch (cmd) {
         case GET_SECTOR_COUNT: {  // Retrieves number of available sectors, the
                                   // largest allowable LBA + 1, on the drive
@@ -88,10 +81,7 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
                                   // function to determine the size of
                                   // volume/partition to be created. It is
                                   // required when FF_USE_MKFS == 1.
-            static LBA_t n;
-            n = sd_card_sector_count();
-            *(LBA_t *)buff = n;
-            if (!n) return RES_ERROR;
+            *(LBA_t *)buff = sd_card_sector_count();
             return RES_OK;
         }
         case GET_BLOCK_SIZE: {  // Retrieves erase block size of the flash
@@ -103,12 +93,12 @@ DRESULT disk_ioctl(BYTE pdrv, /* Physical drive number (0..) */
                                 // f_mkfs function and it attempts to align data
                                 // area on the erase block boundary. It is
                                 // required when FF_USE_MKFS == 1.
-            static DWORD bs = 1;
-            *(DWORD *)buff = bs;
+            *(DWORD *)buff = 1;
             return RES_OK;
         }
         case CTRL_SYNC:
-            return sd_card_sync() ? RES_OK : RES_ERROR;
+            if (sd_card_sync()) return RES_OK;
+            return RES_ERROR;
         default:
             return RES_PARERR;
     }

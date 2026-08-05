@@ -19,7 +19,9 @@ Important files:
 - `fatfs/fatfs_sd_adapter.c`: implementation of FatFs disk I/O using `sd_card_t`.
 - `sd_card/sd_card_spi.h`: the one public SD-card configuration and access API.
 - `sd_card/sd_card_spi.c`: SD-card setup, commands, and block read/write protocol.
-- `sd_card/spi_transport.c`: small blocking Pico SDK SPI transport.
+
+Enable SD-card diagnostics with `cmake -S . -B build -DFATFS_SD_SPI_DEBUG=ON`.
+The driver writes them with `printf`, so they appear on the project's configured stdio output.
 
 Removed:
 

@@ -95,20 +95,27 @@ int main()
     gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
 
-    /////////////////
-    
-    FATFS fs;
-    FIL file;
-    UINT bytes_written;
-    const char text[] = "hi\r\n";
+    /* Write one line to TEST.TXT on SD-card volume 0. */
+    FATFS sd_card_file_system;
+    FIL sd_card_test_file;
+    UINT number_of_bytes_written;
+    const char sd_card_volume[] = "0:";
+    const char sd_card_test_file_path[] = "0:/TEST.TXT";
+    const char text_to_append[] = "hi\r\n";
 
-    f_mount(&fs, "", 1);
-    f_open(&file, "TEST.TXT", FA_OPEN_APPEND | FA_WRITE);
-    f_write(&file, text, sizeof text - 1, &bytes_written);
-    f_close(&file);
-    f_unmount("");
+    /* Connect FatFs to the SD card and read its filesystem information. */
+    f_mount(&sd_card_file_system, sd_card_volume, 1);
 
-    ///////////
+    /* Open TEST.TXT for writing; create it if necessary and append at its end. */
+    f_open(&sd_card_test_file, sd_card_test_file_path, FA_OPEN_APPEND | FA_WRITE);
+
+    /* Write the text, but not the terminating '\0' byte of the C string. */
+    f_write(&sd_card_test_file, text_to_append, sizeof text_to_append - 1,
+            &number_of_bytes_written);
+
+    /* Finish the file operation and detach the filesystem from the SD card. */
+    f_close(&sd_card_test_file);
+    f_unmount(sd_card_volume);
 
 
 
@@ -118,6 +125,7 @@ int main()
         if(can0_pending) can0_callback();
         
         printf("Ring buffer element count: %lu\n", (unsigned long)can_ring_count);
+        
 
     }
     
