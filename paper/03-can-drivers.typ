@@ -46,40 +46,40 @@ Das schalten der Csn-Leitung auf Masse (Active-Low) signalisiert den Beginn eine
 
 Jedes Register des MCP2818FD ist 32 Bit breit und besitzt eine 12-Bit-Startadresse. Der Treiber unterscheidet die drei grundlegenden Befehle zum Schreiben, Lesen und Zurücksetzen.
 
-#code-snippet("../mcp.h", "commands")
+#code-snippet("../mcp2518.h", "commands")
 
 Da SPI immer mit Byte- Arrays arbeitet @picosdk-hardware-spi, muss ein solches für einen erfolgreichen SPI- transfer zunächst aus dem Befehl sowie der Zieladresse im Addressraum des MCP2518FD zusammengesetzt werden. 
 Das erste Befehlsbyte enthält den vier Bit breiten SPI-Befehl sowie die oberen vier Bits der Registeradresse. Das zweite Byte überträgt die verbleibenden acht Bits der Adresse. Anschließend werden die eigentlichen Daten gesendet. @mcp2518fd
 
-#code-snippet("../mcp.c", "mcp_write_register")
+#code-snippet("../mcp2518.c", "mcp_write_register")
 
 Beim Lesen eines Registers des MCP2518FD wird zunächst ebenfalls 2 Bytes aus Befehl und Zieladdresse gesendet. Da SPI Vollduplex ist, werden anschließend so viele Nullbytes gesendet, wie von der Zieladresse an Daten gelesen werden sollen, um den Bus zu takten. Gleichzeitig werden die vom MCP2518-FD gesendeten Bytes im Empfangspuffer gespeichert.
 
-#code-snippet("../mcp.c", "mcp_read_register")
+#code-snippet("../mcp2518.c", "mcp_read_register")
 
 Damit die 32 Bit eines Registers sowohl byteweise über SPI als auch feldweise im Programm nutzbar sind, werden sie als Union abgebildet. `data_array` ist das Übertragungsformat, da die SPI- Treiber des mikrocontrollers immer mit 8-Bit Arrays arbeiten, und `bits` ordnet den Datenfeldern ihre eigentliche Bedeutung zu.
 
-#code-snippet("../mcp.h", "union")
+#code-snippet("../mcp2518.h", "union")
 
 === Konfiguration des Empfangspfads
 
 Nach einem Reset beginnt die Initialisierung mit den Bitzeiten der nominalen CAN-Phase (1 Mbit/s) und der Datenphase (2 Mbit/s). Die Felder `BRP`, `TSEG1`, `TSEG2` und `SJW` bestimmen dabei den Systemtakt- Prescaler und den Abtastzeitpunkt, sowie die maximal zulässige Zeitspanne, mit der der MCP2518 seine eigene Zeitbasis anhand der Datenflanken auf dem CAN-Bus synchronisieren darf.
 
-#code-snippet("../mcp.c", "mcp_bit_timing")
+#code-snippet("../mcp2518.c", "mcp_bit_timing")
 
 Das Register FIFO 1 wird als Empfangspuffer für genau eine CAN-FD-Nachricht mit bis zu 64 Byte Nutzdaten eingerichtet. TFNRFNIE legt fest, das bei vorhanden Daten im FIFO ein Interrupt ausgelöst werden soll.
 
-#code-snippet("../mcp.c", "mcp_receive_fifo")
+#code-snippet("../mcp2518.c", "mcp_receive_fifo")
 
 Filter 0 leitet zunächst alle Nachrichten in FIFO 1. Zusätzlich schaltet `RXIE` den globalen Empfangsinterrupt ein.
 
-#code-snippet("../mcp.c", "mcp_receive_interrupt")
+#code-snippet("../mcp2518.c", "mcp_receive_interrupt")
 
-#code-snippet("../mcp.c", "mcp_receive_filter")
+#code-snippet("../mcp2518.c", "mcp_receive_filter")
 
 Die vorbereiteten Register- Objekte werden anschließend jeweils vollständig geschrieben. Erst der letzte Zugriff fordert den Normalbetrieb im CAN-FD-Modus an. 
 
-#code-snippet("../mcp.c", "mcp_apply_configuration")
+#code-snippet("../mcp2518.c", "mcp_apply_configuration")
 
 === Inbetriebnahme durch den Mikrocontroller
 
@@ -89,7 +89,7 @@ Vor dem ersten Zugriff initialisiert der Mikrocontroller SPI und hält Chip Sele
 
 Der Reset-Befehl wird bei aktivem Chip Select übertragen. Nach einer kurzen Wartezeit werden die zuvor vorbereiteten Registerwerte geschrieben und der Controller in den CAN-FD-Betrieb versetzt.
 
-#code-snippet("../mcp.c", "mcp_reset")
+#code-snippet("../mcp2518.c", "mcp_reset")
 
 #code-snippet("../main.c", "can0_controller_start")
 

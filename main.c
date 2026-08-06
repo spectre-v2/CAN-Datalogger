@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "pico/stdlib.h"
+#include "pico/multicore.h"
 #include "hardware/spi.h"
 
 #include "mcp2518.h"
@@ -11,6 +12,12 @@
 #include "fatfs_core.h"
 
 volatile bool can0_pending = false;
+
+
+
+void core1_entry(){
+
+}
 
 //docs:start:can0_irq
 void can0_irq(uint gpio, uint32_t event_mask){
@@ -22,7 +29,7 @@ void can0_irq(uint gpio, uint32_t event_mask){
 
 
 //docs:start:can0_receive_callback
-void can0_callback(){
+bool can0_callback(){
     printf("Entering CAN-0 recieve callback... \n");
 
     can0_pending = 0;
@@ -59,6 +66,7 @@ void can0_callback(){
 int main()
 {
     stdio_init_all(); //starting USB controller
+    multicore_launch_core1(core1_entry);
 
     while (!stdio_usb_connected()) { //wait for usb terminal connection
         sleep_ms(10);
@@ -95,41 +103,33 @@ int main()
     gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
 
-    /* Write one line to TEST.TXT on SD-card volume 0. */
-    FATFS sd_card_file_system;
-    FIL sd_card_test_file;
-    UINT number_of_bytes_written;
-    const char sd_card_volume[] = "0:";
-    const char sd_card_test_file_path[] = "0:/TEST.TXT";
-    const char text_to_append[] = "hi\r\n";
 
-    /* Connect FatFs to the SD card and read its filesystem information. */
+    // Initialize filesystem
+    FATFS sd_card_file_system;
+    FIL sd_card_logfile;
+    UINT number_of_bytes_written;
+    char sd_card_volume[] = "0:";
+    char sd_card_logfile_path[] = "0:/log.csv";
+    char sd_card_logfile_header[] = "timestamp, identifier, payload\r\n" ;
+
+    // Connect FatFs to the SD card.
     f_mount(&sd_card_file_system, sd_card_volume, 1);
 
-    /* Open TEST.TXT for writing; create it if necessary and append at its end. */
-    f_open(&sd_card_test_file, sd_card_test_file_path, FA_OPEN_APPEND | FA_WRITE);
+    // Open log.csv for writing
+    f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
+    f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &number_of_bytes_written);
 
-    /* Write the text, but not the terminating '\0' byte of the C string. */
-    f_write(&sd_card_test_file, text_to_append, sizeof text_to_append - 1,
-            &number_of_bytes_written);
+    uint8_t i = 0;
+    while(i<1000){
+        if(can0_pending) {
+            can0_callback();
+            i++;
+        }
+    }
+
 
     /* Finish the file operation and detach the filesystem from the SD card. */
-    f_close(&sd_card_test_file);
+    f_close(&sd_card_logfile);
     f_unmount(sd_card_volume);
 
-
-
-    //docs:start:can0_scheduler
-    while(1){
-        sleep_ms(10000);
-        if(can0_pending) can0_callback();
-        
-        printf("Ring buffer element count: %lu\n", (unsigned long)can_ring_count);
-        
-
-    }
-    
-    //docs:end:can0_scheduler
-        
-    
 }
