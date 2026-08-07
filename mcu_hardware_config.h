@@ -6,8 +6,8 @@
 
 #define spi_port_sd spi1
 
-#define spi_port_can0_speed = 2 * 1000 * 1000;
-#define spi_port_sd_speed = 2 * 1000* 1000; //muss noch eingebaut werden
+#define spi_port_can0_speed (2 * 1000 * 1000)
+#define spi_port_sd_speed (2 * 1000* 1000) 
 
 #define pin_power_detect 14
 
@@ -24,3 +24,6 @@
 
 
 #define pin_pico2_led 25
+
+
+void mcu_hardware_init();

@@ -44,6 +44,7 @@ add_executable(CAN-Datalogger
         mcp2518.c
         can_ring_buffer.c
         csv_text_buffer.c
+        statemachine.c
 )
 
 

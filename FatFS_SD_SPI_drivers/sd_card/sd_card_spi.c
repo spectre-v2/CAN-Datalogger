@@ -12,7 +12,7 @@
 #include "fatfs_sd_adapter.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
 
 // Project modules
-#include "board.h"
+#include "mcu_hardware_config.h"
 #include "sd_card_protocol_constants.h"
 #include "sd_card_timeouts.h"
 
@@ -62,7 +62,7 @@ static sd_spi_if_t sd_spi_if = {
     .sck_gpio = pin_sd_sck,
     .mosi_gpio = pin_sd_tx,
     .miso_gpio = pin_sd_rx,
-    .baud_rate = 20 * 1000 * 1000,
+    .baud_rate = spi_port_sd_speed,
     .ss_gpio = pin_sd_cs,
 };
 

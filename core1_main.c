@@ -4,17 +4,18 @@
 #include <hardware/gpio.h>
 
 // Project modules
-#include "board.h"
+#include "mcu_hardware_config.h"
 #include "can_ring_buffer.h"
 #include "csv_text_buffer.h"
 #include "fatfs_core.h"
+#include "statemachine.h"
 
 void core1_entry(){
 
     // Initialize filesystem
     FATFS sd_card_file_system;
     FIL sd_card_logfile;
-    UINT number_of_bytes_written;
+    UINT bytes_written;
     char sd_card_volume[] = "0:";
     char sd_card_logfile_path[] = "0:/log.csv";
     char sd_card_logfile_header[] = "identifier, payload\r\n" ;
@@ -24,19 +25,36 @@ void core1_entry(){
 
     // Open log.csv for writing
     f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
-    f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &number_of_bytes_written);
+    f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &bytes_written);
 
 
     can_message_object_t save_buffer;
 
-    while(gpio_get(pin_power_detect)){
-        if(can_ring_fetch(&save_buffer)){
-            csv_save_entry(&sd_card_logfile, &save_buffer);
-        }
-    }
-    
-        /* Finish the file operation and detach the filesystem from the SD card. */
-    f_close(&sd_card_logfile);
-    f_unmount(sd_card_volume);
+    while(1){
 
+        switch(datalogger_state){
+
+            case STATE_LOGGING:
+                while(can_ring_fetch(&save_buffer)){
+                    csv_save_entry(&sd_card_logfile, &save_buffer);
+                }
+            break;
+
+            case STATE_SAVE:
+                /* Finish the file operation and detach the filesystem from the SD card. */
+                while(can_ring_fetch(&save_buffer)){
+                    csv_save_entry(&sd_card_logfile, &save_buffer);
+                }
+                f_sync(&sd_card_logfile);
+                f_close(&sd_card_logfile);
+                f_unmount(sd_card_volume);
+
+                datalogger_state = STATE_SLEEP;
+                
+            break;
+
+        }
+
+        
+    }
 }

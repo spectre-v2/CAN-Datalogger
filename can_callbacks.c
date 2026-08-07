@@ -8,11 +8,18 @@
 #include <hardware/gpio.h>
 
 // Project modules
-#include "board.h"
+#include "mcu_hardware_config.h"
 #include "mcp2518.h"
 #include "can_ring_buffer.h"
 
 volatile bool can0_pending = false;
+
+//docs:start:can0_irq
+void can0_irq(uint gpio, uint32_t event_mask){
+    can0_pending= 1;
+}
+//docs:end:can0_irq
+
 
 //docs:start:can0_receive_callback
 bool can0_callback(){

@@ -9,7 +9,7 @@
 #include "pico/stdlib.h"
 
 // Project modules
-#include "board.h"
+#include "mcu_hardware_config.h"
 
 
 //docs:start:mcp_reset
