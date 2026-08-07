@@ -7,8 +7,10 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 //
-#include "sd_card_spi.h"
 #include "fatfs_sd_adapter.h" /* Declarations of disk functions */
+
+// SD-card driver
+#include "sd_card_spi.h"
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */

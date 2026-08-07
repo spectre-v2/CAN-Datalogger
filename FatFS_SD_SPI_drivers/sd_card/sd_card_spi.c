@@ -1,14 +1,20 @@
-/* Standard includes. */
+#include "sd_card_spi.h"
+
+// C standard library
 #include <inttypes.h>
 #include <string.h>
+
+// Raspberry Pi Pico SDK
 #include "hardware/gpio.h"
 #include "pico/time.h"
-//
+
+// FatFs adapter
 #include "fatfs_sd_adapter.h" /* Declarations of disk functions */  // Needed for STA_NOINIT, ...
+
+// Project modules
 #include "board.h"
 #include "sd_card_protocol_constants.h"
 #include "sd_card_timeouts.h"
-#include "sd_card_spi.h"
 
 #ifndef SD_CARD_DEBUG
 #define SD_CARD_DEBUG 0

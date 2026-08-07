@@ -1,14 +1,14 @@
 #include "csv_text_buffer.h"
-#include "can_ring_buffer.h"
-#include "can_types.h"
-#include "FatFS_SD_SPI_drivers/fatfs/fatfs_core.h"
+
+// C standard library
 #include <stdio.h>
+#include <string.h>
 
 
 void csv_save_entry(FIL *fatfs_file, can_message_object_t *can_message){
 
     char csv_log_entry[145];
-    char *write_pointer = &csv_log_entry;
+    char *write_pointer = csv_log_entry;
     uint8_t written = 0;
     written = snprintf(write_pointer, sizeof(csv_log_entry), "%u,", (unsigned int)(*can_message).can_message.SID);
     write_pointer = write_pointer + written;
@@ -26,4 +26,3 @@ void csv_save_entry(FIL *fatfs_file, can_message_object_t *can_message){
     UINT bytes_written;
     f_write(fatfs_file, csv_log_entry, strlen(csv_log_entry),&bytes_written);
 }
-

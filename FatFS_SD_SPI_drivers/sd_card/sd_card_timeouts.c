@@ -1,4 +1,3 @@
-
 #include "sd_card_timeouts.h"
 
 sd_timeouts_t sd_timeouts __attribute__((weak)) = {

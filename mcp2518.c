@@ -1,8 +1,14 @@
+#include "mcp2518.h"
+
+// C standard library
 #include <stdio.h>
-#include "pico/stdlib.h"
+
+// Raspberry Pi Pico SDK
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
-#include "mcp2518.h"
+#include "pico/stdlib.h"
+
+// Project modules
 #include "board.h"
 
 

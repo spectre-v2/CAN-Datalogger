@@ -38,7 +38,9 @@ add_subdirectory(FatFS_SD_SPI_drivers)
 # Add executable. Default name is the project name, version 0.1
 
 add_executable(CAN-Datalogger
-        main.c
+        core0_main.c
+        core1_main.c
+        can_callbacks.c
         mcp2518.c
         can_ring_buffer.c
         csv_text_buffer.c

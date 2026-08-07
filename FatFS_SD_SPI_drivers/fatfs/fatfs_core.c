@@ -17,10 +17,12 @@
 / by use of this software.
 /
 /----------------------------------------------------------------------------*/
-
-
-#include <string.h>
 #include "fatfs_core.h"			/* Declarations of FatFs API */
+
+// C standard library
+#include <string.h>
+
+// FatFs device I/O
 #include "fatfs_sd_adapter.h"	/* Declarations of device I/O functions */
 
 
