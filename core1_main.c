@@ -34,13 +34,13 @@ void core1_entry(){
 
         switch(datalogger_state){
 
-            case STATE_LOGGING:
+            case STATE_RUNNING:
                 while(can_ring_fetch(&save_buffer)){
                     csv_save_entry(&sd_card_logfile, &save_buffer);
                 }
             break;
 
-            case STATE_SAVE:
+            case STATE_STOPPING:
                 /* Finish the file operation and detach the filesystem from the SD card. */
                 while(can_ring_fetch(&save_buffer)){
                     csv_save_entry(&sd_card_logfile, &save_buffer);
@@ -49,8 +49,6 @@ void core1_entry(){
                 f_close(&sd_card_logfile);
                 f_unmount(sd_card_volume);
 
-                datalogger_state = STATE_SLEEP;
-                
             break;
 
         }

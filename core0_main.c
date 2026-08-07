@@ -15,43 +15,49 @@
 #include "mcp2518.h"
 #include "statemachine.h"
 
-datalogger_state_t datalogger_state = STATE_INIT;
+datalogger_state_t datalogger_state = STATE_OFF;
+
+
 
 int main()
 {
     stdio_init_all(); 
 
-    while (!stdio_usb_connected()) sleep_ms(10);
+    while (!stdio_usb_connected()) sleep_ms(100);
 
     while(1){
+
+        external_power_on = gpio_get(pin_power_detect);
+
         switch(datalogger_state){
 
-
-        case STATE_SLEEP:
-            while(!gpio_get(pin_power_detect)) sleep_ms(100);
-            datalogger_state = STATE_INIT;
+        case STATE_OFF:
+            if(external_power_on) datalogger_state = STATE_STARTING;
             break;
 
-        case STATE_INIT:
-            mcu_hardware_init();
+        case STATE_STARTING:
 
+            mcu_hardware_init();
             //docs:start:can0_controller_start
             mcp_reset();
             mcp_init();
             //docs:end:can0_controller_start
-
             multicore_launch_core1(core1_entry);
 
-            datalogger_state = STATE_LOGGING;
+            datalogger_state = STATE_RUNNING;
 
             break;
 
 
-        case STATE_LOGGING:
-            while(can0_pending) can0_callback;
+        case STATE_RUNNING:
+            if(can0_pending) can0_callback;
+            if(!external_power_on) datalogger_state = STATE_STOPPING;
+
             break;
             
-        case STATE_SAVE:
+        case STATE_STOPPING:
+
+            
             
     }
     }
