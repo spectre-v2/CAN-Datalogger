@@ -28,6 +28,7 @@ int main()
     while(1){
 
         external_power_on = gpio_get(pin_power_detect);
+        can0_pending = gpio_get(pin_can0_irq);
 
         switch(datalogger_state){
 
@@ -56,7 +57,7 @@ int main()
             break;
             
         case STATE_STOPPING:
-
+            if(can0_pending) can0_callback;
             
             
     }

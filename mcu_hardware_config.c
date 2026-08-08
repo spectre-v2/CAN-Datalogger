@@ -26,11 +26,10 @@ void mcu_hardware_init(){
     gpio_set_dir(pin_pico2_led, GPIO_OUT);
     
     //docs:start:can0_irq_setup
-    //interrupt from can0 controller
+    //interrupt request from can0 controller
     gpio_set_function(pin_can0_irq, GPIO_FUNC_SIO);
     gpio_set_dir(pin_can0_irq, GPIO_IN);
     gpio_pull_up(pin_can0_irq);
-    gpio_set_irq_enabled_with_callback(pin_can0_irq, GPIO_IRQ_EDGE_FALL, true, can0_irq);
     //docs:end:can0_irq_setup
 
 
