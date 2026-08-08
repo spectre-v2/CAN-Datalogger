@@ -11,15 +11,13 @@
 #include "mcu_hardware_config.h"
 #include "mcp2518.h"
 #include "can_ring_buffer.h"
-
-volatile bool can0_pending = false;
-
+#include "statemachine.h"
 
 //docs:start:can0_receive_callback
 bool can0_callback(){
     printf("Entering CAN-0 recieve callback... \n");
 
-    can0_pending = 0;
+    datalogger_state.mcp_state= MCP_IDLE_S;
 
     uint32_t tmp_offset;
     can_message_object_t tmp_can_message_buffer;

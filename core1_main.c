@@ -20,34 +20,43 @@ void core1_entry(){
     char sd_card_logfile_path[] = "0:/log.csv";
     char sd_card_logfile_header[] = "identifier, payload\r\n" ;
 
-    // Connect FatFs to the SD card.
-    f_mount(&sd_card_file_system, sd_card_volume, 1);
-
-    // Open log.csv for writing
-    f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
-    f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &bytes_written);
-
 
     can_message_object_t save_buffer;
 
+
     while(1){
 
-        switch(datalogger_state){
+        switch(datalogger_state.system_state){
 
-            case STATE_RUNNING:
-                if(can_ring_fetch(&save_buffer)){
-                    csv_save_entry(&sd_card_logfile, &save_buffer);
-                }
+
+            case SYSTEM_OFF_S:
+            
             break;
 
-            case STATE_STOPPING:
+            case SYSTEM_STARTING_S:
+                // Connect FatFs to the SD card.
+                f_mount(&sd_card_file_system, sd_card_volume, 1);
+
+                // Open log.csv for writing
+                f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
+                f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &bytes_written);
+                datalogger_state.sd_state = SD_ACTIVE_S;
+            break;
+
+
+            case SYSTEM_RUNNING_S:
+                while(can_ring_fetch(&save_buffer)) csv_save_entry(&sd_card_logfile, &save_buffer);
+            break;
+
+            case SYSTEM_STOPPING_S:
                 /* Finish the file operation and detach the filesystem from the SD card. */
-                if(can_ring_fetch(&save_buffer)){
-                    csv_save_entry(&sd_card_logfile, &save_buffer);
-                }
+                while(can_ring_fetch(&save_buffer)) csv_save_entry(&sd_card_logfile, &save_buffer);
+
                 f_sync(&sd_card_logfile);
                 f_close(&sd_card_logfile);
                 f_unmount(sd_card_volume);
+                datalogger_state.sd_state = SD_IDLE_S;
+
 
             break;
 
