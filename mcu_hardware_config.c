@@ -29,7 +29,7 @@ void mcu_hardware_init(){
     //interrupt request from can0 controller
     gpio_set_function(pin_can0_irq, GPIO_FUNC_SIO);
     gpio_set_dir(pin_can0_irq, GPIO_IN);
-    gpio_pull_up(pin_can0_irq);
+    gpio_pull_down(pin_can0_irq);
     //docs:end:can0_irq_setup
 
 

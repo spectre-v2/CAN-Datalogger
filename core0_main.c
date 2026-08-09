@@ -43,7 +43,7 @@ int main()
 
         case SYSTEM_OFF_S:
 
-            multicore_reset_core1();
+
             low_power_dormant_until_gpio_pin_state(pin_power_detect, true, true, DORMANT_CLOCK_SOURCE_ROSC,NULL);
 
             if(datalogger_state.ext_power_state == EXT_POWER_ON_S) datalogger_state.system_state = SYSTEM_STARTING_S;
@@ -79,11 +79,14 @@ int main()
 
             if(datalogger_state.mcp_state==MCP_PENDING_S) {
                 can0_mcp_fetch_data();
-                datalogger_state.mcp_state= MCP_IDLE_S;
             }
 
-            if (datalogger_state.sd_state == SD_IDLE_S && datalogger_state.mcp_state != MCP_PENDING_S) datalogger_state.system_state = SYSTEM_OFF_S;
+            if (datalogger_state.sd_state == SD_IDLE_S && datalogger_state.mcp_state != MCP_PENDING_S) {
+                multicore_reset_core1();
+                datalogger_state.system_state= SYSTEM_OFF_S;
+            } ;
 
+            
             
 
         break;
