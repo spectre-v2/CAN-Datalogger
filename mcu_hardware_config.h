@@ -9,7 +9,7 @@
 #define spi_port_can0_speed (2 * 1000 * 1000)
 #define spi_port_sd_speed (2 * 1000* 1000) 
 
-#define pin_power_detect 14
+#define pin_power_detect 22
 
 #define pin_can0_cs 1   //blue
 #define pin_can0_sck 2  //white

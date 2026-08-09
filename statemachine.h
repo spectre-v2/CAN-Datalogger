@@ -16,13 +16,13 @@ typedef enum { //owned by core 1!
 }sd_state_t;
 
 typedef enum{
-    MCP_IDLE_S,
-    MCP_PENDING_S
+    MCP_IDLE_S = 0,
+    MCP_PENDING_S = 1
 }mcp_state_t;
 
 typedef enum{
-    EXT_POWER_ON_S = 1,
-    EXT_POWER_OFF_S = 0
+    EXT_POWER_OFF_S = 0,
+    EXT_POWER_ON_S = 1
 }ext_power_state_t;
 
 typedef struct{

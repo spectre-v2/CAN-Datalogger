@@ -37,7 +37,7 @@ void mcu_hardware_init(){
     gpio_set_dir(pin_power_detect, GPIO_IN);
     gpio_pull_down(pin_power_detect);
     gpio_set_input_hysteresis_enabled(pin_power_detect, true);
-    gpio_set_dormant_irq_enabled(pin_power_detect, GPIO_IRQ_EDGE_RISE, true);
+    //gpio_set_dormant_irq_enabled(pin_power_detect, GPIO_IRQ_EDGE_RISE, true);
 
 
     

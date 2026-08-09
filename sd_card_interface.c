@@ -23,7 +23,7 @@ char sd_card_logfile_path[] = "0:/log.csv";
 char sd_card_logfile_header[] = "identifier, payload\r\n" ;
 
 void sd_mount(){
-    
+    printf("Mounting SD card... \n");
     // Connect FatFs to the SD card.
     f_mount(&sd_card_filesystem, sd_card_volume, 1);
     // Open log.csv for writing
@@ -34,7 +34,7 @@ void sd_mount(){
 }
 
 void sd_save_unmount(){
-
+    printf("Unmounting SD card ...");
     // Finish the file operation and detach the filesystem from the SD card.
 
     while(can_ring_fetch(&can_message_buffer)){
@@ -49,6 +49,7 @@ void sd_save_unmount(){
 }
 
 void sd_save_continuous(){
+    printf("saving data to sdcard... \n");
     
     while(can_ring_fetch(&can_message_buffer)) {
         csv_create_log_entry(new_csv_entry_buffer, &can_message_buffer);

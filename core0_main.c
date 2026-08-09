@@ -36,13 +36,23 @@ void update_statemachine_inputs(){
         else datalogger_state.mcp_state = MCP_IDLE_S;
 }
 
+static void debug_print_datalogger_state(void) {
+    printf("state: system=%d, sd=%d, mcp=%d, power=%d\n",
+           atomic_load(&datalogger_state.system_state),
+           atomic_load(&datalogger_state.sd_state),
+           atomic_load(&datalogger_state.mcp_state),
+           atomic_load(&datalogger_state.ext_power_state));
+}
+
+
 
 int main()
 {
     stdio_init_all(); 
+    mcu_hardware_init();
 
     while (!stdio_usb_connected()) sleep_ms(100);
-
+    
 
     while(1){
 
@@ -53,7 +63,7 @@ int main()
         case SYSTEM_OFF_S:
 
 
-            low_power_dormant_until_gpio_pin_state(pin_power_detect, true, true, DORMANT_CLOCK_SOURCE_ROSC,NULL);
+           // low_power_dormant_until_gpio_pin_state(pin_power_detect, true, true, DORMANT_CLOCK_SOURCE_ROSC,NULL);
 
             if(datalogger_state.ext_power_state == EXT_POWER_ON_S) datalogger_state.system_state = SYSTEM_STARTING_S;
 
@@ -61,7 +71,7 @@ int main()
 
         case SYSTEM_STARTING_S:
 
-            if(datalogger_state.sd_state == SD_IDLE_S){
+            if(datalogger_state.sd_state == SD_IDLE_S){ 
                 mcu_hardware_init();
                 mcp_init();
                 multicore_launch_core1(core1_entry);
@@ -101,9 +111,10 @@ int main()
         break;
             
         }
+
+        //debug_print_datalogger_state();
     }
 
 }
-
 
 
