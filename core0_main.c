@@ -26,6 +26,15 @@ datalogger_state_t datalogger_state = {
 
 
 
+void update_statemachine_inputs(){
+
+            //updating system state with external signals.
+        if (gpio_get(pin_power_detect)) datalogger_state.ext_power_state = EXT_POWER_ON_S;
+        else datalogger_state.ext_power_state = EXT_POWER_OFF_S;
+
+        if (gpio_get(pin_can0_irq)) datalogger_state.mcp_state = MCP_PENDING_S;
+        else datalogger_state.mcp_state = MCP_IDLE_S;
+}
 
 
 int main()
@@ -98,12 +107,3 @@ int main()
 
 
 
-void update_statemachine_inputs(){
-
-            //updating system state with external signals.
-        if (gpio_get(pin_power_detect)) datalogger_state.ext_power_state = EXT_POWER_ON_S;
-        else datalogger_state.ext_power_state = EXT_POWER_OFF_S;
-
-        if (gpio_get(pin_can0_irq)) datalogger_state.mcp_state = MCP_PENDING_S;
-        else datalogger_state.mcp_state = MCP_IDLE_S;
-}

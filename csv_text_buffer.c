@@ -6,21 +6,20 @@
 
 
 
-void csv_create_log_entry(csv_log_entry *new_entry, can_message_object_t *can_message){
+void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_message_ptr){
 
-    char *write_pointer = new_entry;
     uint8_t written = 0;
-    written = snprintf(write_pointer, sizeof(csv_log_entry), "%u,", (unsigned int)(*can_message).can_message.SID);
-    write_pointer = write_pointer + written;
+    written = snprintf(new_entry, sizeof(csv_log_entry), "%u,", (unsigned int)(*can_message_ptr).can_message.SID);
+    new_entry = new_entry + written;
 
-    for (uint8_t payload_index = 0; payload_index>64; payload_index++){
+    for (uint8_t payload_index = 0; payload_index<64; payload_index++){
         
-        snprintf(write_pointer, 3, "%02X", (unsigned int)(*can_message).can_message.can_payload[payload_index]);
+        snprintf(new_entry, 3, "%02X", (unsigned int)(*can_message_ptr).can_message.can_payload[payload_index]);
 
-        write_pointer = write_pointer + 2;
+        new_entry = new_entry + 2;
         
     }
 
-    snprintf(write_pointer, 2, "\n");
+    snprintf(new_entry, 2, "\n");
 
 }

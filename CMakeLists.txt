@@ -45,6 +45,7 @@ add_executable(CAN-Datalogger
         can_ring_buffer.c
         csv_text_buffer.c
         mcu_hardware_config.c
+        sd_card_interface.c
 )
 
 

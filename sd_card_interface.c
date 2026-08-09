@@ -1,6 +1,7 @@
 // C standard library
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "fatfs_core.h"
 #include "mcu_hardware_config.h"
@@ -9,7 +10,7 @@
 
 
 // Initialize filesystem
-FATFS sd_card_file_system;
+FATFS sd_card_filesystem;
 FIL sd_card_logfile;
 UINT fatfs_bytes_written;
 
@@ -24,7 +25,7 @@ char sd_card_logfile_header[] = "identifier, payload\r\n" ;
 void sd_mount(){
     
     // Connect FatFs to the SD card.
-    f_mount(&sd_card_file_system, sd_card_volume, 1);
+    f_mount(&sd_card_filesystem, sd_card_volume, 1);
     // Open log.csv for writing
     f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
     // write header
@@ -38,7 +39,9 @@ void sd_save_unmount(){
 
     while(can_ring_fetch(&can_message_buffer)){
 
-    } csv_create_log_entry(&new_csv_entry_buffer, &can_message_buffer);
+        csv_create_log_entry(new_csv_entry_buffer, &can_message_buffer);
+        f_write(&sd_card_logfile, new_csv_entry_buffer, strlen(new_csv_entry_buffer),&fatfs_bytes_written);
+    } 
 
     f_sync(&sd_card_logfile);
     f_close(&sd_card_logfile);
@@ -48,8 +51,8 @@ void sd_save_unmount(){
 void sd_save_continuous(){
     
     while(can_ring_fetch(&can_message_buffer)) {
-        csv_create_log_entry(&new_csv_entry_buffer, &can_message_buffer);
-        
-        f_write(fatfs_file, new_csv_entry_buffer, strlen(new_csv_entry_buffer),&fatfs_bytes_written);
+        csv_create_log_entry(new_csv_entry_buffer, &can_message_buffer);
+
+        f_write(&sd_card_logfile, new_csv_entry_buffer, strlen(new_csv_entry_buffer),&fatfs_bytes_written);
     }
 }

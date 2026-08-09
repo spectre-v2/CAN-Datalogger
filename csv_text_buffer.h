@@ -4,4 +4,4 @@
 
 typedef char csv_log_entry[145];
 
-void csv_create_log_entry(csv_log_entry *new_entry, can_message_object_t *can_message);
+void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_message);
