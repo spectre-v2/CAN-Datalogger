@@ -67,6 +67,8 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
 void mcp_init(void){
 
     printf("Initializing MCP2518... ");
+    
+    mcp_reset();
 
 
     //nominal data rate: 500kbit/s

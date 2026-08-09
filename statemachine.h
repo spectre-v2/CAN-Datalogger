@@ -1,36 +1,36 @@
 #pragma once
 #include <stdatomic.h>
 
-typedef struct{
-    system_state_t system_state;
-    sd_state_t sd_card_state;
-    mcp_state_t mcp_state;
-    ext_power_state_t ext_power_state;
-}datalogger_state_t;
-
-
 typedef enum {
     SYSTEM_OFF_S,
     SYSTEM_STARTING_S,
-    SYSEM_RUNNING_S,
+    SYSTEM_RUNNING_S,
     SYSTEM_STOPPING_S
 }system_state_t;
 
-typedef enum {
-    SD_ACTIVE_S = 1,
-    SD_IDLE_S = 0
+typedef enum { //owned by core 1!
+    SD_IDLE_S,
+    SD_MOUNTING_S,
+    SD_READY_S
+
 }sd_state_t;
 
 typedef enum{
-    MCP_PENDING_S = 1,
-    MCP_IDLE_S = 0
+    MCP_IDLE_S,
+    MCP_PENDING_S
 }mcp_state_t;
 
 typedef enum{
     EXT_POWER_ON_S = 1,
     EXT_POWER_OFF_S = 0
-}ext_power_state_t
+}ext_power_state_t;
 
+typedef struct{
+    _Atomic system_state_t system_state;
+    _Atomic sd_state_t sd_state;
+    _Atomic mcp_state_t mcp_state;
+    _Atomic ext_power_state_t ext_power_state;
+}datalogger_state_t;
 
 
 

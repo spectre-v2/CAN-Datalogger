@@ -14,10 +14,10 @@
 #include "statemachine.h"
 
 //docs:start:can0_receive_callback
-bool can0_callback(){
+bool can0_mcp_fetch_data(){
     printf("Entering CAN-0 recieve callback... \n");
 
-    datalogger_state.mcp_state= MCP_IDLE_S;
+    
 
     uint32_t tmp_offset;
     can_message_object_t tmp_can_message_buffer;
@@ -39,7 +39,7 @@ bool can0_callback(){
         mcp_write(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
 
 
-    }while(!gpio_get(pin_can0_irq));
+    }while(gpio_get(pin_can0_irq));
     
     printf("done.\n");
 }

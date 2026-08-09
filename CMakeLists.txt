@@ -44,7 +44,7 @@ add_executable(CAN-Datalogger
         mcp2518.c
         can_ring_buffer.c
         csv_text_buffer.c
-        statemachine.c
+        mcu_hardware_config.c
 )
 
 
@@ -59,7 +59,8 @@ pico_enable_stdio_usb(CAN-Datalogger 1)
 target_link_libraries(CAN-Datalogger
         pico_stdlib
         fatfs_sd_spi
-        pico_multicore)
+        pico_multicore
+        pico_low_power)
 
 # Add the standard include files to the build
 target_include_directories(CAN-Datalogger PRIVATE
