@@ -63,4 +63,4 @@ Core 0 muss Core 1 aktiv starten und einen Pointer auf den Einstiegspunkt überg
 
  #code-snippet("../core1_main.c", "core1-loop")
 
-Hier wird die wichtigkeit des Ownership- prinzips wichtig, den Theoretisch könnte Core 1 variablen des System States verändern, die die Statemachine von Core 0 beeinflussen. Aus diesem Grund verändert Core 1 ausschließlich die struct `datalogger_state.sd_state`.
+Hier wird die Wichtigkeit des Ownership- prinzips wichtig, den Theoretisch könnte Core 1 variablen des System States verändern, die die Statemachine von Core 0 beeinflussen. Aus diesem Grund verändert Core 1 ausschließlich die struct `datalogger_state.sd_state`.

@@ -30,7 +30,7 @@ bool can0_mcp_fetch_data(){
         mcp_read(tmp_offset + MCP_RAM_BASE, tmp_can_message_buffer.data_array, sizeof tmp_can_message_buffer.data_array);
 
         //save message in ringbuffer
-        can_ring_save(&tmp_can_message_buffer);
+        can_ring_store(&tmp_can_message_buffer);
 
         //set UINC bit in C1FIFOCON1 to prompt load operation of next message offset into C1FIFOUA1
         MCP_REG_C1FIFOCON_t tmp_c1fifocon;

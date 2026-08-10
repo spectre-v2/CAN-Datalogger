@@ -178,7 +178,14 @@ In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigs
   )
 *Fazit*
 
-Der RP2350 eignet sich vorallem durch seie flexiblen Pin-Multiplexer, die freie Gestaltung von seriellen Schnittstellen mithilfe von Programmable- Input- Output  State Machines (PIO-SM), großem SRAM und Dual-Core RISC-V Prozessoren, sowie aufgrund seiner übersichtlichen, gut dokumentierten C/C++ Entwicklungsumgebung. Für die schnelle Prototypenentwicklung steht die Entwicklungsplatine Raspberry Pico 2 zur Verfügung.
+Der RP2350 eignet sich vorallem durch seie flexiblen Pin-Multiplexer, die freie Gestaltung von seriellen Schnittstellen mithilfe von Programmable- Input- Output  State Machines (PIO-SM), großem SRAM und Dual-Core RISC-V Prozessoren, sowie aufgrund seiner übersichtlichen, gut dokumentierten C/C++ Entwicklungsumgebung. Für die Prototypenentwicklung steht die Entwicklungsplatine Raspberry Pico 2 zur Verfügung.
+
+#align(center)[
+  #figure(
+    image("pictures/pico2.jpg", width: 50%),
+    caption: [Raspberry Pico 2 Entwicklungsplatine @pico2],
+  )
+]
 
 #block(breakable: false)[
 == Auswahl eines CAN- FD Controller-Transcievers <can-fd-controller-selection>

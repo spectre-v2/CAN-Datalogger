@@ -46,7 +46,7 @@ DRESULT disk_read(BYTE pdrv,  /* Physical drive number to identify the drive */
     if (sd_card_read_blocks(buff, sector, count)) return RES_OK;
     return RES_ERROR;
 }
-
+//docs:start:fatfs-adapter
 /*-----------------------------------------------------------------------*/
 /* Write Sector(s)                                                       */
 /*-----------------------------------------------------------------------*/
@@ -64,7 +64,7 @@ DRESULT disk_write(BYTE pdrv, /* Physical drive number to identify the drive */
 }
 
 #endif
-
+//docs:end:fatfs-adapter
 /*-----------------------------------------------------------------------*/
 /* Miscellaneous Functions                                               */
 /*-----------------------------------------------------------------------*/

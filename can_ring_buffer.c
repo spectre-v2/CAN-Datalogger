@@ -8,8 +8,8 @@ _Atomic uint32_t can_ring_read_index = 0;
 _Atomic uint32_t can_ring_write_index = 0;
 _Atomic uint32_t can_ring_count = 0;
 
-
-bool can_ring_save(const can_message_object_t *new_entry){
+//docs:start:ringbuffer-store
+bool can_ring_store(const can_message_object_t *new_entry){
     printf("Saving message to ringbuffer... \n");
 
     uint32_t read_index = atomic_load(&can_ring_read_index);
@@ -26,9 +26,10 @@ bool can_ring_save(const can_message_object_t *new_entry){
 
     atomic_fetch_add(&can_ring_count, 1);
     return true;
-
 }
+//docs:end:ringbuffer-store
 
+//docs:start:ringbuffer-fetch
 bool can_ring_fetch(can_message_object_t *fetched_entry){
 printf("Fetching message from ringbuffer... \n");
 
@@ -47,7 +48,5 @@ printf("Fetching message from ringbuffer... \n");
    atomic_fetch_sub(&can_ring_count,1);
 
    return true;
-
 }
-
-//docs:end:can_ring
+//docs:end:ringbuffer-fetch

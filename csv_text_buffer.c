@@ -5,7 +5,7 @@
 #include <string.h>
 
 
-
+//docs:start:csv-create-log
 void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_message_ptr){
 
     printf("Creating csv log entry... ");
@@ -26,3 +26,4 @@ void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_mes
     printf("done.\n");
 
 }
+//docs:end:csv-create-log
