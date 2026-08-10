@@ -16,25 +16,25 @@
 #include "mcp2518.h"
 #include "statemachine.h"
 
-
+//docs:start:start-states
 datalogger_state_t datalogger_state = {
     .system_state   = SYSTEM_OFF_S,
     .sd_state       = SD_IDLE_S,
     .mcp_state      = MCP_IDLE_S,
     .ext_power_state= EXT_POWER_OFF_S
 };
+//docs:end:start-states
 
-
-
+//docs:start:update-statemachine
 void update_statemachine_inputs(){
-
-            //updating system state with external signals.
+        //updating system state with external signals.
         if (gpio_get(pin_power_detect)) datalogger_state.ext_power_state = EXT_POWER_ON_S;
         else datalogger_state.ext_power_state = EXT_POWER_OFF_S;
 
         if (gpio_get(pin_can0_irq)) datalogger_state.mcp_state = MCP_PENDING_S;
         else datalogger_state.mcp_state = MCP_IDLE_S;
 }
+//docs:end:update-statemachine
 
 static void debug_print_datalogger_state(void) {
     printf("state: system=%d, sd=%d, mcp=%d, power=%d\n",
@@ -52,8 +52,7 @@ int main()
     mcu_hardware_init();
 
     while (!stdio_usb_connected()) sleep_ms(100);
-    
-
+    //docs:start:core0-loop
     while(1){
 
         update_statemachine_inputs();
@@ -72,28 +71,22 @@ int main()
         case SYSTEM_STARTING_S:
 
             if(datalogger_state.sd_state == SD_IDLE_S){ 
-                //docs:start:can0_startup
                 mcu_hardware_init();
                 mcp_init();
                 multicore_launch_core1(core1_entry);
                 datalogger_state.sd_state = SD_MOUNTING_S;
-                //docs:end:can0_startup
             }
-
             //waiting for core1 to start up the SD.
             if(datalogger_state.sd_state == SD_READY_S) datalogger_state.system_state = SYSTEM_RUNNING_S;
-
-            
-
             break;
 
         case SYSTEM_RUNNING_S:
-            //docs:start:can0_service_pending
+
             if(datalogger_state.mcp_state==MCP_PENDING_S) {
                 can0_mcp_fetch_data();
                 datalogger_state.mcp_state= MCP_IDLE_S;
             }
-            //docs:end:can0_service_pending
+   
             
             if(datalogger_state.ext_power_state == EXT_POWER_OFF_S) datalogger_state.system_state = SYSTEM_STOPPING_S;
         break;
@@ -108,16 +101,12 @@ int main()
                 multicore_reset_core1();
                 datalogger_state.system_state= SYSTEM_OFF_S;
             } ;
-
-            
-            
-
         break;
             
         }
 
-        //debug_print_datalogger_state();
+ 
     }
-
+//docs:end:core0-loop
 }
 
