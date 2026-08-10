@@ -9,12 +9,21 @@ In eingebetteten Datenverarbeitungssystemen ist ein exakt definiertes Verhalten 
 
 Aus diesem Grund muss ein Zustandsautomat alle möglichen Zustände des Systems lückenlos abbilden. Es muss exakt definiert werden, unter welchen Umständen das System seinen Zustand wechseln soll. Zudem muss der Zustandsraum endlich und seine Mächtigkeit klar definert sein. Jeder Zustand muss einzigartig sein, es soll keine zwei möglichen Varianten eines Zustandes, einen sogenannten Hidden State, geben.
 
+
+
+#align(center)[
+  #figure(
+    image("pictures/can-datalogger-state-machine.svg", width: 100%),
+    caption: [MCP-2518-FD Modul.@mcp2518fd-module],
+  )
+]
+
+
 - Modulare Treiberschichten
 
 Die Funktionalitäten des Systems in Modulen mit klaren Zuständigkeitsgrenzen ausgeführt werden, um Zugriffe auf die Systemzustände nur duch die explizit zuständige Hardware oder Software auszuführen. Dies ist essentiell, um Komplexe Firmware übersichtlich und wartbar zu gestalten und unvorhergesehenes Verhalten zu vermeiden. 
 
-- Hardware- Zuständigkeitstrennung 
-
+- Hardware- Zuständigkeitstrennung
 Der RP2350 ermöglicht die klare Trennung von funktionalitäten in besonderem Maße durch seine dual- Core architektur. Durch diese ist es möglich, dass einer der Prozessoren ausschließlich als "Empfänger" arbeitet, das heißt er reagiert auf Interrupt- anforderungen des MCP218, führt die SPI- Treiberfunktionen aus, und speichert die ausgelesenen Daten in einem Zwischenspeicher. Der zweite Core nimmt ausschließlich eine Rolle als "Schreiber" ein. Er liest Daten aus dem Zwischenspeicher, wandelt CAN-FD spezifische Daten in .csv tabelleneinträge um, nutzt FAT32- Bibliotheken zur Organisation der Daten in Sektoren sowie verwaltung von Partitionstabellen, und führt SD-Karten spezifische SPI- Treiberfunktionen aus, um diese verarbeiteten Daten zu speichern. Somit agieren beide Cores weitgehend unabhängig voneinander, eine unvorhergesehene, langsame Operation einer der cores beeinflusst den anderen nicht.
 
 - Ringbuffer
