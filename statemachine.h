@@ -1,4 +1,7 @@
 #pragma once
+
+
+//docs:start:statemachine-struct
 #include <stdatomic.h>
 
 typedef enum {
@@ -31,8 +34,5 @@ typedef struct{
     _Atomic mcp_state_t mcp_state;
     _Atomic ext_power_state_t ext_power_state;
 }datalogger_state_t;
-
-
-
-
+//docs:end:statemachine-struct
 extern datalogger_state_t datalogger_state;

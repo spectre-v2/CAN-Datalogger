@@ -128,7 +128,6 @@
   flash_management: -1,
   pc_readability: -1,
   integration: 1,
-  availability: 0,
   cost: -1,
 )
 
@@ -140,7 +139,6 @@
   flash_management: 1,
   pc_readability: 0,
   integration: -1,
-  availability: 0,
   cost: 0,
 )
 
@@ -152,7 +150,6 @@
   flash_management: 1,
   pc_readability: 1,
   integration: 1,
-  availability: 1,
   cost: 1,
 )
 
@@ -164,7 +161,6 @@
   flash_management: 3,
   pc_readability: 3,
   integration: 2,
-  availability: 1,
   cost: 2,
 )
 
@@ -175,6 +171,5 @@
   medium.flash_management * storage_multi.flash_management +
   medium.pc_readability * storage_multi.pc_readability +
   medium.integration * storage_multi.integration +
-  medium.availability * storage_multi.availability +
   medium.cost * storage_multi.cost
 )

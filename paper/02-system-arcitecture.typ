@@ -9,15 +9,15 @@ Der Datenlogger wird als modularer Datenpfad aus CAN-FD-Controllern, Mikrocontro
 
 === Mikrocontroller
 
-Der Mikrocontroller koordiniert die Peripherie, verarbeitet empfangene Nachrichten und steuert die Datenspeicherung. Gegenüber einer FPGA-Lösung bietet er eine besser zugängliche Entwicklungsumgebung, Debug-Möglichkeiten und verfügbare Softwarebibliotheken; damit unterstützt er die schnelle Entwicklung (#link(<t6>)[T6]). Ausreichende Rechenleistung, RAM und flexible Schnittstellen sind erforderlich, um den Datenstrom mit deterministischen Latenzen zu verarbeiten (#link(<t3>)[T3]) und mehrere externe Controller sowie das Speichermedium anzubinden (#link(<t5>)[T5]).
+Der Mikrocontroller koordiniert die Peripherie, verarbeitet empfangene Nachrichten und steuert die Datenspeicherung. Gegenüber einer FPGA-Lösung bietet er eine besser zugängliche Entwicklungsumgebung, Debug-Möglichkeiten und verfügbare Softwarebibliotheken.(#link(<t6>)[T6]). Ausreichende Rechenleistung, RAM und flexible Schnittstellen sind erforderlich, um den Datenstrom mit deterministischen Latenzen zu verarbeiten (#link(<t3>)[T3]) und mehrere externe Controller sowie das Speichermedium anzubinden (#link(<t5>)[T5]).
 
 === Externe CAN-FD-Controller
 
-Die Forderung nach mindestens vier unabhängigen CAN-FD-Bussen (#link(<t5>)[T5]) kann nicht von einem einzelnen, üblichen Mikrocontroller mit integrierten CAN-FD-Controllern erfüllt werden. Im niedrigen Preissegment bietet aktuell jediglich der STM32G474 drei CAN-FD-Controller. @stm32g4 Aus diesem Grund wird jeder Bus über einen spezialisierten externen CAN-FD-Controller angebunden. Dessen Filter und Empfangspuffer sollen den Mikrocontroller entlasten und unterstützen eine verlustfreie Echtzeiterfassung (#link(<t3>)[T3]). Die Anzahl der Kanäle kann durch zusätzliche gleichartige Controller erweitert werden (#link(<t9>)[T9]).
+Der Bedarf von mindestens vier unabhängigen CAN-FD-Bussen (#link(<t5>)[T5]) kann nicht von einem einzelnen, üblichen Mikrocontroller mit integrierten CAN-FD-Controllern erfüllt werden. Im niedrigen Preissegment bietet aktuell jediglich der STM32G474 drei CAN-FD-Controller. @stm32g4 Aus diesem Grund wird jeder Bus über einen spezialisierten externen CAN-FD-Controller angebunden. Dessen Filter und Empfangspuffer sollen den Mikrocontroller entlasten und unterstützen eine verlustfreie Echtzeiterfassung (#link(<t3>)[T3]). Die Anzahl der Kanäle kann durch zusätzliche gleichartige Controller erweitert werden (#link(<t9>)[T9]).
 
 === microSD-Karte
 
-Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisystem gespeichert. Das Standardmedium kann ohne Spezialhardware am PC gelesen werden und unterstützt damit die standardisierte Datenauslese (#link(<t1>)[T1]); ein offen dokumentiertes Logformat soll die Auswertung somit einfach gestalten (#link(<t2>)[T2]). Das integrierte Flash-Management der Karte sowie ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Schreibvorgang und tragen zur ausfallsicheren Speicherung bei (#link(<t4>)[T4]).
+Die Messdaten werden auf einer entnehmbaren microSD-Karte in einem FAT32-Dateisystem gespeichert. Das Standardmedium kann ohne Spezialhardware am PC gelesen werden und unterstützt damit die standardisierte Datenauslese (#link(<t1>)[T1]). Durch Verwendung einer CSV- Tabelle als Logformat soll die Auswertung möglichst einfach gestalten (#link(<t2>)[T2]). Das integrierte Flash-Management der Karte sowie ein RAM-Zwischenspeicher entkoppeln Datenerfassung und Schreibvorgang und tragen zur ausfallsicheren Speicherung bei (#link(<t4>)[T4]).
 
 === USB-Schnittstelle und Platine
 
@@ -28,46 +28,10 @@ USB dient als Standardschnittstelle für Programmierung, Debugging und die direk
 Um den Prototypen sinnvoll testen zu können, wird das USB- zu CAN-FD Interface Candlelight FD des Herstellers Linux Automation GmbH verwendet. Dieses basiert seinerseits auf einem STM32G0 und bietet die einfachste Möglichkeit, Nachrichten mit inkrementell angepasstem Inhalt zu versenden, um schlussendlich die Vollständigkeit des Datensatzes zu überprüfen.
 
 
-Die nachfolgenden Komponentenauswahlen vergleichen zunächst harte Ausschlusskriterien und bewerten die verbleibenden Optionen anschließend anhand der technischen Anforderungen.
+== Auswahl und Bewertung von Komponenten
 
+Um fundierte Entscheidungen treffen zu können, werden im Folgenden die aktuellen in der Industrie üblichen Technologien anhand von harten Ausschlusskriterien vorausgewählt, und mit einer dreistufigen Bewertung versehen. Anschließend wird diese je nach Relevanz für diesen konkreten Anwendungsfall mit einem Multiplikator gewichtet.
 
-== Auswahl des Mikrocontrollers <microcontroller-selection>
-
-Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzeitverarbeitung (#link(<t3>)[T3]) vor allem mehrere flexible Schnittstellen für CAN-FD-Controller und Speichermedium (#link(<t5>)[T5]). Hohe Priorität haben außerdem eine gut dokumentierte Software-Infrastruktur und einfache Debug-Möglichkeiten (#link(<t6>)[T6]), ein fertigungsgerechtes Gehäuse (#link(<t7>)[T7]) sowie Reserven für spätere Erweiterungen (#link(<t9>)[T9]). In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigsten Hersteller gelistet.
-
-
-
-                
-#block(breakable: false)[
-
-  #figure(
-    table(
-      columns: (auto, auto, auto, auto), align: (left + horizon), inset: STD_INSET,
-
-      table.header([Mikrocontroller],
-      [*AVR64DU* @avr64du #figure(image("pictures/avr64du32.png"))],
-      [*STM32-C5* @stm32c5 #figure(image("pictures/stm32c5.webp"))],
-      [*RP2350* @rp2350 #figure(image("pictures/rp2350.png"))],
-      ),
-
-      [Hersteller],[Microchip],[STMicroelectronics],[Raspberry Pi],
-      [Veröffentlichung],[2026],[2026],[2024],
-      [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[2x 32-Bit Cortex-M33 + 2x 32-Bit RISC-V],
-      [Anzahl Prozessoren],[1],[1],[2],
-      [RAM-Größe],[8 KB],[bis 256 KB],[520 KB],
-      [Schnittstellen],[1x SPI, 1x I²C, 2x USART, USB FS],[USB, OctoSPI, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
-      [Pin-Multiplexer],[PORTMUX eingeschränkt],[Alternate-Function-Matrix],[sehr flexibel über GPIO-Funktionen],
-      [Anzahl CAN-FD-Controller],[0],[2],[0],
-      [Treiber/ Software workflow],[Melody],[STM- HAL, CubeMX-2],[Pico C/ C++ SDK]),
-    
-      caption: [Gängige aktuelle Mikrocontroller],
-  )
-]
-
-
-*Entscheidungsmatrix Mikrocontroller*
-
-Im folgenden werden die ausgewählten Mikrocontroller mit einer dreistufigen Bewertung versehen, anschließend wird diese je nach Relevanz für diesen konkreten Anwendungsfall mit einem Multiplikator gewichtet.
 
 
 #figure(
@@ -94,6 +58,42 @@ table.header([*Bewertung*], [*Bedeutung*]),
   ),
   caption: [Gewichtungsskala]
 )
+
+== Auswahl des Mikrocontrollers <microcontroller-selection>
+
+Entscheidend für die Auswahl sind neben Rechenleistung und RAM für die Echtzeitverarbeitung (#link(<t3>)[T3]) vor allem mehrere flexible Schnittstellen für CAN-FD-Controller und Speichermedium (#link(<t5>)[T5]). Hohe Priorität haben außerdem eine gut dokumentierte Software-Infrastruktur und einfache Debug-Möglichkeiten (#link(<t6>)[T6]), ein fertigungsgerechtes Gehäuse (#link(<t7>)[T7]) sowie Reserven für spätere Erweiterungen (#link(<t9>)[T9]).
+In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigsten Hersteller gelistet.
+
+
+                
+#block(breakable: false)[
+
+  #figure(
+    table(
+      columns: (auto, auto, auto, auto), align: (left + horizon), inset: STD_INSET,
+
+      table.header([Mikrocontroller],
+      [*AVR64DU* @avr64du #figure(image("pictures/avr64du32.png"))],
+      [*STM32-C5* @stm32c5 #figure(image("pictures/stm32c5.webp"))],
+      [*RP2350* @rp2350 #figure(image("pictures/rp2350.png"))],
+      ),
+
+      [Hersteller],[Microchip],[STMicroelectronics],[Raspberry Pi],
+      [Veröffentlichung],[2026],[2026],[2024],
+      [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[2x 32-Bit Cortex-M33 / 2x 32-Bit RISC-V],
+      [Anzahl Prozessoren],[1],[1],[2],
+      [RAM-Größe],[8 KB],[bis 256 KB],[520 KB],
+      [Schnittstellen],[1x SPI, 1x I²C, 2x USART, USB FS],[USB, OctoSPI, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
+      [Pin-Multiplexer],[Eingeschränkt],[Eingeschränkt],[sehr flexibel über GPIO-Funktionen],
+      [Anzahl CAN-FD-Controller],[0],[2],[0],
+      [Treiber/ Software workflow],[Melody],[STM- HAL, CubeMX-2],[Pico C/ C++ SDK]),
+    
+      caption: [Gängige aktuelle Mikrocontroller],
+  )
+]
+
+
+*Entscheidungsmatrix Mikrocontroller*
 
   #figure(
     table(
@@ -178,11 +178,11 @@ table.header([*Bewertung*], [*Bedeutung*]),
   )
 *Fazit*
 
-Der RP2350 eignet sich vorallem durch seie flexiblen pin-multiplexer, die freie Gestaltung von seriellen Schnittstellen mithilfe von Programmable- Input- Output  State Machines (PIO-SM), großem SRAM und Dual-Core RISC-V Prozessoren, sowie aufgrund seiner übersichtlichen, gut dokumentierten C/C++ Entwicklungsumgebung. Für die schnelle Prototypenentwicklung steht die Entwicklungsplatine Raspberry Pico 2 zur Verfügung.
+Der RP2350 eignet sich vorallem durch seie flexiblen Pin-Multiplexer, die freie Gestaltung von seriellen Schnittstellen mithilfe von Programmable- Input- Output  State Machines (PIO-SM), großem SRAM und Dual-Core RISC-V Prozessoren, sowie aufgrund seiner übersichtlichen, gut dokumentierten C/C++ Entwicklungsumgebung. Für die schnelle Prototypenentwicklung steht die Entwicklungsplatine Raspberry Pico 2 zur Verfügung.
 
 #block(breakable: false)[
 == Auswahl eines CAN- FD Controller-Transcievers <can-fd-controller-selection>
-Für die Anbindung der externen CAN-FD-Busse werden Controller . Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
+Für die Anbindung der externen CAN-FD-Busse werden Controller. Besonders relevant sind ein integrierter Transceiver, die maximale Datenrate, die Filtermöglichkeiten und die Größe des internen Nachrichtenspeichers.
 
 
   #figure(
@@ -237,6 +237,8 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller . Besonders relev
   )
 ]
 
+*Entscheidungsmatrix CAN-FD- Controller*
+
 #figure(
   table(
     columns: (auto,auto,auto,auto,auto,auto),
@@ -256,7 +258,7 @@ Für die Anbindung der externen CAN-FD-Busse werden Controller . Besonders relev
   caption: [Entscheidungsmatrix CAN-FD-Controller],
 )
 
-Der MCP251863 bietet eine integrierte Lösung, welche RAM, CAN-Controller sowie Bus-Transciever auf einem Chip vereint. Seine übersichtliche Registerstruktur, schnelles SPI- Interface und flexible Filterobjekte machen ihn besonders geeignet. Der CAN-Controller des MCP251863 ist mit dem des MCP2518-FD identisch, der einzige Unterschied besteht darin, dass der MCP2518-FD keinen internen CAN- Transciever besitzt.
+Der MCP251863 bietet eine Lösung, welche die gesamte CAN-FD Funktionalität inklusive RAM, CAN-Controller sowie Bus-Transciever auf einem Chip vereint. Seine übersichtliche Registerstruktur, schnelles SPI- Interface und flexible Filterobjekte machen ihn besonders geeignet. Der CAN-Controller des MCP251863 ist mit dem des MCP2518-FD identisch, der einzige Unterschied besteht darin, dass der MCP2518-FD keinen internen CAN- Transciever besitzt.
 Für die Entwicklung eines Prototypen wird aufgrund einfacher Verfügbarkeit ein fertiges Modul verwendet, welches einen MCP2518-FD und einen ATA6563-Transciever kombiniert. Dies ist Softwaretechnisch vollständig äquivalent.
 
 #align(center)[
@@ -269,7 +271,7 @@ Für die Entwicklung eines Prototypen wird aufgrund einfacher Verfügbarkeit ein
 
 == Auswahl eines Speichermediums <storage-selection>
 
-Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und microSD betrachtet. Entscheidend sind dabei nutzbare Speicherkapazität, Schreibgeschwindigkeit, Schnittstellenaufwand, integriertes Flash-Management, mechanische Integration und die einfache Auslesbarkeit am PC.
+Für die dauerhafte Speicherung der Messdaten werden die in der Industrie gängigen Lösungen SPI-NAND-Flash, eMMC und microSD betrachtet. Entscheidend sind dabei nutzbare Speicherkapazität, Schreibgeschwindigkeit, Schnittstellenaufwand, integriertes Flash-Management, mechanische Integration und die einfache Auslesbarkeit am PC.
 
 #block(breakable: false)[
   #figure(
@@ -279,95 +281,85 @@ Für die dauerhafte Speicherung der Messdaten werden SPI-NAND-Flash, eMMC und mi
       inset: STD_INSET,
       table.header(
         [Speichermedium],
-        [*SPI-NAND-Flash* @w25n01gv],
-        [*eMMC* @kingstonemmc],
-        [*microSD* @kingstonmicrosd],
+        [*ISSI NAND-Flash* @ISSI-nand-datasheet],
+        [*Swissbit eMMC* @swissbit-emmc-datasheet],
+        [*SanDisk MicroSDHC* @sandisk-sdhc-datasheet],
       ),
 
-      [Beispiel],
-      [Winbond W25N01GV],
-      [Kingston eMMC 5.1],
-      [Kingston Industrial microSD],
-
-      [Schnittstelle],
-      [SPI / Quad-SPI],
-      [eMMC 5.1 HS400],
-      [SD / SPI-Modus],
+      [Kapazität],
+      [8 Gb],
+      [512 GB],
+      [32 GB],
 
       [Schreibgeschwindigkeit],
-      [seitenweise, controllerabhängig],
-      [hoch, host- und typabhängig],
-      [bis 80 MB/s],
+      [27 MB/s],
+      [150 MB/s],
+      [40 MB/s],
+
+      [Schnittstelle],
+      [NAND-Interface],
+      [eMMC Communication Interface],
+      [SPI],
 
       [Flash-Controller],
       [nein, Host verwaltet Wear-Leveling],
-      [ja, ECC und Wear-Leveling integriert],
-      [ja, ECC und Wear-Leveling integriert],
+      [ja, Wear-Leveling integriert],
+      [ja, Wear-Leveling integriert],
 
       [Auslesbarkeit am PC],
       [nur über eigene Firmware],
-      [nur über Adapter/Testhardware],
+      [nur über Testhardware],
       [direkt über Kartenleser],
 
       [Gehäuse / Integration],
-      [SOIC/WSON, gut lötbar],
-      [BGA, schwer zu löten],
+      [48-pin TSOP oder 63-ball VFBGA],
+      [153-ball BGA],
       [Sockel oder Push-Push-Halter],
 
-      [Verfügbarkeit],
-      [gut als Bauteil],
-      [gut, aber Variantenbindung],
-      [sehr gut als Standardmedium],
+      [Preis],
+      [36,77 € @ISSI-nand-shop],
+      [119,33 € @swissbit-emmc-shop],
+      [24,53€ @sandisk-sdhc-shop],
 
-      [Kosten pro GB],
-      [hoch],
-      [mittel],
-      [niedrig],
-
-      [Bewertung],
-      [robust, aber hoher Softwareaufwand],
-      [technisch stark, aber aufwendig zu fertigen],
-      [einfach auslesbar und prototypenfreundlich],
     ),
     caption: [Vergleich verfügbarer Speichermedien],
   )
 ]
+
+*Entscheidungsmatrix Speichermedium*
 
 #figure(
   table(
     columns: (auto, auto, auto, auto, auto, auto),
     align: (left + horizon),
     inset: STD_INSET,
-    table.header([T-Nr.], [Eigenschaft], [Multiplikator], [*SPI-NAND-Flash* @w25n01gv], [*eMMC* @kingstonemmc], [*microSD* @kingstonmicrosd]),
+    table.header([T-Nr.], [Eigenschaft], [Multiplikator], [*SPI-NAND-Flash*], [*eMMC*], [*microSD*]),
     [#link(<t4>)[T4]], [Nutzbare Speicher- \kapazität], [#storage_multi.capacity], [#spinand_scores.capacity], [#emmc_scores.capacity], [#microsd_scores.capacity],
     [#link(<t3>)[T3]], [Schreib-\geschwindigkeit], [#storage_multi.write_speed], [#spinand_scores.write_speed], [#emmc_scores.write_speed], [#microsd_scores.write_speed],
     [#link(<t6>)[T6]], [Schnittstellen Komplexität], [#storage_multi.interface], [#spinand_scores.interface], [#emmc_scores.interface], [#microsd_scores.interface],
     [#link(<t4>)[T4]], [Integriertes Flash-Management], [#storage_multi.flash_management], [#spinand_scores.flash_management], [#emmc_scores.flash_management], [#microsd_scores.flash_management],
     [#link(<t1>)[T1]], [Auslesbarkeit am PC], [#storage_multi.pc_readability], [#spinand_scores.pc_readability], [#emmc_scores.pc_readability], [#microsd_scores.pc_readability],
     [#link(<t7>)[T7]], [Mechanische Integration], [#storage_multi.integration], [#spinand_scores.integration], [#emmc_scores.integration], [#microsd_scores.integration],
-    [#link(<t9>)[T9]], [Verfügbarkeit], [#storage_multi.availability], [#spinand_scores.availability], [#emmc_scores.availability], [#microsd_scores.availability],
     [#link(<t7>)[T7]], [Geringe Kosten], [#storage_multi.cost], [#spinand_scores.cost], [#emmc_scores.cost], [#microsd_scores.cost],
     [], [*Gewichtete Summe*], [], [*#storage_score(spinand_scores)*], [*#storage_score(emmc_scores)*], [*#storage_score(microsd_scores)*],
   ),
   caption: [Entscheidungsmatrix Speichermedium],
 )
 
-Die microSD-Karte erzielt die höchste gewichtete Bewertung. Sie verbindet eine direkte PC-Auslesbarkeit mit integriertem Flash-Management, geringem Integrationsaufwand und ausreichender Schreibgeschwindigkeit und wird daher als Speichermedium eingesetzt.
-
+Die SanDisk High Endurance 32GB MicroSDHC Memory Card eignet sich aufgrund ihrer einfachen Integration sowie bester Speicher- Kapazität und Geschwindigkeit im Verhältnis zum Preis.
 
 == Blockdiagramm <block-diagram>
 
 #align(center)[
   #figure(
     image("pictures/full-system-diagram.svg", width: 80%),
-    caption: [Vollständiger Datenlogger.],
+    caption: [Blockdiagramm des vollständigen Datenloggers.],
   )
 ]
-
-== Blockdiagramm des Prototypen <prototype-block-diagram>
+ <prototype-block-diagram>
 #align(center)[
   #figure(
     image("pictures/prototype-diagram.svg", width: 80%),
-    caption: [Zeitplanung],
+    caption: [Blockdiagramm des Protoypen],
   )
 ]

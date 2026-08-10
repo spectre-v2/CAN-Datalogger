@@ -5,14 +5,13 @@
 
 #define MCP_RAM_BASE 0x400
 
-//docs:start:commands
+//docs:start:mcp_commands
 // MCP command bits
 #define MCP_COMMAND_WRITE 0b00100000
 #define MCP_COMMAND_READ 0b00110000
 #define MCP_COMMAND_RESET 0b00000000
-//docs:end:commands
+//docs:end:mcp_commands
 
-//docs:start:core_register_addresses
 // MCP2518FD register addresses 
 #define MCP_REG_ADR_C1CON       0b000000000000  // 0x000 - CAN Control Register
 #define MCP_REG_ADR_C1NBTCFG    0b000000000100  // 0x004 - Nominal Bit Time Configuration Register
@@ -23,7 +22,6 @@
 #define MCP_REG_ADR_C1TXIF      0b000000100100  // 0x024 - Transmit Interrupt Flag Register
 #define MCP_REG_ADR_C1TXREQ     0b000000110000  // 0x030 - Transmit Request Register
 #define MCP_REG_ADR_C1TREC      0b000000110100  // 0x034 - Transmit/Receive Error Count Register
-//docs:end:core_register_addresses
 #define MCP_REG_ADR_C1FIFOCON1  0b000001011100  // 0x05C - FIFO 1 Control Register
 #define MCP_REG_ADR_C1FIFOSTA1  0b000001100000  // 0x060 - FIFO 1 Status Register
 #define MCP_REG_ADR_C1FIFOUA1   0b000001100100  // 0x064 - FIFO 1 User Address Register
@@ -63,7 +61,7 @@ typedef union {
 
 } MCP_REG_C1CON_t;                   // CAN Control Register
 
-//docs:start:union
+//docs:start:mcp_register_union
 typedef union {
     uint8_t data_array[4];
     struct __attribute__((packed)) {
@@ -75,7 +73,7 @@ typedef union {
     uint32_t BRP : 8;                // Baud Rate Prescaler bits
     } bits;
 } MCP_REG_C1NBTCFG_t;                // Nominal Bit Time Configuration Register
-//docs:end:union
+//docs:end:mcp_register_union
 
 typedef union {
     uint8_t data_array[4];

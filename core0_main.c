@@ -72,10 +72,12 @@ int main()
         case SYSTEM_STARTING_S:
 
             if(datalogger_state.sd_state == SD_IDLE_S){ 
+                //docs:start:can0_startup
                 mcu_hardware_init();
                 mcp_init();
                 multicore_launch_core1(core1_entry);
                 datalogger_state.sd_state = SD_MOUNTING_S;
+                //docs:end:can0_startup
             }
 
             //waiting for core1 to start up the SD.
@@ -86,10 +88,12 @@ int main()
             break;
 
         case SYSTEM_RUNNING_S:
+            //docs:start:can0_service_pending
             if(datalogger_state.mcp_state==MCP_PENDING_S) {
                 can0_mcp_fetch_data();
                 datalogger_state.mcp_state= MCP_IDLE_S;
             }
+            //docs:end:can0_service_pending
             
             if(datalogger_state.ext_power_state == EXT_POWER_OFF_S) datalogger_state.system_state = SYSTEM_STOPPING_S;
         break;
@@ -116,5 +120,4 @@ int main()
     }
 
 }
-
 

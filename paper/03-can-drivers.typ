@@ -29,11 +29,12 @@ cansend can0 123##1DEADBEEF
 
 == Der Treiber des MCP2518FD
 
-Der RP2350 verarbeitet CAN-FD nicht selbst, sondern über den externen Controller MCP2518FD. Der Treiber trennt deshalb die SPI-Übertragung von CAN-spezifischen Konfigurationen und Nutzdaten.
+Der RP2350 verarbeitet CAN-FD nicht selbst, sondern über den externen Controller MCP2518FD. Der Treiber trennt deshalb die SPI-Übertragung von der weiterverarbeitung von CAN-spezifischen Nutzdaten.
 
 
 === Serial Peripheral Interface
-Das Serial Peripheral Interface (SPI) ist ein voll- Duplex Master-Slave Datenbus. Das bedeutet, es werden Daten immmer gleichzeitig vom Master an den Slave und vom Slave an den Master zurückgesendet. Dazu besitzt er folgende Leitungen:
+
+Das Serial Peripheral Interface (SPI) ist ein voll- Duplex Master-Slave Datenbus. Das bedeutet, es werden Daten immer gleichzeitig vom Master an den Slave und vom Slave an den Master zurückgesendet. Dazu besitzt er folgende Leitungen:
 
 - *CSn*: Chip-Select
 - *SCK*: Serial Clock
@@ -42,71 +43,62 @@ Das Serial Peripheral Interface (SPI) ist ein voll- Duplex Master-Slave Datenbus
 
 Das schalten der Csn-Leitung auf Masse (Active-Low) signalisiert den Beginn einer Übertragung.
 
-=== Registerzugriff über SPI
+Vor dem ersten Zugriff initialisiert der Mikrocontroller seine interne SPI- Logik und hält Chip Select auf High. 
 
-Jedes Register des MCP2818FD ist 32 Bit breit und besitzt eine 12-Bit-Startadresse. Der Treiber unterscheidet die drei grundlegenden Befehle zum Schreiben, Lesen und Zurücksetzen.
+#code-snippet("../mcu_hardware_config.c", "can0_spi_configuration")
 
-#code-snippet("../mcp2518.h", "commands")
 
-Da SPI immer mit Byte- Arrays arbeitet @picosdk-hardware-spi, muss ein solches für einen erfolgreichen SPI- transfer zunächst aus dem Befehl sowie der Zieladresse im Addressraum des MCP2518FD zusammengesetzt werden. 
-Das erste Befehlsbyte enthält den vier Bit breiten SPI-Befehl sowie die oberen vier Bits der Registeradresse. Das zweite Byte überträgt die verbleibenden acht Bits der Adresse. Anschließend werden die eigentlichen Daten gesendet. @mcp2518fd
+=== Grundlegende Befehle des MCP2518-FD
 
-#code-snippet("../mcp2518.c", "mcp_write_register")
+Jedes Register des MCP2518FD ist 32 Bit breit und besitzt eine 12-Bit-Startadresse. 
+Der Chip unterscheidet drei Grundlegende Befehle zum Schreiben oder Lesen von Registern sowie zum zurücksetzen. Diese sind 4 Bit groß. Im folgenden werden sie um vier stellen nach links verschoben, um die spätere Maskierung zu vereinfachen.
 
-Beim Lesen eines Registers des MCP2518FD wird zunächst ebenfalls 2 Bytes aus Befehl und Zieladdresse gesendet. Da SPI Vollduplex ist, werden anschließend so viele Nullbytes gesendet, wie von der Zieladresse an Daten gelesen werden sollen, um den Bus zu takten. Gleichzeitig werden die vom MCP2518-FD gesendeten Bytes im Empfangspuffer gespeichert.
+#code-snippet("../mcp2518.h", "mcp_commands")
 
-#code-snippet("../mcp2518.c", "mcp_read_register")
+SPI auf dem RP2350 sendet ausschließlich Byte-Arrays. @picosdk-hardware-spi
+Aus diesem Grund muss das erste gesendete Byte die ersten vier Bit des Befehls sowie die ersten vier Bits der Registeradresse enthalten. Das zweite Byte überträgt die verbleibenden acht Bits der Adresse. Anschließend werden die eigentlichen Daten gesendet. @mcp2518fd
 
-Damit die 32 Bit eines Registers sowohl byteweise über SPI als auch feldweise im Programm nutzbar sind, werden sie als Union abgebildet. `data_array` ist das Übertragungsformat, da die SPI- Treiber des mikrocontrollers immer mit 8-Bit Arrays arbeiten, und `bits` ordnet den Datenfeldern ihre eigentliche Bedeutung zu.
+#code-snippet("../mcp2518.c", "mcp_write")
 
-#code-snippet("../mcp2518.h", "union")
+Auch beim Lesen werden zwei Bytes aus Befehl und Registeradresse gesendet. Anschließend wird `0b00000000` gesendet, damit die funktion `spi_read_blocking` die Clock- Leitung taktet die gleichzeitig empfangenen Daten speichert.
+
+#code-snippet("../mcp2518.c", "mcp_read")
+
+=== Adressraum und Registerstruktur des MCP2518-FD
+
+Der MCP2518 besitzt 34 Steuerregister- Blöcke. Für einen ersten Funktionstest sind jedoch nur folgende relevant:
+
+- C1CON (Controller 1 Control) 
+- C1NBTCFG (Controller 1 Nominal Bit Time Configuration)
+- C1FIFOCON (Controller 1 First- In- First- Out Control)
+- C1INT (Controller 1 Interrupt)
+- C1FLTCON (Controller 1 Filter Configuration)
+- C1FIFOUA1 (Controller 1 FIFO User Adress 1)
+
+Um Nutzdaten auszulesen wird zusätzlich nur das statische Offset des Message- RAM, welches 0x400 beträgt und im folgenden mit MCP_RAM_BASE bezeichnet wird, benötigt.
+
+Die Register des MCP2518FD werden in der Software als Union abgebildet: `data_array` ist das SPI-Format, `bits` macht die einzelnen Felder im Programm zugänglich und ordnet den Rohdaten eine klare Bedeutung zu. Allerdings ist es wichtig zu beachten, dass diese Datenstruktur sich zunächst nur auf dem Mikrocontroller befindet und nicht den tatsächlichen Zustand des MCP2518 Darstellt. Für eine Tatsächliche Modifikation muss deshalb eine Read- Modify- Write operation durchgeführt werden.
+
+#code-snippet("../mcp2518.h", "mcp_register_union")
 
 === Konfiguration des Empfangspfads
 
-Nach einem Reset beginnt die Initialisierung mit den Bitzeiten der nominalen CAN-Phase (1 Mbit/s) und der Datenphase (2 Mbit/s). Die Felder `BRP`, `TSEG1`, `TSEG2` und `SJW` bestimmen dabei den Systemtakt- Prescaler und den Abtastzeitpunkt, sowie die maximal zulässige Zeitspanne, mit der der MCP2518 seine eigene Zeitbasis anhand der Datenflanken auf dem CAN-Bus synchronisieren darf.
+Um den MCP2518 zu konfigurieren, wird zunächst ein reset- Befehl gesendet, um einen definierten Zustand zu erzeugen. 
+#code-snippet("../mcp2518.c","mcp_reset")
+
+Danach werden die Bitzeiten für die nominale CAN-Phase auf 500 kbit/s gesetzt  und für die Datenphase auf 2 Mbit/s. Dies geschieht mithilfe der Datenfelder innerhalb von `C1NBTCFG` und `C1DBTCFG`. `BRP` steht für Bit- Rate- Prescaler und bestimmt zunächst den Prescaler, welcher den Systemtakt, welcher abhängig vom externen Quarzoszillator ist, teilen kann. `TSEG1` und `TSEG2` bestimmen die Anzahl der Takte, welche vom Beginn einer Datenflanke bis zum Abtasten der Leitung gewartet werden sollen, und wie lange nach diesem Zeitpunkt die Datenflanke noch im definierten Zustand bleiben soll, sollte der Controller aktiv senden. `SJW` bestimmt, wie viele Takte der Controller die folgende Flanke vor- oder zurück verschieben darf, um den Bus zu Synchronisieren. Dies ist nötig, da CAN-FD ein selbstsynchronisierender Bus ist. Die gewählten Werte orientieren sich an den Standardeinstellungen des Candlelight FD.
 
 #code-snippet("../mcp2518.c", "mcp_bit_timing")
 
-Das Register FIFO 1 wird als Empfangspuffer für genau eine CAN-FD-Nachricht mit bis zu 64 Byte Nutzdaten eingerichtet. TFNRFNIE legt fest, das bei vorhanden Daten im FIFO ein Interrupt ausgelöst werden soll.
+Wird eine CAN- Nachricht empfangen, wird ihr Identifier zunächst mit einem bestimmten Filter verglichen. Meldet dieser Vergleich einen Treffer, speichert der Chip die CAN-Nachricht in dedizierten Bereich im Message- RAM, ein Pointer- Register gibt die Adresse an. Dieses zeigt zunächst auf die zuerst empfangene Nachricht. Wird diese Nachricht ausgelesen, zeigt der Pointer auf die Nachricht, die unmittelbar danach empfangen wurde. Dieses Prinzip bezeichnet man als First- In- First- Out (FIFO).
+Das Fifo- control- register C1FIFOCON1 steuert die Anzahl der Nachrichten in diesem FIFO sowie deren Größe, um somit die Pointer- Logik zu ermöglichen. 
+Für diesen Test wird das gesamte Message- Ram genutzt, und wir beschränken uns auf CAN-FD Frames mit ausschließlich voller 64- Byte Nutzlast.  
+Zudem wird mithilfe von `TFNRFNIE` und `RXIE` eingestellt, dass der Interupt- Pin am Chip ein Signal ausgeben soll, wenn mindestens eine Nachricht im FIFO vorhanden ist. Dies wird später genutzt, um von Seiten des Mikrocontrollers auf dieses Ereignis zu reagieren.
 
-#code-snippet("../mcp2518.c", "mcp_receive_fifo")
 
-Filter 0 leitet zunächst alle Nachrichten in FIFO 1. Zusätzlich schaltet `RXIE` den globalen Empfangsinterrupt ein.
+#code-snippet("../mcp2518.c", "mcp_receive_path_configuration")
 
-#code-snippet("../mcp2518.c", "mcp_receive_interrupt")
-
-#code-snippet("../mcp2518.c", "mcp_receive_filter")
-
-Die vorbereiteten Register- Objekte werden anschließend jeweils vollständig geschrieben. Erst der letzte Zugriff fordert den Normalbetrieb im CAN-FD-Modus an. 
+Die vorbereiteten Structs werden anschließend mithilfe der bereits vorhandenen SPI- Treiberfunktion `mcp_write` an den MCP2518 gesendet. Danach wird der Chip in den normalen CAN-FD Empfangsmodus versetzt
 
 #code-snippet("../mcp2518.c", "mcp_apply_configuration")
 
-=== Inbetriebnahme durch den Mikrocontroller
-
-Vor dem ersten Zugriff initialisiert der Mikrocontroller SPI und hält Chip Select auf High. Ein Reset setzt den MCP2518FD in einen definierten Ausgangszustand.
-
-#code-snippet("../main.c", "can0_spi_setup")
-
-Der Reset-Befehl wird bei aktivem Chip Select übertragen. Nach einer kurzen Wartezeit werden die zuvor vorbereiteten Registerwerte geschrieben und der Controller in den CAN-FD-Betrieb versetzt.
-
-#code-snippet("../mcp2518.c", "mcp_reset")
-
-#code-snippet("../main.c", "can0_controller_start")
-
-=== Interruptgesteuertes Auslesen
-
-Eine empfangene Nachricht zieht die Interrupt- Leitung des MCP2518FD auf Low. Die Interrupt-Routine führt selbst keine SPI-Übertragung aus, sondern setzt nur ein Flag. So bleibt sie kurz und der eigentliche Zugriff erfolgt kontrolliert in der Hauptschleife.
-
-#code-snippet("../main.c", "can0_irq_handler")
-
-Der zugehörige GPIO wird als Eingang mit Pull-up konfiguriert und auf den Low-Pegel überwacht.
-
-#code-snippet("../main.c", "can0_irq_setup")
-
-Beim gesetzten Flag liest die Callback-Funktion zunächst aus `C1FIFOUA1` den Offset der Nachricht im Message-RAM. Anschließend wird das vollständige Nachrichtenobjekt gelesen. Das Setzen von `UINC` bestätigt die Verarbeitung und bewegt den FIFO-Zeiger auf die nächste Nachricht.
-
-#code-snippet("../main.c", "can0_receive_callback")
-
-Die Hauptschleife verbindet beide Schritte: Sie verarbeitet eine Nachricht erst, wenn die Interrupt-Routine dies angefordert hat.
-
-#code-snippet("../main.c", "can0_scheduler")

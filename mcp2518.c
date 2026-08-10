@@ -27,7 +27,7 @@ void mcp_reset(void){
 }
 //docs:end:mcp_reset
 
-//docs:start:mcp_write_register
+//docs:start:mcp_write
 void mcp_write(uint16_t address, const void *tx_buffer, size_t length){
     printf("Attempting MCP2518 Register modification... ");
 
@@ -43,9 +43,9 @@ void mcp_write(uint16_t address, const void *tx_buffer, size_t length){
 
     printf("done.\n");
 }
-//docs:end:mcp_write_register
+//docs:end:mcp_write
 
-//docs:start:mcp_read_register
+//docs:start:mcp_read
 void mcp_read(uint16_t address, void *rx_buffer, size_t length){
     printf("Attempting MCP2518 Register retrieve... ");
     
@@ -61,7 +61,7 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
 
     printf("done.\n");
 }
-//docs:end:mcp_read_register
+//docs:end:mcp_read
 
 
 void mcp_init(void){
@@ -71,6 +71,7 @@ void mcp_init(void){
     mcp_reset();
 
 
+    //docs:start:mcp_bit_timing
     //nominal data rate: 500kbit/s
     //sample point: 87%, weil der Candlelight FD auch auf dieser Sample rate arbeitet
     //system clock: 20Mhz
@@ -94,7 +95,7 @@ void mcp_init(void){
     };
     //docs:end:mcp_bit_timing
 
-    //docs:start:mcp_receive_fifo
+    //docs:start:mcp_receive_path_configuration
     MCP_REG_C1FIFOCON_t mcp_c1fifocon1 = {
         .bits = {
             
@@ -103,25 +104,21 @@ void mcp_init(void){
             .TFNRFNIE= 1, // Recieve-Fifo not empty Interrupt enabled.
         },
     };
-    //docs:end:mcp_receive_fifo
 
-    //docs:start:mcp_receive_interrupt
     MCP_REG_C1INT_t mcp_c1int = {
         .bits = {
             .RXIE = 1, //recieve message interrupt enable
         }
     };
-    //docs:end:mcp_receive_interrupt
 
     
-    //docs:start:mcp_receive_filter
     MCP_REG_C1FLTCON_t mcp_c1fltcon = {
         .bits = {
             .FLTEN0= 1, //enable filter 0
             .F0BP=  1 //save hits in fifo 1
         }
     };
-    //docs:end:mcp_receive_filter
+    //docs:end:mcp_receive_path_configuration
 
     MCP_REG_C1CON_t mcp_c1con = {
         .bits = {

@@ -9,7 +9,7 @@
   
 void mcu_hardware_init(){
 
-  //docs:start:can0_spi_setup
+  //docs:start:can0_spi_configuration
     // SPI initialisation
     spi_init(spi_port_can0, spi_port_can0_speed);
     spi_set_format(spi_port_can0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
@@ -20,17 +20,15 @@ void mcu_hardware_init(){
     //chip select as active-low
     gpio_set_dir(pin_can0_cs, GPIO_OUT);
     gpio_put(pin_can0_cs, 1);
-    //docs:end:can0_spi_setup
+    //docs:end:can0_spi_configuration
 
     gpio_set_function(pin_pico2_led, GPIO_FUNC_SIO);
     gpio_set_dir(pin_pico2_led, GPIO_OUT);
     
-    //docs:start:can0_irq_setup
     //interrupt request from can0 controller
     gpio_set_function(pin_can0_irq, GPIO_FUNC_SIO);
     gpio_set_dir(pin_can0_irq, GPIO_IN);
     gpio_pull_down(pin_can0_irq);
-    //docs:end:can0_irq_setup
 
 
     gpio_set_function(pin_power_detect, GPIO_FUNC_SIO);
@@ -42,4 +40,3 @@ void mcu_hardware_init(){
 
     
 }
-

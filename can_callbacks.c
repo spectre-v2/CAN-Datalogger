@@ -13,7 +13,7 @@
 #include "can_ring_buffer.h"
 #include "statemachine.h"
 
-//docs:start:can0_receive_callback
+//docs:start:can0_drain_receive_fifo
 bool can0_mcp_fetch_data(){
     printf("Entering CAN-0 recieve callback... \n");
 
@@ -43,4 +43,4 @@ bool can0_mcp_fetch_data(){
     
     printf("done.\n");
 }
-//docs:end:can0_receive_callback
+//docs:end:can0_drain_receive_fifo
