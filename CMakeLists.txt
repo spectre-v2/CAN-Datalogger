@@ -40,7 +40,6 @@ add_subdirectory(FatFS_SD_SPI_drivers)
 add_executable(CAN-Datalogger
         core0_main.c
         core1_main.c
-        can_callbacks.c
         mcp2518.c
         can_ring_buffer.c
         csv_text_buffer.c
@@ -72,5 +71,7 @@ target_include_directories(CAN-Datalogger PRIVATE
 target_link_libraries(CAN-Datalogger 
         hardware_spi
         )
+# Debugging mode
+target_compile_definitions(CAN-Datalogger PRIVATE DEBUGMSG)
 
 pico_add_extra_outputs(CAN-Datalogger)

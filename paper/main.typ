@@ -34,7 +34,7 @@
 
 #include "01-intro.typ"
 #include "02-system-arcitecture.typ"
-#include "03-state-machine.typ"
+#include "03-software-architecture.typ"
 #include "04-can-drivers.typ"
 #include "05-data-storage.typ"
 #include "06-evaluation.typ"

@@ -4,11 +4,14 @@
 #include <stdio.h>
 #include <string.h>
 
+//project modules
+#include "debug.h"
+
 
 //docs:start:csv-create-log
 void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_message_ptr){
 
-    printf("Creating csv log entry... ");
+    debugmsg("csv-buffer", "Creating CSV log entry...");
 
     uint8_t written = 0;
     written = snprintf(new_entry, sizeof(csv_log_entry), "%u,", (unsigned int)(*can_message_ptr).can_message.SID);
@@ -23,7 +26,5 @@ void csv_create_log_entry(csv_log_entry new_entry, can_message_object_t *can_mes
     }
 
     snprintf(new_entry, 2, "\n");
-    printf("done.\n");
-
 }
 //docs:end:csv-create-log

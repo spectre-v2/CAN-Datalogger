@@ -1,13 +1,20 @@
 #import "header.typ":*
 
+= Speicherung der Daten
+
 Die Zentrale technische Herausforderung bei diesem System ist die zuverlässige Speicherung von Daten und gleichzeitiger vollständiger Aufzeichnung aller neuen eingehenden Daten. 
 
-Zu diesem Zweck ist es nötig, eingehende Nachrichten in einem Zwischenspeicher abzulegen, während die SD Karte daten verarbeitet.
+Eine SD- Karte besteht im Kern aus Sektoren zu je 512 Byte NAND- Flash und einem Mikrocontroller. Dieser verwaltet Sektoren, schaltet defekte Sektoren ab und stellt die übrigen mit logischen Blucknummern nach als logischen linearen Adressraum zur Verfügung.
+
+Um eine Datei in FAT32- Format zu speichern, bedarf es der zuordnung von Clustern.
+
+
+Deshalb ist es wichtig, eingehende Nachrichten schnell in einem Zwischenspeicher abzulegen, um diese anschließend weiterzuverarbeiten.
 Zu diesem Zweck nutzt man ein Array, welches mithilfe von zwei Indizes verwaltet wird, ein schreib und ein Lese- INdex. Schreibt man daten in dieses Array, so erhöht man den schreibindex. Liest man dis geschriebenen Daten anschließend wieder aus, erhöht man den Leseindex. Erreicht einer der Indizes irgendwann das ende des arrays, wird er auf 0 zurückgesetzt. Dadurch ergibt sich ein Speicher, bei dem immer die ältesten einträge zuerst ausgelesen werden, und die neusten EInträge an die freiwerdende Stelle geschrieben werden. 
 
 #code-snippet("../can_ring_buffer.c", "ringbuffer-store")
 
-#code-snippet("../can_ring_buffer.c", "ringbuffer-store")
+#code-snippet("../can_ring_buffer.c", "ringbuffer-fetch")
 
 Dies nennt man auf grund der zyklischen wiederkehr der Adressen einen Ringbuffer.
 

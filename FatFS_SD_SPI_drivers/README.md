@@ -20,8 +20,8 @@ Important files:
 - `sd_card/sd_card_spi.h`: the one public SD-card configuration and access API.
 - `sd_card/sd_card_spi.c`: SD-card setup, commands, and block read/write protocol.
 
-Enable SD-card diagnostics with `cmake -S . -B build -DFATFS_SD_SPI_DEBUG=ON`.
-The driver writes them with `printf`, so they appear on the project's configured stdio output.
+SD-card diagnostics use the project-wide `debugmsg("sd-spi", ...)` channel. Enable
+`DEBUGMSG` (or `DEBUG`) for the application to print them on its configured stdio output.
 
 Removed:
 

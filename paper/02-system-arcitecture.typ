@@ -25,7 +25,7 @@ USB dient als Standardschnittstelle für Programmierung, Debugging und die direk
 
 === Sender
 
-Um den Prototypen sinnvoll testen zu können, wird das USB- zu CAN-FD Interface Candlelight FD des Herstellers Linux Automation GmbH verwendet. Dieses basiert seinerseits auf einem STM32G0 und bietet die einfachste Möglichkeit, Nachrichten mit inkrementell angepasstem Inhalt zu versenden, um schlussendlich die Vollständigkeit des Datensatzes zu überprüfen.
+Um den Prototypen sinnvoll testen zu können, wird das USB- zu CAN-FD Interface Candlelight FD des Herstellers Linux Automation GmbH verwendet. Dieses basiert seinerseits auf einem STM32G0 und bietet die einfachste Möglichkeit, Nachrichten mit inkrementell angepasstem Inhalt zu versenden, um schlussendlich die Vollständigkeit des Datensatzes zu überprüfen. @candlelight-fd
 
 
 == Auswahl und Bewertung von Komponenten
@@ -366,7 +366,7 @@ Die SanDisk High Endurance 32GB MicroSDHC Memory Card eignet sich aufgrund ihrer
  <prototype-block-diagram>
 #align(center)[
   #figure(
-    image("pictures/can-datalogger-prototype-diagram.svg", width: 80%),
+    image("pictures/can-datalogger-prototype-diagram.svg", width: 60%),
     caption: [Blockdiagramm des Protoypen],
   )
 ]

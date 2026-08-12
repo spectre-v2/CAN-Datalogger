@@ -5,7 +5,7 @@
 #include "pico/multicore.h"
 
 #include "mcu_hardware_config.h"
-#include "can_callbacks.h"
+#include "debug.h"
   
 void mcu_hardware_init(){
 

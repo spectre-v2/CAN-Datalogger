@@ -1,5 +1,3 @@
-// C standard library
-#include <stdio.h>
 #include <stdint.h>
 
 // Raspberry Pi Pico SDK
@@ -11,10 +9,12 @@
 
 // Project modules
 #include "mcu_hardware_config.h"
-#include "can_callbacks.h"
 #include "core1_main.h"
 #include "mcp2518.h"
 #include "statemachine.h"
+#include "debug.h"
+
+
 
 //docs:start:start-states
 datalogger_state_t datalogger_state = {
@@ -37,11 +37,11 @@ void update_statemachine_inputs(){
 //docs:end:update-statemachine
 
 static void debug_print_datalogger_state(void) {
-    printf("state: system=%d, sd=%d, mcp=%d, power=%d\n",
-           atomic_load(&datalogger_state.system_state),
-           atomic_load(&datalogger_state.sd_state),
-           atomic_load(&datalogger_state.mcp_state),
-           atomic_load(&datalogger_state.ext_power_state));
+    debugmsg("core0", "state: system=%d, sd=%d, mcp=%d, power=%d",
+             atomic_load(&datalogger_state.system_state),
+             atomic_load(&datalogger_state.sd_state),
+             atomic_load(&datalogger_state.mcp_state),
+             atomic_load(&datalogger_state.ext_power_state));
 }
 
 
@@ -109,4 +109,3 @@ int main()
     }
 //docs:end:core0-loop
 }
-

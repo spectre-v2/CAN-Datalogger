@@ -7,6 +7,7 @@
 
 #include "statemachine.h"
 #include "sd_card_interface.h"
+#include "debug.h"
 
 
 //docs:start:core1-loop

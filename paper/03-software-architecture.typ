@@ -7,21 +7,27 @@ Um die die Grundarchitektur der Software so auszurichten, dass sie die übergeor
 - Zustandsautomat
 In eingebetteten Datenverarbeitungssystemen ist ein exakt definiertes Verhalten die Basis für ein Sicheres, zuverlässig vorhersehbares und echtzeitfähiges System. Besonders für einen Datenlogger ist ein klar definiertes Verhalten in Szenarien wie Ausfall der Versorgung, Unterbrechung der Kommunikation oder Crash des Speichermediums essenziell, um #link(<t4>)[T4] zu gewährleisten. Die Aufgaben der Software müssen Zeitlich klar definiert und eingegrenzt sein. #link(<t3>)[T3]
 
-Aus diesem Grund muss ein Zustandsautomat alle möglichen Zustände des Systems lückenlos abbilden. Es muss exakt definiert werden, unter welchen Umständen das System seinen Zustand wechseln soll. Zudem muss der Zustandsraum endlich und seine Mächtigkeit klar definert sein. Jeder Zustand muss einzigartig sein, es soll keine zwei möglichen Varianten eines Zustandes, einen sogenannten Hidden State, geben.
+Aus diesem Grund muss ein Zustandsautomat alle möglichen Zustände des Systems lückenlos abbilden. Es muss exakt definiert werden, unter welchen Umständen das System seinen Zustand wechseln soll. Zudem muss der Zustandsraum endlich und seine Mächtigkeit klar definert sein. Jeder Zustand muss einzigartig sein, es soll keine zwei möglichen Varianten eines Zustandes, einen sogenannten Hidden State, geben. @statemachine-paper
 
 
 
 #align(center)[
   #figure(
     image("pictures/can-datalogger-state-machine.svg", width: 100%),
-    caption: [MCP-2518-FD Modul.@mcp2518fd-module],
+    caption: [Zustandsautomat des Datenloggers.],
   )
 ]
 
 
 - Modulare Treiberschichten
 
-Die Funktionalitäten des Systems in Modulen mit klaren Zuständigkeitsgrenzen ausgeführt werden, um Zugriffe auf die Systemzustände nur duch die explizit zuständige Hardware oder Software auszuführen. Dies ist essentiell, um Komplexe Firmware übersichtlich und wartbar zu gestalten und unvorhergesehenes Verhalten zu vermeiden. 
+Die Funktionalitäten des Systems in Modulen mit klaren Zuständigkeitsgrenzen ausgeführt werden, um Zugriffe auf die Systemzustände nur duch die explizit zuständige Hardware oder Software auszuführen. Dies ist essentiell, um komplexe Firmware übersichtlich und wartbar zu gestalten und unvorhergesehenes Verhalten zu vermeiden. 
+#align(center)[+
+#figure(
+  image("pictures/can-datalogger-driver-architecture.svg", width:60%),
+  caption: [Treiberarchitektur des Prototypen.]
+)]
+
 
 - Hardware- Zuständigkeitstrennung
 Der RP2350 ermöglicht die klare Trennung von funktionalitäten in besonderem Maße durch seine dual- Core architektur. Durch diese ist es möglich, dass einer der Prozessoren ausschließlich als "Empfänger" arbeitet, das heißt er reagiert auf Interrupt- anforderungen des MCP218, führt die SPI- Treiberfunktionen aus, und speichert die ausgelesenen Daten in einem Zwischenspeicher. Der zweite Core nimmt ausschließlich eine Rolle als "Schreiber" ein. Er liest Daten aus dem Zwischenspeicher, wandelt CAN-FD spezifische Daten in .csv tabelleneinträge um, nutzt FAT32- Bibliotheken zur Organisation der Daten in Sektoren sowie verwaltung von Partitionstabellen, und führt SD-Karten spezifische SPI- Treiberfunktionen aus, um diese verarbeiteten Daten zu speichern. Somit agieren beide Cores weitgehend unabhängig voneinander, eine unvorhergesehene, langsame Operation einer der cores beeinflusst den anderen nicht.

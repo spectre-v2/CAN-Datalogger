@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #define MCP_RAM_BASE 0x400
 
@@ -311,3 +312,5 @@ void mcp_write(uint16_t address, const void *tx_buffer, size_t length);
 void mcp_read(uint16_t address, void *rx_buffer, size_t length);
 
 void mcp_init(void);
+
+bool can0_mcp_fetch_data();

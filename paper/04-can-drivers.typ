@@ -69,7 +69,10 @@ Zudem wird mithilfe von `TFNRFNIE` und `RXIE` eingestellt, dass der Interupt- Pi
 
 #code-snippet("../mcp2518.c", "mcp_receive_path_configuration")
 
-Die vorbereiteten Structs werden anschließend mithilfe der bereits vorhandenen SPI- Treiberfunktion `mcp_write` an den MCP2518 gesendet. Danach wird der Chip in den normalen CAN-FD Empfangsmodus versetzt
+Die vorbereiteten Structs werden anschließend mithilfe der bereits vorhandenen SPI- Treiberfunktion `mcp_write` an den MCP2518 gesendet. Danach wird der Chip in den normalen CAN-FD Empfangsmodus versetzt.
 
 #code-snippet("../mcp2518.c", "mcp_apply_configuration")
 
+Ist nun eine Nachricht empfangen worden, wird dies duch die Interrupt- Leitung des MCP signalisiert. Zudem wird in C1FIFOUA1 das Adress- Offset gespeichert. Durch Addition mit der RAM- Basisadresse erhält man die Adresse der Nachricht und kann diese auslesen.
+
+#code-snippet("../mcp2518.c", "can0_drain_receive_fifo")

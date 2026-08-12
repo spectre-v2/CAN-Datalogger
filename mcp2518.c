@@ -1,8 +1,5 @@
 #include "mcp2518.h"
 
-// C standard library
-#include <stdio.h>
-
 // Raspberry Pi Pico SDK
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
@@ -10,11 +7,13 @@
 
 // Project modules
 #include "mcu_hardware_config.h"
+#include "can_types.h"
+#include "can_ring_buffer.h"
+#include "debug.h"
 
 
 //docs:start:mcp_reset
 void mcp_reset(void){
-    printf("Resetting MCP2518... ");
     uint8_t command[2];
     command[0]= 0b00000000;
     command[1]= 0b00000000;
@@ -23,14 +22,11 @@ void mcp_reset(void){
     spi_write_blocking(spi_port_can0,command, 2);
         sleep_us(1);
     gpio_put(pin_can0_cs,1); 
-    printf("done.\n");
 }
 //docs:end:mcp_reset
 
 //docs:start:mcp_write
 void mcp_write(uint16_t address, const void *tx_buffer, size_t length){
-    printf("Attempting MCP2518 Register modification... ");
-
     uint8_t command[2];
     command[0]=MCP_COMMAND_WRITE | (address >>8);
     command[1]=address & 0b000011111111;
@@ -41,14 +37,11 @@ void mcp_write(uint16_t address, const void *tx_buffer, size_t length){
     sleep_us(1);
     gpio_put(pin_can0_cs, 1);
 
-    printf("done.\n");
 }
 //docs:end:mcp_write
 
 //docs:start:mcp_read
 void mcp_read(uint16_t address, void *rx_buffer, size_t length){
-    printf("Attempting MCP2518 Register retrieve... ");
-    
     uint8_t command[2];
 
     command[0]= MCP_COMMAND_READ | (address>>8);    //4 command bits + first 4 address bits according to datasheet
@@ -59,15 +52,12 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
     spi_read_blocking(spi_port_can0, 0b00000000, rx_buffer, length); //sending empty bytes and write recieved data in buffer
     gpio_put(pin_can0_cs, 1);
 
-    printf("done.\n");
 }
 //docs:end:mcp_read
 
 
 void mcp_init(void){
-
-    printf("Initializing MCP2518... ");
-    
+    debugmsg("mcp2518 driver", "Initializing mcp...");
     mcp_reset();
 
 
@@ -127,7 +117,6 @@ void mcp_init(void){
         }
     };
     
-    
     //docs:start:mcp_apply_configuration
     mcp_write(MCP_REG_ADR_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
     mcp_write(MCP_REG_ADR_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
@@ -137,6 +126,34 @@ void mcp_init(void){
     mcp_write(MCP_REG_ADR_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
     //docs:end:mcp_apply_configuration
 
-    printf("done.\n");
+}
+
+
+
+//docs:start:can0_drain_receive_fifo
+bool can0_mcp_fetch_data(){
+    debugmsg("mcp2518 driver", "Fetching can message...");
+    uint32_t tmp_offset;
+    can_message_object_t tmp_can_message_buffer;
+
+    do {
+        //Retrieve the address offset of the recieved CAN-Message stored in message ram from C1FIFOUA1
+        mcp_read(MCP_REG_ADR_C1FIFOUA1, &tmp_offset, sizeof tmp_offset);
+
+        //Read this message address and write into temp. message buffer.
+        mcp_read(tmp_offset + MCP_RAM_BASE, tmp_can_message_buffer.data_array, sizeof tmp_can_message_buffer.data_array);
+
+        //save message in ringbuffer
+        can_ring_store(&tmp_can_message_buffer);
+
+        //set UINC bit in C1FIFOCON1 to prompt load operation of next message offset into C1FIFOUA1
+        MCP_REG_C1FIFOCON_t tmp_c1fifocon;
+        mcp_read(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+        tmp_c1fifocon.bits.UINC= 1;
+        mcp_write(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+
+
+    }while(gpio_get(pin_can0_irq));
 
 }
+//docs:end:can0_drain_receive_fifo
