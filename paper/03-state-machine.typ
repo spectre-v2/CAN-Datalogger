@@ -5,7 +5,7 @@
 Um die die Grundarchitektur der Software so auszurichten, dass sie die übergeordneten Technischen Ziele erreicht, werden folgende Prinzipen angewendet: 
 
 - Zustandsautomat
-In eingebetteten Datenverarbeitungssystemen ist ein exakt definiertes Verhalten die Basis für ein Sicheres, zuverlässig vorhersehbares und echtzeitfähiges System. Besonders für einen Datenlogger ist ein klar definiertes Verhalten in Szenarien wie Stromausfall, Unterbrechung der Kommunikation oder Crash des Speichermediums essentiell, um #link(<t4>)[T4] zu gewährleisten. Die Aufgaben der Software müssen Zeitlich klar definiert und eingegrenzt sein. #link(<t3>)[T3]
+In eingebetteten Datenverarbeitungssystemen ist ein exakt definiertes Verhalten die Basis für ein Sicheres, zuverlässig vorhersehbares und echtzeitfähiges System. Besonders für einen Datenlogger ist ein klar definiertes Verhalten in Szenarien wie Ausfall der Versorgung, Unterbrechung der Kommunikation oder Crash des Speichermediums essenziell, um #link(<t4>)[T4] zu gewährleisten. Die Aufgaben der Software müssen Zeitlich klar definiert und eingegrenzt sein. #link(<t3>)[T3]
 
 Aus diesem Grund muss ein Zustandsautomat alle möglichen Zustände des Systems lückenlos abbilden. Es muss exakt definiert werden, unter welchen Umständen das System seinen Zustand wechseln soll. Zudem muss der Zustandsraum endlich und seine Mächtigkeit klar definert sein. Jeder Zustand muss einzigartig sein, es soll keine zwei möglichen Varianten eines Zustandes, einen sogenannten Hidden State, geben.
 

@@ -73,9 +73,9 @@ In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigs
       columns: (auto, auto, auto, auto), align: (left + horizon), inset: STD_INSET,
 
       table.header([Mikrocontroller],
-      [*AVR64DU* @avr64du #figure(image("pictures/avr64du32.png"))],
-      [*STM32-C5* @stm32c5 #figure(image("pictures/stm32c5.webp"))],
-      [*RP2350* @rp2350 #figure(image("pictures/rp2350.png"))],
+      [#align(top)[*AVR64DU* @avr64du] #figure(image("pictures/avr64du32.png",width: 50%))],
+      [#align(top)[*STM32-C5* @stm32c5] #figure(image("pictures/stm32c5.webp",width: 110%))],
+      [#align(top)[*RP2350* @rp2350] #figure(image("pictures/rp2350.png"))],
       ),
 
       [Hersteller],[Microchip],[STMicroelectronics],[Raspberry Pi],
@@ -83,7 +83,7 @@ In der folgenden Tabelle wird eine Auswahl der  aktuellsten Modelle der gängigs
       [Architektur],[8-Bit AVR-Mega],[32-Bit Cortex-M33],[2x 32-Bit Cortex-M33 / 2x 32-Bit RISC-V],
       [Anzahl Prozessoren],[1],[1],[2],
       [RAM-Größe],[8 KB],[bis 256 KB],[520 KB],
-      [Schnittstellen],[1x SPI, 1x I²C, 2x USART, USB FS],[USB, OctoSPI, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
+      [Schnittstellen],[SPI, I²C, USART, USB],[USB, SPI, I²C, CAN-FD],[2x SPI, 2x I²C, USB, 12x PIO-SM],
       [Pin-Multiplexer],[Eingeschränkt],[Eingeschränkt],[sehr flexibel über GPIO-Funktionen],
       [Anzahl CAN-FD-Controller],[0],[2],[0],
       [Treiber/ Software workflow],[Melody],[STM- HAL, CubeMX-2],[Pico C/ C++ SDK]),
@@ -315,7 +315,7 @@ Für die dauerhafte Speicherung der Messdaten werden die in der Industrie gängi
 
       [Auslesbarkeit am PC],
       [nur über eigene Firmware],
-      [nur über Testhardware],
+      [nur über eigene Firmware],
       [direkt über Kartenleser],
 
       [Gehäuse / Integration],
@@ -359,14 +359,14 @@ Die SanDisk High Endurance 32GB MicroSDHC Memory Card eignet sich aufgrund ihrer
 
 #align(center)[
   #figure(
-    image("pictures/full-system-diagram.svg", width: 80%),
+    image("pictures/can-datalogger-full-system-diagram.svg", width: 80%),
     caption: [Blockdiagramm des vollständigen Datenloggers.],
   )
 ]
  <prototype-block-diagram>
 #align(center)[
   #figure(
-    image("pictures/prototype-diagram.svg", width: 80%),
+    image("pictures/can-datalogger-prototype-diagram.svg", width: 80%),
     caption: [Blockdiagramm des Protoypen],
   )
 ]

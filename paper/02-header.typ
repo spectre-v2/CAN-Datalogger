@@ -122,34 +122,34 @@
 //----------------------Speicher-----------------------
 #let spinand_scores=(
   name: "SPI-NAND-Flash",
-  capacity: 0,
+  capacity: -1,
   write_speed: 0,
-  interface: 0,
+  interface: -1,
   flash_management: -1,
-  pc_readability: -1,
+  pc_readability: 0,
   integration: 1,
-  cost: -1,
+  cost: 1,
 )
 
 #let emmc_scores=(
   name: "eMMC",
-  capacity: 0,
+  capacity: 1,
   write_speed: 1,
   interface: -1,
   flash_management: 1,
   pc_readability: 0,
   integration: -1,
-  cost: 0,
+  cost: -1,
 )
 
 #let microsd_scores=(
   name: "microSD",
   capacity: 1,
-  write_speed: 1,
+  write_speed: 0,
   interface: 1,
   flash_management: 1,
   pc_readability: 1,
-  integration: 1,
+  integration: 0,
   cost: 1,
 )
 
@@ -158,10 +158,10 @@
   capacity: 1,
   write_speed: 3,
   interface: 2,
-  flash_management: 3,
-  pc_readability: 3,
-  integration: 2,
-  cost: 2,
+  flash_management: 1,
+  pc_readability: 2,
+  integration: 1,
+  cost: 1,
 )
 
 #let storage_score(medium)= (
