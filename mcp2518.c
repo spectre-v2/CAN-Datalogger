@@ -86,14 +86,23 @@ void mcp_init(void){
     //docs:end:mcp_bit_timing
 
     //docs:start:mcp_receive_path_configuration
-    MCP_REG_C1FIFOCON_t mcp_c1fifocon1 = {
+    MCP_REG_C1FIFOCON_t mcp_c1fifocon1 = { //recieve fifo
         .bits = {
             
-            .PLSIZE= 0b111, //64 byte payload
-            .FSIZE= 0b11001, //26 Messages fifo-depth
+            .PLSIZE= 63, //64 byte payload
+            .FSIZE= 15, //16 Messages fifo-depth
             .TFNRFNIE= 1, // Recieve-Fifo not empty Interrupt enabled.
         },
     };
+
+
+    MCP_REG_C1FIFOCON_t mcp_c1fifocon2 = { //transmit fifo
+        .bits = {
+
+            .PLSIZE= 63, 
+            .FSIZE= 7, //8 Messages fifo-depth
+        }
+    }
 
     MCP_REG_C1INT_t mcp_c1int = {
         .bits = {
@@ -121,14 +130,13 @@ void mcp_init(void){
     mcp_write(MCP_REG_ADR_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
     mcp_write(MCP_REG_ADR_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
     mcp_write(MCP_REG_ADR_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
+    mcp_write(MCP_REG_ADR_C1FIFOCON2, mcp_c1fifocon2.data_array, sizeof mcp_c1fifocon2.data_array)
     mcp_write(MCP_REG_ADR_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
     mcp_write(MCP_REG_ADR_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
     mcp_write(MCP_REG_ADR_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
     //docs:end:mcp_apply_configuration
 
 }
-
-
 
 //docs:start:can0_drain_receive_fifo
 bool can0_mcp_fetch_data(){
@@ -157,3 +165,51 @@ bool can0_mcp_fetch_data(){
 
 }
 //docs:end:can0_drain_receive_fifo
+
+bool mcp_send_data(can_message_object_t can_tx_object){
+    if(!mcp_check_txfifo_ready()) return false;
+    uint32_t tmp_offset;
+    mcp_read(MCP_REG_ADR_C1FIFOUA2,tmp_offset, sizeof tmp_offset);
+    mcp_write(MCP_RAM_BASE + tmp_offset, can_tx_object.data_array);
+
+    MCP_REG_C1FIFOCON_t tmp_c1fifocon;
+    mcp_read(MCP_REG_ADR_C1FIFOCON2, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+    tmp_c1fifocon.bits.UINC= 1;
+    tmp_c1fifocon.bits.TXREQ= 1;
+    mcp_write(MCP_REG_ADR_C1FIFOCON2, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
+
+
+}
+
+bool mcp_check_rxfifo_ready(){
+    MCP_REG_C1FIFOSTA tmp_c1fifosta;
+    mcp_read(MCP_REG_ADR_C1FIFOSTA1, tmp_c1fifosta.data_array, sizeof tmp_c1fifosta.data_array);
+    return (bool)tmp_c1fifosta.bits.TFNRFNIF;
+}
+
+bool mcp_check_txfifo_ready(){
+    MCP_REG_C1FIFOSTA tmp_c1fifosta;
+    mcp_read(MCP_REG_ADR_C1FIFOSTA2, tmp_c1fifosta.data_array, sizeof tmp_c1fifosta.data_array);
+    return (bool)tmp_c1fifosta.bits.TFNRFNIF;
+}
+
+
+
+
+void mcp_convert_can_to_tx_obj(can_frame_t *can_frame, mcp_tx_object_t *tx_obj){
+
+    memset(tx_obj,0,sizeof(*tx_obj));
+
+    tx_obj -> SID = can_frame -> SID;
+    tx_obj -> DLC = can_frame -> DLC;
+    tx_obj -> BRS = BUS_BITRATE_SWITCH;
+    tx_obj -> FDF = BUS_CAN_FD;
+}
+
+void mcp_convert_rx_obj_to_can(mcp_rx_object_t rx_obj, can_frame_t can_frame){
+
+    rx_obj -> SID = can_frame -> SID;
+    rx_obj -> DLC = can_frame -> DLC;
+    rx_obj -> ESI = can_frame -> ESI;
+    rx_obj -> can_payload = can_frame -> can_payload;
+}

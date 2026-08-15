@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include "can_types.h"
 
 #define MCP_RAM_BASE 0x400
 
@@ -24,8 +25,11 @@
 #define MCP_REG_ADR_C1TXREQ     0b000000110000  // 0x030 - Transmit Request Register
 #define MCP_REG_ADR_C1TREC      0b000000110100  // 0x034 - Transmit/Receive Error Count Register
 #define MCP_REG_ADR_C1FIFOCON1  0b000001011100  // 0x05C - FIFO 1 Control Register
+#define MCP_REG_ADR_C1FIFOCON2  0b000001101000  // 0x068 - FIFO 2 Control Register
 #define MCP_REG_ADR_C1FIFOSTA1  0b000001100000  // 0x060 - FIFO 1 Status Register
+#define MCP_REG_ADR_C1IFIOSTA2  0b000001101100  // 0x06C - FIFO 2 Status Register
 #define MCP_REG_ADR_C1FIFOUA1   0b000001100100  // 0x064 - FIFO 1 User Address Register
+#define MCP_REG_ADR_C1FIFOUA2   0b000001110000  // 0c070 - FIFO 2 User Adress Register
 
 #define MCP_REG_ADR_C1FLTCON0   0b000111010000  // 0x1D0 - Filter Control Register 0
 #define MCP_REG_ADR_C1FLTOBJ0   0b000111110000  // 0x1F0 - Filter Object Register 0
@@ -305,6 +309,52 @@ typedef union {
     } bits;
 } MCP_REG_IOCON_t;                   // I/O Control Register
 
+
+
+
+// Datatype for recieved CAN-FD messages stored in MCP2518FD message RAM.
+typedef union {
+    uint8_t data_array[72];
+    struct __attribute__((packed)) {
+        uint32_t SID : 11;             // Standard Identifier
+        uint32_t EID : 18;             // Extended Identifier
+        uint32_t SID12 : 1;            // optional 12. bit of SID
+        uint32_t unimplemented_0 : 2;
+        uint32_t DLC : 4;              // Data Length Code
+        uint32_t IDE : 1;              // Identifier Extension
+        uint32_t RTR : 1;              // Remote Transmission Request
+        uint32_t BRS : 1;              // Bit Rate Switch
+        uint32_t FDF : 1;              // Flexible Data Rate Format
+        uint32_t ESI : 1;              // Error Status Indicator
+        uint32_t unimplemented_1 : 2;
+        uint32_t FILHIT : 5;           // Acceptance filter that accepted this message
+        uint32_t unimplemented_2 : 16;
+        uint8_t can_payload[64];
+    }datafields;
+}mcp_rx_object_t;
+
+
+// Datatype for CAN-FD messages to be loaded in MCP2518FD message RAM for transmission.
+typredef uinion{
+    uint8_t data_array[72];
+
+    struct__attribute__((packed)) {
+    uint32_t SID : 11;
+    uint32_t EID : 18;
+    uint32_t SID11 : 1;
+    uint32_t unimplemented_0 : 2;
+    uint32_t DLC : 4;
+    uint32_t IDE : 1;
+    uint32_t RTR : 1;
+    uint32_t BRS : 1;
+    uint32_t FDF : 1;
+    uint32_t ESI : 1;
+    uint32_t SEQ : 23;
+    uint8_t can_payload[64];
+}datafields;
+}mcp_tx_object_t;
+
+
 void mcp_reset(void);
 
 void mcp_write(uint16_t address, const void *tx_buffer, size_t length);
@@ -312,5 +362,13 @@ void mcp_write(uint16_t address, const void *tx_buffer, size_t length);
 void mcp_read(uint16_t address, void *rx_buffer, size_t length);
 
 void mcp_init(void);
+
+bool mcp_check_rxfifo_ready();
+
+bool mcp_check_txfifo_ready();
+
+void mcp_convert_can_to_tx_obj();
+
+void mcp_convert_rx_obj_to_can();
 
 bool can0_mcp_fetch_data();
