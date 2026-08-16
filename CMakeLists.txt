@@ -42,7 +42,7 @@ add_executable(CAN-Datalogger
         core1_main.c
         mcp2518.c
         can_ring_buffer.c
-        csv_text_buffer.c
+        csv_converter.c
         mcu_hardware_config.c
         sd_card_interface.c
 )

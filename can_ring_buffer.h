@@ -11,5 +11,5 @@
 
 extern _Atomic uint32_t can_ring_count;
 
-bool can_ring_store(const can_message_object_t *new_entry);
-bool can_ring_fetch(can_message_object_t *fetched_entry);
+bool can_ring_store(const can_frame_t *new_entry);
+bool can_ring_fetch(can_frame_t *fetched_entry);

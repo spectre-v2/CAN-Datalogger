@@ -335,10 +335,10 @@ typedef union {
 
 
 // Datatype for CAN-FD messages to be loaded in MCP2518FD message RAM for transmission.
-typredef uinion{
+typedef union{
     uint8_t data_array[72];
 
-    struct__attribute__((packed)) {
+    struct __attribute__((packed)) {
     uint32_t SID : 11;
     uint32_t EID : 18;
     uint32_t SID11 : 1;
@@ -367,8 +367,10 @@ bool mcp_check_rxfifo_ready();
 
 bool mcp_check_txfifo_ready();
 
-void mcp_convert_can_to_tx_obj();
+void mcp_convert_can_to_tx_obj(const can_frame_t *can_frame, mcp_tx_object_t *tx_obj);
 
-void mcp_convert_rx_obj_to_can();
+void mcp_convert_rx_obj_to_can(const mcp_rx_object_t *rx_obj, can_frame_t *can_frame);
 
-bool can0_mcp_fetch_data();
+bool mcp_fetch_data();
+
+bool mcp_send_data(mcp_tx_object_t mcp_tx_object);

@@ -3,13 +3,13 @@
 
 //docs:start:can_ring
 // Ring buffer for CAN messages.
-can_message_object_t can_ring[CAN_RING_SIZE];
+can_frame_t can_ring[CAN_RING_SIZE];
 _Atomic uint32_t can_ring_read_index = 0;
 _Atomic uint32_t can_ring_write_index = 0;
 _Atomic uint32_t can_ring_count = 0;
 
 //docs:start:ringbuffer-store
-bool can_ring_store(const can_message_object_t *new_entry){
+bool can_ring_store(const can_frame_t *new_entry){
     debugmsg("can-ring", "Saving message to ring buffer...");
 
     uint32_t read_index = atomic_load(&can_ring_read_index);
@@ -30,7 +30,7 @@ bool can_ring_store(const can_message_object_t *new_entry){
 //docs:end:ringbuffer-store
 
 //docs:start:ringbuffer-fetch
-bool can_ring_fetch(can_message_object_t *fetched_entry){
+bool can_ring_fetch(can_frame_t *fetched_entry){
     debugmsg("can-ring", "Fetching message from ring buffer...");
 
     uint32_t read_index = atomic_load(&can_ring_read_index);

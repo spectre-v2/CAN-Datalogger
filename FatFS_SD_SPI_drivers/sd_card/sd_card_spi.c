@@ -619,9 +619,11 @@ static block_dev_err_t in_sd_read_blocks(sd_card_t *sd_card_p, uint8_t *buffer,
     }
 
     // Send command to receive data
-    if (num_rd_blks == 1)
+    if (num_rd_blks == 1) {
+        debugmsg("sd-spi", "before CMD17: sector=%lu", data_address);
         status = sd_cmd(sd_card_p, CMD17_READ_SINGLE_BLOCK, data_address, false, 0);
-    else
+        debugmsg("sd-spi", "after CMD17: status=%d", (int)status);
+    } else
         status = sd_cmd(sd_card_p, CMD18_READ_MULTIPLE_BLOCK, data_address, false, 0);
     if (SD_BLOCK_DEVICE_ERROR_NONE != status) return status;
 
@@ -635,10 +637,14 @@ static block_dev_err_t in_sd_read_blocks(sd_card_t *sd_card_p, uint8_t *buffer,
             return SD_BLOCK_DEVICE_ERROR_NO_RESPONSE;
         }
         // read data
+        debugmsg("sd-spi", "before 512-byte read");
         sd_spi_transfer(sd_card_p, NULL, buffer, sd_block_size);
+        debugmsg("sd-spi", "after 512-byte read");
 
+        debugmsg("sd-spi", "before CRC");
         sd_spi_read(sd_card_p);
         sd_spi_read(sd_card_p);
+        debugmsg("sd-spi", "after CRC");
         buffer += sd_block_size;
         --blk_cnt;
     }
@@ -663,7 +669,9 @@ static block_dev_err_t sd_read_blocks(sd_card_t *sd_card_p, uint8_t *buffer,
                 break;
         }
     } while (--retries && status != SD_BLOCK_DEVICE_ERROR_NONE);
+    debugmsg("sd-spi", "before deselect");
     sd_release(sd_card_p);
+    debugmsg("sd-spi", "after deselect");
     return status;
 }
 
@@ -1284,13 +1292,15 @@ static uint8_t sd_card_init_for(sd_card_t *sd_card_p) {
     }
     debugmsg("sd-spi", "Card capacity: %" PRIu32 " sectors", sd_card_p->state.sectors);
     // Set the block length to 512 (CMD16)
+    
+    /*
     if (SD_BLOCK_DEVICE_ERROR_NONE !=
         sd_cmd(sd_card_p, CMD16_SET_BLOCKLEN, sd_block_size, false, 0)) {
         debugmsg("sd-spi", "Set %u-byte block timed out", sd_block_size);
         sd_release(sd_card_p);
         return sd_card_p->state.m_Status;
     }
-
+*/
     // The card is now initialized
     sd_card_p->state.m_Status &= ~STA_NOINIT;
 

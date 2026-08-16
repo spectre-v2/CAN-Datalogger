@@ -1,5 +1,8 @@
 #include "mcp2518.h"
 
+//C Standard
+#include <string.h>
+
 // Raspberry Pi Pico SDK
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
@@ -89,7 +92,7 @@ void mcp_init(void){
     MCP_REG_C1FIFOCON_t mcp_c1fifocon1 = { //recieve fifo
         .bits = {
             
-            .PLSIZE= 63, //64 byte payload
+            .PLSIZE= 7, //64 byte payload (MCP2518FD PLSIZE encoding)
             .FSIZE= 15, //16 Messages fifo-depth
             .TFNRFNIE= 1, // Recieve-Fifo not empty Interrupt enabled.
         },
@@ -99,10 +102,10 @@ void mcp_init(void){
     MCP_REG_C1FIFOCON_t mcp_c1fifocon2 = { //transmit fifo
         .bits = {
 
-            .PLSIZE= 63, 
+            .PLSIZE= 7, //64 byte payload (MCP2518FD PLSIZE encoding)
             .FSIZE= 7, //8 Messages fifo-depth
         }
-    }
+    };
 
     MCP_REG_C1INT_t mcp_c1int = {
         .bits = {
@@ -130,7 +133,7 @@ void mcp_init(void){
     mcp_write(MCP_REG_ADR_C1NBTCFG, mcp_c1nbtcfg.data_array, sizeof mcp_c1nbtcfg.data_array);
     mcp_write(MCP_REG_ADR_C1DBTCFG, mcp_c1dbtcfg.data_array, sizeof mcp_c1dbtcfg.data_array);
     mcp_write(MCP_REG_ADR_C1FIFOCON1, mcp_c1fifocon1.data_array, sizeof mcp_c1fifocon1.data_array);
-    mcp_write(MCP_REG_ADR_C1FIFOCON2, mcp_c1fifocon2.data_array, sizeof mcp_c1fifocon2.data_array)
+    mcp_write(MCP_REG_ADR_C1FIFOCON2, mcp_c1fifocon2.data_array, sizeof mcp_c1fifocon2.data_array);
     mcp_write(MCP_REG_ADR_C1INT, mcp_c1int.data_array, sizeof mcp_c1int.data_array);
     mcp_write(MCP_REG_ADR_C1FLTCON0, mcp_c1fltcon.data_array, sizeof mcp_c1fltcon.data_array);
     mcp_write(MCP_REG_ADR_C1CON, mcp_c1con.data_array, sizeof mcp_c1con.data_array);
@@ -139,20 +142,22 @@ void mcp_init(void){
 }
 
 //docs:start:can0_drain_receive_fifo
-bool can0_mcp_fetch_data(){
+bool mcp_fetch_data(){
     debugmsg("mcp2518 driver", "Fetching can message...");
     uint32_t tmp_offset;
-    can_message_object_t tmp_can_message_buffer;
+    mcp_rx_object_t tmp_rx_obj;
+    can_frame_t tmp_can_frame;
 
     do {
         //Retrieve the address offset of the recieved CAN-Message stored in message ram from C1FIFOUA1
         mcp_read(MCP_REG_ADR_C1FIFOUA1, &tmp_offset, sizeof tmp_offset);
 
         //Read this message address and write into temp. message buffer.
-        mcp_read(tmp_offset + MCP_RAM_BASE, tmp_can_message_buffer.data_array, sizeof tmp_can_message_buffer.data_array);
+        mcp_read(tmp_offset + MCP_RAM_BASE, tmp_rx_obj.data_array, sizeof tmp_rx_obj.data_array);
 
         //save message in ringbuffer
-        can_ring_store(&tmp_can_message_buffer);
+        mcp_convert_rx_obj_to_can(&tmp_rx_obj, &tmp_can_frame);
+        can_ring_store(&tmp_can_frame);
 
         //set UINC bit in C1FIFOCON1 to prompt load operation of next message offset into C1FIFOUA1
         MCP_REG_C1FIFOCON_t tmp_c1fifocon;
@@ -161,55 +166,58 @@ bool can0_mcp_fetch_data(){
         mcp_write(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
 
 
-    }while(gpio_get(pin_can0_irq));
+    }while(!gpio_get(pin_can0_irq));
 
+    return true;
 }
 //docs:end:can0_drain_receive_fifo
 
-bool mcp_send_data(can_message_object_t can_tx_object){
+bool mcp_send_data(mcp_tx_object_t mcp_tx_object){
     if(!mcp_check_txfifo_ready()) return false;
     uint32_t tmp_offset;
-    mcp_read(MCP_REG_ADR_C1FIFOUA2,tmp_offset, sizeof tmp_offset);
-    mcp_write(MCP_RAM_BASE + tmp_offset, can_tx_object.data_array);
+    mcp_read(MCP_REG_ADR_C1FIFOUA2, &tmp_offset, sizeof tmp_offset);
+    mcp_write(MCP_RAM_BASE + tmp_offset, mcp_tx_object.data_array, sizeof mcp_tx_object.data_array);
 
     MCP_REG_C1FIFOCON_t tmp_c1fifocon;
     mcp_read(MCP_REG_ADR_C1FIFOCON2, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
     tmp_c1fifocon.bits.UINC= 1;
     tmp_c1fifocon.bits.TXREQ= 1;
     mcp_write(MCP_REG_ADR_C1FIFOCON2, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
-
-
+    return true;
 }
 
 bool mcp_check_rxfifo_ready(){
-    MCP_REG_C1FIFOSTA tmp_c1fifosta;
+    MCP_REG_C1FIFOSTA_t tmp_c1fifosta;
     mcp_read(MCP_REG_ADR_C1FIFOSTA1, tmp_c1fifosta.data_array, sizeof tmp_c1fifosta.data_array);
     return (bool)tmp_c1fifosta.bits.TFNRFNIF;
 }
 
 bool mcp_check_txfifo_ready(){
-    MCP_REG_C1FIFOSTA tmp_c1fifosta;
-    mcp_read(MCP_REG_ADR_C1FIFOSTA2, tmp_c1fifosta.data_array, sizeof tmp_c1fifosta.data_array);
+    MCP_REG_C1FIFOSTA_t tmp_c1fifosta;
+    mcp_read(MCP_REG_ADR_C1IFIOSTA2, tmp_c1fifosta.data_array, sizeof tmp_c1fifosta.data_array);
     return (bool)tmp_c1fifosta.bits.TFNRFNIF;
 }
 
 
 
 
-void mcp_convert_can_to_tx_obj(can_frame_t *can_frame, mcp_tx_object_t *tx_obj){
+void mcp_convert_can_to_tx_obj(const can_frame_t *can_frame, mcp_tx_object_t *tx_obj){
 
     memset(tx_obj,0,sizeof(*tx_obj));
 
-    tx_obj -> SID = can_frame -> SID;
-    tx_obj -> DLC = can_frame -> DLC;
-    tx_obj -> BRS = BUS_BITRATE_SWITCH;
-    tx_obj -> FDF = BUS_CAN_FD;
+    tx_obj -> datafields.SID = can_frame -> SID;
+    tx_obj -> datafields.DLC = can_frame -> DLC;
+    tx_obj -> datafields.BRS = BUS_BITRATE_SWITCH;
+    tx_obj -> datafields.FDF = BUS_CAN_FD;
 }
 
-void mcp_convert_rx_obj_to_can(mcp_rx_object_t rx_obj, can_frame_t can_frame){
+void mcp_convert_rx_obj_to_can(const mcp_rx_object_t *rx_obj, can_frame_t *can_frame){
 
-    rx_obj -> SID = can_frame -> SID;
-    rx_obj -> DLC = can_frame -> DLC;
-    rx_obj -> ESI = can_frame -> ESI;
-    rx_obj -> can_payload = can_frame -> can_payload;
+    can_frame -> SID = rx_obj -> datafields.SID;
+    can_frame -> DLC = rx_obj -> datafields.DLC;
+    can_frame -> ESI = rx_obj -> datafields.ESI;
+    
+    memcpy(can_frame->can_payload,
+           rx_obj->datafields.can_payload,
+           sizeof can_frame->can_payload);
 }

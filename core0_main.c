@@ -31,20 +31,10 @@ void update_statemachine_inputs(){
         if (gpio_get(pin_power_detect)) datalogger_state.ext_power_state = EXT_POWER_ON_S;
         else datalogger_state.ext_power_state = EXT_POWER_OFF_S;
 
-        if (gpio_get(pin_can0_irq)) datalogger_state.mcp_state = MCP_PENDING_S;
+        if (!gpio_get(pin_can0_irq)) datalogger_state.mcp_state = MCP_PENDING_S;
         else datalogger_state.mcp_state = MCP_IDLE_S;
 }
 //docs:end:update-statemachine
-
-static void debug_print_datalogger_state(void) {
-    debugmsg("core0", "state: system=%d, sd=%d, mcp=%d, power=%d",
-             atomic_load(&datalogger_state.system_state),
-             atomic_load(&datalogger_state.sd_state),
-             atomic_load(&datalogger_state.mcp_state),
-             atomic_load(&datalogger_state.ext_power_state));
-}
-
-
 
 int main()
 {
@@ -60,7 +50,6 @@ int main()
         switch(datalogger_state.system_state){
 
         case SYSTEM_OFF_S:
-
 
            // low_power_dormant_until_gpio_pin_state(pin_power_detect, true, true, DORMANT_CLOCK_SOURCE_ROSC,NULL);
 
@@ -83,7 +72,7 @@ int main()
         case SYSTEM_RUNNING_S:
 
             if(datalogger_state.mcp_state==MCP_PENDING_S) {
-                can0_mcp_fetch_data();
+                mcp_fetch_data();
                 datalogger_state.mcp_state= MCP_IDLE_S;
             }
    
@@ -94,7 +83,7 @@ int main()
         case SYSTEM_STOPPING_S:
 
             if(datalogger_state.mcp_state==MCP_PENDING_S) {
-                can0_mcp_fetch_data();
+                mcp_fetch_data();
             }
 
             if (datalogger_state.sd_state == SD_IDLE_S && datalogger_state.mcp_state != MCP_PENDING_S) {
@@ -105,7 +94,6 @@ int main()
             
         }
 
- 
     }
 //docs:end:core0-loop
 }
