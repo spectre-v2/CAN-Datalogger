@@ -41,7 +41,7 @@ int main()
     stdio_init_all(); 
     mcu_hardware_init();
 
-    while (!stdio_usb_connected()) sleep_ms(100);
+    //while (!stdio_usb_connected()) sleep_ms(100);
     //docs:start:core0-loop
     while(1){
 
