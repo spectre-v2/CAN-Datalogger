@@ -1,17 +1,19 @@
 #include "csv_converter.h"
+#include "pico/time.h"
+
 
 // C standard library
 #include <stdio.h>
 #include <string.h>
 
 //project modules
-#include "debug.h"
+
 
 
 //docs:start:csv-create-log
 void csv_create_log_entry(csv_log_entry_t new_entry, can_frame_t *can_frame){
 
-    debugmsg("csv-buffer", "Creating CSV log entry...");
+    
 
     uint8_t written = 0;
     written = snprintf(new_entry, sizeof(csv_log_entry_t), "%u,", (unsigned int)(*can_frame).SID);

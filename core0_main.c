@@ -12,7 +12,7 @@
 #include "core1_main.h"
 #include "mcp2518.h"
 #include "statemachine.h"
-#include "debug.h"
+
 
 
 

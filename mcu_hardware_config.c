@@ -5,7 +5,7 @@
 #include "pico/multicore.h"
 
 #include "mcu_hardware_config.h"
-#include "debug.h"
+
   
 void mcu_hardware_init(){
 
@@ -24,6 +24,14 @@ void mcu_hardware_init(){
 
     gpio_set_function(pin_pico2_led, GPIO_FUNC_SIO);
     gpio_set_dir(pin_pico2_led, GPIO_OUT);
+
+    gpio_set_function(pin_pico2_t_can_recieved, GPIO_FUNC_SIO);
+    gpio_set_dir(pin_pico2_t_can_recieved, GPIO_OUT);
+    gpio_pull_down(pin_pico2_t_can_recieved);
+
+    gpio_set_function(pin_pico2_t_sd_saved, GPIO_FUNC_SIO);
+    gpio_set_dir(pin_pico2_t_sd_saved, GPIO_OUT);
+    gpio_pull_down(pin_pico2_t_sd_saved);
     
     //interrupt request from can0 controller
     gpio_set_function(pin_can0_irq, GPIO_FUNC_SIO);
@@ -39,4 +47,8 @@ void mcu_hardware_init(){
 
 
     
+}
+
+void time_mes_pin_toggle(uint8_t pin){
+gpio_xor_mask(1<<pin);
 }

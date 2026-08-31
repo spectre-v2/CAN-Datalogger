@@ -25,6 +25,10 @@
 
 #define pin_pico2_led 25
 
+#define pin_pico2_t_can_recieved 16 //blue
+#define pin_pico2_t_sd_saved 17 //white
+
 
 void mcu_hardware_init();
+void time_mes_pin_toggle(uint8_t pin);
 

@@ -10,7 +10,7 @@
 #include "mcu_hardware_config.h"
 #include "can_ring_buffer.h"
 #include "csv_converter.h"
-#include "debug.h"
+
 
 
 // Initialize filesystem
@@ -24,19 +24,19 @@ can_frame_t can_message_buffer;
 
 char sd_card_volume[] = "0:";
 char sd_card_logfile_path[] = "0:/log.csv";
-char sd_card_logfile_header[] = "identifier, payload\r\n" ;
+char sd_card_logfile_header[] = "identifier, message_number\r\n" ;
 
 void sd_mount(){
-    debugmsg("sd-interface", "Mounting SD card...");
+    
     // Connect FatFs to the SD card.
     FRESULT mount = f_mount(&sd_card_filesystem, sd_card_volume, 1);
     // Open log.csv for writing
-    FRESULT open = f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
+    FRESULT open = f_open(&sd_card_logfile, sd_card_logfile_path, FA_CREATE_ALWAYS | FA_WRITE);
     FRESULT write_header = f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &fatfs_bytes_written);
 }
 
 void sd_save_unmount(){
-    debugmsg("sd-interface", "Unmounting SD card...");
+    
     // Finish the file operation and detach the filesystem from the SD card.
 
     while(can_ring_fetch(&can_message_buffer)){
@@ -55,5 +55,9 @@ void sd_save_continuous(){
         csv_create_log_entry(new_csv_entry_buffer, &can_message_buffer);
 
         f_write(&sd_card_logfile, new_csv_entry_buffer, strlen(new_csv_entry_buffer),&fatfs_bytes_written);
+
+        //time marker for end of saving process
+        time_mes_pin_toggle(pin_pico2_t_sd_saved);
+        
     }
 }

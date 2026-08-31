@@ -12,7 +12,7 @@
 #include "mcu_hardware_config.h"
 #include "can_types.h"
 #include "can_ring_buffer.h"
-#include "debug.h"
+
 
 
 //docs:start:mcp_reset
@@ -60,7 +60,7 @@ void mcp_read(uint16_t address, void *rx_buffer, size_t length){
 
 
 void mcp_init(void){
-    debugmsg("mcp2518 driver", "Initializing mcp...");
+    
     mcp_reset();
 
 
@@ -143,7 +143,7 @@ void mcp_init(void){
 
 //docs:start:can0_drain_receive_fifo
 bool mcp_fetch_data(){
-    debugmsg("mcp2518 driver", "Fetching can message...");
+    
     uint32_t tmp_offset;
     mcp_rx_object_t tmp_rx_obj;
     can_frame_t tmp_can_frame;
@@ -165,6 +165,8 @@ bool mcp_fetch_data(){
         tmp_c1fifocon.bits.UINC= 1;
         mcp_write(MCP_REG_ADR_C1FIFOCON1, tmp_c1fifocon.data_array, sizeof tmp_c1fifocon.data_array);
 
+        //time marker for end of transmission
+        time_mes_pin_toggle(pin_pico2_t_can_recieved);
 
     }while(!gpio_get(pin_can0_irq));
 

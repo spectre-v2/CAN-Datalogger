@@ -1,5 +1,5 @@
 #include "can_ring_buffer.h"
-#include "debug.h"
+
 
 //docs:start:can_ring
 // Ring buffer for CAN messages.
@@ -10,7 +10,6 @@ _Atomic uint32_t can_ring_count = 0;
 
 //docs:start:ringbuffer-store
 bool can_ring_store(const can_frame_t *new_entry){
-    debugmsg("can-ring", "Saving message to ring buffer...");
 
     uint32_t read_index = atomic_load(&can_ring_read_index);
     uint32_t write_index = atomic_load(&can_ring_write_index);
@@ -31,7 +30,6 @@ bool can_ring_store(const can_frame_t *new_entry){
 
 //docs:start:ringbuffer-fetch
 bool can_ring_fetch(can_frame_t *fetched_entry){
-    debugmsg("can-ring", "Fetching message from ring buffer...");
 
     uint32_t read_index = atomic_load(&can_ring_read_index);
     uint32_t write_index = atomic_load(&can_ring_write_index);
@@ -45,7 +43,7 @@ bool can_ring_fetch(can_frame_t *fetched_entry){
 
     atomic_store(&can_ring_read_index, next_read_index);
 
-   atomic_fetch_sub(&can_ring_count,1);
+    atomic_fetch_sub(&can_ring_count,1);
 
    return true;
 }
