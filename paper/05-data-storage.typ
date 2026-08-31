@@ -4,11 +4,17 @@
 
 Die Zentrale technische Herausforderung bei diesem System ist die zuverlässige Speicherung von Daten und gleichzeitiger vollständiger Aufzeichnung aller neuen eingehenden Daten. 
 
-Eine SD- Karte besteht im Kern aus Sektoren zu je 512 Byte NAND- Flash und einem Mikrocontroller. Dieser verwaltet Sektoren, schaltet defekte Sektoren ab und stellt die übrigen mit logischen Blucknummern nach als logischen linearen Adressraum zur Verfügung.
+Eine SD- Karte besteht im Kern aus Sektoren zu je 512 Byte NAND- Flash und einem Mikrocontroller. Dieser verwaltet Sektoren, schaltet defekte Sektoren ab und stellt die übrigen mit Blucknummern nach als logischen linearen Adressraum zur Verfügung. Ein Sektor ist die kleinste les- oder schreibbare Einheit.
 
-Um eine Datei in FAT32- Format zu speichern, bedarf es der zuordnung von Clustern.
+Um eine Datei in FAT32- Format zu speichern, bedarf es der Zuordnung von Sektoren zu größeren Gruppen, den Clustern. Ein Cluster umfasst immer eine feste Menge an Sektoren. Anschließend müssen die zu speichernden Daten diesen Clustern zugeordnet werden. 
 
+In einem Bestimmten Speicherbereich des Speichermedium liegt die Partitionstabelle. Diese gibt auskunft darüber, welche in welche Partitionen das Speichermedium aufgeteilt ist, welche Formate in den Partitionen zu erwarten sind und in welchem Sektor die Partitionen beginnen.
 
+In der FAT32- Partition liegen dann zuerst diverse wichtige Metadaten im sogenannten Bootsektor. Hier wird festgehalten, wie viele Sektoren zu einem Cluster zusammengefasst wurden, wie viele Cluster existieren, und wie viele davon für Metadaten reserviert sind. Daraus wird die Adresse der Dateizuordnungstabelle, der File Allocation Table (FAT) berechnet. Es können auch mehrere FATs existieren, ihre Anzahl ist im Bootsektor vermerkt. In dieser Tabelle wird festgehalten, in welchen Clustern eine gespeicherte Datei tatsächlich liegt, wo die Datei beginnt und wo sie endet. Jeder für eine Datei Markierte cluster enthält entweder eine Startmarkierung, die nummer des folgenden Clusters, oder eine Endmarkierung. Eine Datei ist somit als Reihe von Clustern definiert. Cluster müssen nicht direkt aufeinander folgen, da die FAT auch Nummern von besetzten oder defekten Clustern überspringen kann.
+
+Ebenso wird aus der FAT ersichtlich, welche Cluster ungenutzt oder Defekt sind.
+
+Wenn eine Datei Gespeichert, gelesen oder Modifiziert werden soll, muss zuerst ein passendes cluster und der darin enthaltene passende Sektor berechnet werden. Ist der verbleibende Platz in einem CLuster zu klein, muss ein freier Cluster gefunden und in der FAT vermerkt werden. Dann kann der Sektor oder die Sektoren gelesen, modifiziert, und zurückgeschrieben werden. Dazu nutzt man im Prozessor in regel einen sogenannten Sector Cache.
 Deshalb ist es wichtig, eingehende Nachrichten schnell in einem Zwischenspeicher abzulegen, um diese anschließend weiterzuverarbeiten.
 Zu diesem Zweck nutzt man ein Array, welches mithilfe von zwei Indizes verwaltet wird, ein schreib und ein Lese- INdex. Schreibt man daten in dieses Array, so erhöht man den schreibindex. Liest man dis geschriebenen Daten anschließend wieder aus, erhöht man den Leseindex. Erreicht einer der Indizes irgendwann das ende des arrays, wird er auf 0 zurückgesetzt. Dadurch ergibt sich ein Speicher, bei dem immer die ältesten einträge zuerst ausgelesen werden, und die neusten EInträge an die freiwerdende Stelle geschrieben werden. 
 
