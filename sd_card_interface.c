@@ -30,15 +30,9 @@ void sd_mount(){
     debugmsg("sd-interface", "Mounting SD card...");
     // Connect FatFs to the SD card.
     FRESULT mount = f_mount(&sd_card_filesystem, sd_card_volume, 1);
-    gpio_put(pin_pico2_led, 1);  // nur: f_mount ist zurückgekehrt
-
-    debugmsg("sd-interface", "mounted: %d", (int)mount);
     // Open log.csv for writing
     FRESULT open = f_open(&sd_card_logfile, sd_card_logfile_path, FA_OPEN_APPEND | FA_WRITE);
-    debugmsg("sd-interface%d", "mounted: %d",(int)open);
-    // write header
     FRESULT write_header = f_write(&sd_card_logfile, sd_card_logfile_header, sizeof sd_card_logfile_header -1, &fatfs_bytes_written);
-    debugmsg("sd-interface%d", "mounted: %d", (int)write_header);
 }
 
 void sd_save_unmount(){
@@ -57,8 +51,6 @@ void sd_save_unmount(){
 }
 
 void sd_save_continuous(){
-    debugmsg("sd-interface", "Saving data to SD card...");
-    
     while(can_ring_fetch(&can_message_buffer)) {
         csv_create_log_entry(new_csv_entry_buffer, &can_message_buffer);
 

@@ -1,5 +1,7 @@
 #include "sd_card_spi.h"
-#include "debug.h"
+
+/* Keep SD transfer diagnostics out of normal application logging. */
+#define debugmsg(...) do { } while (0)
 
 // C standard library
 #include <inttypes.h>

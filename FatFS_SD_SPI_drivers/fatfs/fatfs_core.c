@@ -3306,8 +3306,20 @@ static UINT check_fs (	/* 0:FAT/FAT32 VBR, 1:exFAT VBR, 2:Not FAT and valid BS, 
 	if (sign == 0xAA55 && !memcmp(fs->win + BS_JmpBoot, "\xEB\x76\x90" "EXFAT   ", 11)) return 1;	/* It is an exFAT VBR */
 #endif
 	b = fs->win[BS_JmpBoot];
+
+	//dies ist ein Bytevergleich, der im richtigen FATFS mit memcmp gelöst wurde. Da dies aber auf RiscV
+	//wegen Memory misaignment einen Hardfault verursacht, ist es jetzt so.
+	
 	if (b == 0xEB || b == 0xE9 || b == 0xE8) {	/* Valid JumpBoot code? (short jump, near jump or near call) */
-		if (sign == 0xAA55 && !memcmp(fs->win + BS_FilSysType32, "FAT32   ", 8)) {
+		if (sign == 0xAA55
+			&& fs->win[BS_FilSysType32 + 0] == 'F'
+			&& fs->win[BS_FilSysType32 + 1] == 'A'
+			&& fs->win[BS_FilSysType32 + 2] == 'T'
+			&& fs->win[BS_FilSysType32 + 3] == '3'
+			&& fs->win[BS_FilSysType32 + 4] == '2'
+			&& fs->win[BS_FilSysType32 + 5] == ' '
+			&& fs->win[BS_FilSysType32 + 6] == ' '
+			&& fs->win[BS_FilSysType32 + 7] == ' ') {
 			return 0;	/* It is an FAT32 VBR */
 		}
 		/* FAT volumes formatted with early MS-DOS lack BS_55AA and BS_FilSysType, so FAT VBR needs to be identified without them. */
