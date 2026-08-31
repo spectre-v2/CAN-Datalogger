@@ -142,13 +142,12 @@ void mcp_init(void){
 }
 
 //docs:start:can0_drain_receive_fifo
-bool mcp_fetch_data(){
+void mcp_fetch_data(){
     
     uint32_t tmp_offset;
     mcp_rx_object_t tmp_rx_obj;
     can_frame_t tmp_can_frame;
 
-    do {
         //Retrieve the address offset of the recieved CAN-Message stored in message ram from C1FIFOUA1
         mcp_read(MCP_REG_ADR_C1FIFOUA1, &tmp_offset, sizeof tmp_offset);
 
@@ -168,9 +167,6 @@ bool mcp_fetch_data(){
         //time marker for end of transmission
         time_mes_pin_toggle(pin_pico2_t_can_recieved);
 
-    }while(!gpio_get(pin_can0_irq));
-
-    return true;
 }
 //docs:end:can0_drain_receive_fifo
 

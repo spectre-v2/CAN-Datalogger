@@ -7,6 +7,9 @@ can_frame_t can_ring[CAN_RING_SIZE];
 _Atomic uint32_t can_ring_read_index = 0;
 _Atomic uint32_t can_ring_write_index = 0;
 _Atomic uint32_t can_ring_count = 0;
+_Atomic uint32_t can_ring_overflow_counter = 0;
+
+
 
 //docs:start:ringbuffer-store
 bool can_ring_store(const can_frame_t *new_entry){
@@ -17,7 +20,10 @@ bool can_ring_store(const can_frame_t *new_entry){
     
     if(next_write_index == CAN_RING_SIZE) next_write_index = 0; 
 
-    if(next_write_index == read_index) return false;    
+    if(next_write_index == read_index){
+        can_ring_overflow_counter++;
+        return false;
+    }    
    
     can_ring[write_index]= *new_entry;
 

@@ -10,6 +10,7 @@
 //docs:end:can_ring_size
 
 extern _Atomic uint32_t can_ring_count;
+extern _Atomic uint32_t can_ring_overflow_counter;
 
 bool can_ring_store(const can_frame_t *new_entry);
 bool can_ring_fetch(can_frame_t *fetched_entry);

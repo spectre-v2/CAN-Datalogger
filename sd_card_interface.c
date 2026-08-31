@@ -24,7 +24,7 @@ can_frame_t can_message_buffer;
 
 char sd_card_volume[] = "0:";
 char sd_card_logfile_path[] = "0:/log.csv";
-char sd_card_logfile_header[] = "identifier, message_number\r\n" ;
+char sd_card_logfile_header[] = "ID, payload\r\n" ;
 
 void sd_mount(){
     

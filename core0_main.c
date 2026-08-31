@@ -53,7 +53,9 @@ int main()
 
            // low_power_dormant_until_gpio_pin_state(pin_power_detect, true, true, DORMANT_CLOCK_SOURCE_ROSC,NULL);
 
-            if(datalogger_state.ext_power_state == EXT_POWER_ON_S) datalogger_state.system_state = SYSTEM_STARTING_S;
+            if(datalogger_state.ext_power_state == EXT_POWER_ON_S){ 
+            datalogger_state.system_state = SYSTEM_STARTING_S;
+            }
 
             break;
 
@@ -66,7 +68,10 @@ int main()
                 datalogger_state.sd_state = SD_MOUNTING_S;
             }
             //waiting for core1 to start up the SD.
-            if(datalogger_state.sd_state == SD_READY_S) datalogger_state.system_state = SYSTEM_RUNNING_S;
+            if(datalogger_state.sd_state == SD_READY_S) {
+            datalogger_state.system_state = SYSTEM_RUNNING_S;
+            }
+
             break;
 
         case SYSTEM_RUNNING_S:
@@ -76,8 +81,10 @@ int main()
                 datalogger_state.mcp_state= MCP_IDLE_S;
             }
    
-            
-            if(datalogger_state.ext_power_state == EXT_POWER_OFF_S) datalogger_state.system_state = SYSTEM_STOPPING_S;
+            if(datalogger_state.ext_power_state == EXT_POWER_OFF_S) {
+                datalogger_state.system_state = SYSTEM_STOPPING_S;
+            }
+
         break;
             
         case SYSTEM_STOPPING_S:
